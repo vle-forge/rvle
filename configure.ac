@@ -1,4 +1,4 @@
-AC_INIT([rvle],[0.8.000-0],[quesnel@users.sourceforge.net])
+AC_INIT([rvle],[0.8.999-0],[quesnel@users.sourceforge.net])
 
 : ${R_HOME=`R RHOME`}
 if test -z "${R_HOME}"; then
@@ -11,8 +11,8 @@ CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
 AC_PROG_CXX
 AC_PROG_CC
 
-VLE_CFLAGS=`pkg-config --cflags vle-0.8`
-VLE_LIBS=`pkg-config --libs vle-0.8`
+VLE_CFLAGS=`pkg-config --cflags vle-0.9`
+VLE_LIBS=`pkg-config --libs vle-0.9`
 PKG_CPPFLAGS="${PKG_CPPFLAGS} ${VLE_CFLAGS}"
 PKG_LIBS="${PKG_LIBS} ${VLE_LIBS}"
 AC_SUBST(PKG_CPPFLAGS)
