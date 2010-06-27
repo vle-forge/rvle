@@ -361,6 +361,31 @@ int rvle_condition_add_string(rvle_t handle,
     }
 }
 
+int rvle_condition_add_tuple(rvle_t handle,
+                             const char* conditionname,
+                             const char* portname,
+                             double* values,
+                             size_t size)
+{
+    std::cout << vle::fmt("rvle_condition_add_tuple\n");
+    assert(handle && conditionname && portname && values);
+    assert(size > 0);
+
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::Condition& cnd(file->project().experiment().
+                            conditions().get(conditionname));
+
+        value::Tuple* tuple = new value::Tuple(size, 0.0);
+        std::copy(values, values + size, tuple->value().begin());
+
+        cnd.addValueToPort(portname, tuple);
+        return -1;
+    } catch (const std::exception& e) {
+        return 0;
+    }
+}
+
 int rvle_experiment_set_duration(rvle_t handle, double value)
 {
     assert(handle);

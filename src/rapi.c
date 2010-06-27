@@ -26,6 +26,7 @@
 
 #include <R.h>
 #include <Rinternals.h>
+#include <Rdefines.h>
 #include <R_ext/Rdynload.h>
 #include <stdint.h>
 
@@ -53,8 +54,12 @@ static SEXP r_rvle_condition_port_list_size(SEXP rvle, SEXP cnd);
 static SEXP r_rvle_condition_show(SEXP rvle, SEXP cnd, SEXP prt);
 static void r_rvle_condition_clear(SEXP rvle, SEXP cnd, SEXP prt);
 static void r_rvle_condition_add_real(SEXP rvle, SEXP cnd, SEXP prt, SEXP val);
-static void r_rvle_condition_add_integer(SEXP rvle, SEXP cnd, SEXP prt, SEXP val);
-static void r_rvle_condition_add_string(SEXP rvle, SEXP cnd, SEXP prt, SEXP val);
+static void r_rvle_condition_add_integer(SEXP rvle, SEXP cnd, SEXP prt, SEXP
+                val);
+static void r_rvle_condition_add_string(SEXP rvle, SEXP cnd, SEXP prt, SEXP
+                val);
+static void r_rvle_condition_add_tuple(SEXP rvle, SEXP cnd, SEXP prt, SEXP
+                values);
 static void r_rvle_experiment_set_duration(SEXP rvle, SEXP val);
 static SEXP r_rvle_experiment_get_duration(SEXP rvle);
 static void r_rvle_experiment_set_seed(SEXP rvle, SEXP val);
@@ -96,8 +101,11 @@ R_CallMethodDef callMethods[] = {
         { "condition_add_real", (DL_FUNC) r_rvle_condition_add_real, 4},
         { "condition_add_integer", (DL_FUNC) r_rvle_condition_add_integer, 4},
         { "condition_add_string", (DL_FUNC) r_rvle_condition_add_string, 4},
-        { "experiment_set_duration", (DL_FUNC) r_rvle_experiment_set_duration, 2},
-        { "experiment_get_duration", (DL_FUNC) r_rvle_experiment_get_duration, 1},
+        { "condition_add_tuple", (DL_FUNC) r_rvle_condition_add_tuple, 4},
+        { "experiment_set_duration", (DL_FUNC) r_rvle_experiment_set_duration,
+                2},
+        { "experiment_get_duration", (DL_FUNC) r_rvle_experiment_get_duration,
+                1},
         { "experiment_set_seed", (DL_FUNC) r_rvle_experiment_set_seed, 2},
         { "experiment_get_seed", (DL_FUNC) r_rvle_experiment_get_seed, 1},
         { "experiment_linear_combination", (DL_FUNC)
@@ -474,7 +482,33 @@ void r_rvle_condition_add_string(SEXP rvle, SEXP cnd, SEXP prt, SEXP val)
 
         if (!result) {
                 Rf_error("RVLE: cannot add %s to condition %s port %s",
-                                CHAR(STRING_ELT(val, 0)), CHAR(STRING_ELT(prt, 0)),
+                                CHAR(STRING_ELT(val, 0)),
+                                CHAR(STRING_ELT(prt, 0)),
+                                CHAR(STRING_ELT(cnd, 0)));
+        }
+}
+
+void r_rvle_condition_add_tuple(SEXP rvle, SEXP cnd, SEXP prt, SEXP vals)
+{
+        size_t len = length(vals);
+        double* values = (double*)malloc(sizeof(double) * len);
+        SEXP temp;
+        size_t i;
+
+        PROTECT(vals = AS_NUMERIC(vals));
+        values = NUMERIC_POINTER(vals);
+
+        int result = rvle_condition_add_tuple(R_ExternalPtrAddr(rvle),
+                        CHAR(STRING_ELT(cnd, 0)),
+                        CHAR(STRING_ELT(prt, 0)),
+                        values,
+                        len);
+
+        UNPROTECT(1);
+
+        if (!result) {
+                Rf_error("RVLE: cannot add tuple to condition %s port %s",
+                                CHAR(STRING_ELT(prt, 0)),
                                 CHAR(STRING_ELT(cnd, 0)));
         }
 }

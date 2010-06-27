@@ -179,6 +179,30 @@ rvle.setRealCondition <- function(self, condition, port, value)
     return (invisible(NULL))
 }
 
+rvle.addTupleCondition <- function(self, condition, port, value)
+{
+    stopifnot(is.rvle(self))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+
+    .Call("condition_add_tuple", self, condition, port, as.list(value),
+            PACKAGE="rvle")
+
+    return (invisible(NULL))
+}
+
+rvle.setTupleCondition <- function(self, condition, port, value)
+{
+    stopifnot(is.rvle(self))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+
+    rvle.clearConditionPort(self, condition, port)
+    rvle.addTupleCondition(self, condition, port, as.list(value))
+
+    return (invisible(NULL))
+}
+
 rvle.setStringCondition <- function(self, condition, port, value)
 {
     stopifnot(is.rvle(self))

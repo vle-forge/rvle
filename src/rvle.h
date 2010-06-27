@@ -27,6 +27,7 @@
 #define VLE_RPACKAGE_VLE_H
 
 #include <stdint.h>
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -191,6 +192,21 @@ int rvle_condition_add_string(rvle_t handle,
                               const char* conditionname,
                               const char* portname,
                               const char* value);
+
+/**
+ * @brief Set the initial condition of the specified condition and portname.
+ * @param handle The reference to the Vpz file.
+ * @param conditionname The name of the condition.
+ * @param portname The name of the condition's port.
+ * @param values The array of double to push.
+ * @param size The size of the array.
+ * @return 0 if failed, -1 otherwise.
+ */
+int rvle_condition_add_tuple(rvle_t handle,
+                             const char* conditionname,
+                             const char* portname,
+                             double* values,
+                             size_t size);
 
 /**
  * @brief Set the duration of the experiment.
