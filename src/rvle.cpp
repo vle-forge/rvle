@@ -376,7 +376,8 @@ int rvle_condition_add_tuple(rvle_t handle,
         vpz::Condition& cnd(file->project().experiment().
                             conditions().get(conditionname));
 
-        value::Tuple* tuple = new value::Tuple(size, 0.0);
+        value::Tuple* tuple = new value::Tuple();
+        tuple->value().resize(size);
         std::copy(values, values + size, tuple->value().begin());
 
         cnd.addValueToPort(portname, tuple);
