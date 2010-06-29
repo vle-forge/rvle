@@ -252,63 +252,64 @@ SEXP rvle_convert_vectorvalue(rvle_output_t out)
 
     value::VectorValue::const_iterator it = lst->begin();
 
-    assert(it != lst->end());
+    if (it != lst->end()) {
+        switch ((*it)->getType()) {
+        case value::Value::BOOLEAN:
+            PROTECT(sexplst = NEW_LOGICAL(lst->size()));
+            break;
+        case value::Value::DOUBLE:
+            PROTECT(sexplst = NEW_NUMERIC(lst->size()));
+            break;
+        case value::Value::INTEGER:
+            PROTECT(sexplst = NEW_INTEGER(lst->size()));
+            break;
+        case value::Value::STRING:
+            PROTECT(sexplst = NEW_CHARACTER(lst->size()));
+            break;
+        case value::Value::TUPLE:
+            PROTECT(sexplst = allocVector(VECSXP, lst->size()));
+            allocated = lst->size();
+            break;
+        default:
+            break;
+        }
 
-    switch ((*it)->getType()) {
-    case value::Value::BOOLEAN:
-	PROTECT(sexplst = NEW_LOGICAL(lst->size()));
-	break;
-    case value::Value::DOUBLE:
-	PROTECT(sexplst = NEW_NUMERIC(lst->size()));
-	break;
-    case value::Value::INTEGER:
-	PROTECT(sexplst = NEW_INTEGER(lst->size()));
-	break;
-    case value::Value::STRING:
-	PROTECT(sexplst = NEW_CHARACTER(lst->size()));
-	break;
-    case value::Value::TUPLE:
-        PROTECT(sexplst = allocVector(VECSXP, lst->size()));
-        allocated = lst->size();
-        break;
-    default:
-	break;
-    }
-
-    for (int n = 0; it != lst->end(); ++it, ++n) {
-        if (*it) {
-            switch ((*it)->getType()) {
-            case value::Value::BOOLEAN:
-                LOGICAL(sexplst)[n] = (bool)value::toBoolean(*it);
-                break;
-            case value::Value::DOUBLE:
-                REAL(sexplst)[n] = value::toDouble(*it);
-                break;
-            case value::Value::INTEGER:
-                INTEGER(sexplst)[n] = value::toInteger(*it);
-                break;
-	    case value::Value::STRING:
-		SET_STRING_ELT(sexplst, n, mkChar(value::toString(*it).c_str()));
-                break;
-            case value::Value::TUPLE:
-                {
-                    const value::Tuple* tuple(value::toTupleValue(*it));
-                    SEXP sexptuple;
-                    PROTECT(sexptuple = NEW_NUMERIC(tuple->size()));
-                    for (int i = 0; i < tuple->size(); ++i) {
-                        REAL(sexptuple)[i] = tuple->operator[](i);
+        for (int n = 0; it != lst->end(); ++it, ++n) {
+            if (*it) {
+                switch ((*it)->getType()) {
+                case value::Value::BOOLEAN:
+                    LOGICAL(sexplst)[n] = (bool)value::toBoolean(*it);
+                    break;
+                case value::Value::DOUBLE:
+                    REAL(sexplst)[n] = value::toDouble(*it);
+                    break;
+                case value::Value::INTEGER:
+                    INTEGER(sexplst)[n] = value::toInteger(*it);
+                    break;
+                case value::Value::STRING:
+                    SET_STRING_ELT(sexplst, n,
+                                   mkChar(value::toString(*it).c_str()));
+                    break;
+                case value::Value::TUPLE:
+                    {
+                        const value::Tuple* tuple(value::toTupleValue(*it));
+                        SEXP sexptuple;
+                        PROTECT(sexptuple = NEW_NUMERIC(tuple->size()));
+                        for (int i = 0; i < tuple->size(); ++i) {
+                            REAL(sexptuple)[i] = tuple->operator[](i);
+                        }
+                        SET_VECTOR_ELT(sexplst, n, sexptuple);
+                        UNPROTECT(1);
                     }
-                    SET_VECTOR_ELT(sexplst, n, sexptuple);
-                    UNPROTECT(1);
+                default:
+                    break;
                 }
-            default:
-                break;
             }
-	}
-    }
+        }
 
-    if (sexplst != R_NilValue) {
-	UNPROTECT(allocated);
+        if (sexplst != R_NilValue) {
+            UNPROTECT(allocated);
+        }
     }
 
     return sexplst;
