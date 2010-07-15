@@ -439,8 +439,8 @@ void r_rvle_condition_clear(SEXP rvle, SEXP cnd, SEXP prt)
 
         if (!result) {
                 Rf_error("RVLE: cannot clear values from condition %s port %s",
-                                CHAR(STRING_ELT(prt, 0)),
-                                CHAR(STRING_ELT(cnd, 0)));
+                                CHAR(STRING_ELT(cnd, 0)),
+                                CHAR(STRING_ELT(prt, 0)));
         }
 
 }
@@ -453,9 +453,9 @@ void r_rvle_condition_add_real(SEXP rvle, SEXP cnd, SEXP prt, SEXP val)
                         REAL(val)[0]);
 
         if (!result) {
-                Rf_error("RVLE: cannot add %d to condition %s port %s",
-                                REAL(val)[0], CHAR(STRING_ELT(prt, 0)),
-                                CHAR(STRING_ELT(cnd, 0)));
+                Rf_error("RVLE: cannot add %f to condition %s port %s",
+                                REAL(val)[0], CHAR(STRING_ELT(cnd, 0)),
+                                CHAR(STRING_ELT(prt, 0)));
         }
 }
 
@@ -468,8 +468,8 @@ void r_rvle_condition_add_integer(SEXP rvle, SEXP cnd, SEXP prt, SEXP val)
 
         if (!result) {
                 Rf_error("RVLE: cannot add %i to condition %s port %s",
-                                INTEGER(val)[0], CHAR(STRING_ELT(prt, 0)),
-                                CHAR(STRING_ELT(cnd, 0)));
+                                INTEGER(val)[0], CHAR(STRING_ELT(cnd, 0)),
+                                CHAR(STRING_ELT(prt, 0)));
         }
 }
 
@@ -483,8 +483,8 @@ void r_rvle_condition_add_string(SEXP rvle, SEXP cnd, SEXP prt, SEXP val)
         if (!result) {
                 Rf_error("RVLE: cannot add %s to condition %s port %s",
                                 CHAR(STRING_ELT(val, 0)),
-                                CHAR(STRING_ELT(prt, 0)),
-                                CHAR(STRING_ELT(cnd, 0)));
+                                CHAR(STRING_ELT(cnd, 0)),
+                                CHAR(STRING_ELT(prt, 0)));
         }
 }
 
@@ -508,8 +508,8 @@ void r_rvle_condition_add_tuple(SEXP rvle, SEXP cnd, SEXP prt, SEXP vals)
 
         if (!result) {
                 Rf_error("RVLE: cannot add tuple to condition %s port %s",
-                                CHAR(STRING_ELT(prt, 0)),
-                                CHAR(STRING_ELT(cnd, 0)));
+                                CHAR(STRING_ELT(cnd, 0)),
+                                CHAR(STRING_ELT(prt, 0)));
         }
 }
 
