@@ -58,46 +58,49 @@ rvle.runMatrix <- function(self)
     .Call("run_matrix", self, PACKAGE="rvle")
 }
 
-rvle.runManager <- function(self)
+rvle.runManager <- function(self, commonSeed = TRUE)
 {
     stopifnot(is.rvle(self))
 
-    .Call("run_manager", self, PACKAGE="rvle")
+    .Call("run_manager", self, as.logical(commonSeed), PACKAGE="rvle")
 }
 
-rvle.runManagerMatrix <- function(self)
+rvle.runManagerMatrix <- function(self, commonSeed = TRUE)
 {
     stopifnot(is.rvle(self))
 
-    .Call("run_manager_matrix", self, PACKAGE="rvle")
+    .Call("run_manager_matrix", self, as.logical(commonSeed), PACKAGE="rvle")
 }
 
-rvle.runManagerThread <- function(self, th)
+rvle.runManagerThread <- function(self, th, commonSeed = TRUE)
 {
     stopifnot(is.rvle(self))
 
-    .Call("run_manager_thread", self, as.integer(th), PACKAGE="rvle")
+    .Call("run_manager_thread", self, as.integer(th), as.logical(commonSeed),
+			PACKAGE="rvle")
 }
 
-rvle.runManagerThreadMatrix <- function(self, th)
+rvle.runManagerThreadMatrix <- function(self, th, commonSeed = TRUE)
 {
     stopifnot(is.rvle(self))
 
-    .Call("run_manager_thread_matrix", self, as.integer(th), PACKAGE="rvle")
+    .Call("run_manager_thread_matrix", self, as.integer(th),
+			as.logical(commonSeed), PACKAGE="rvle")
 }
 
-rvle.runManagerCluster <- function(self)
+rvle.runManagerCluster <- function(self, commonSeed = TRUE)
 {
     stopifnot(is.rvle(self))
 
-    .Call("run_manager_cluster", self, PACKAGE="rvle")
+    .Call("run_manager_cluster", self, as.logical(commonSeed), PACKAGE="rvle")
 }
 
-rvle.runManagerClusterMatrix <- function(self)
+rvle.runManagerClusterMatrix <- function(self, commonSeed = TRUE)
 {
     stopifnot(is.rvle(self))
 
-    .Call("run_manager_cluster_matrix", self, PACKAGE="rvle")
+    .Call("run_manager_cluster_matrix", self, as.logical(commonSeed),
+			PACKAGE="rvle")
 }
 
 is.rvle <- function(self)
