@@ -103,7 +103,7 @@ rvle_output_t rvle_run(rvle_t handle)
     return NULL;
 }
 
-rvle_output_t rvle_manager(rvle_t handle)
+rvle_output_t rvle_manager(rvle_t handle, int commonSeed)
 {
     assert(handle);
 
@@ -116,7 +116,8 @@ rvle_output_t rvle_manager(rvle_t handle)
             << "\n\n" << std::flush;
 
 
-        manager::ManagerRunMono jrm(*logfile, false);
+        manager::ManagerRunMono jrm(*logfile, false /*writefile*/,
+            false /*storeComb*/, commonSeed);
         jrm.start(*file);
 
         logfile->close();
@@ -130,7 +131,7 @@ rvle_output_t rvle_manager(rvle_t handle)
     return NULL;
 }
 
-rvle_output_t rvle_manager_thread(rvle_t handle, int th)
+rvle_output_t rvle_manager_thread(rvle_t handle, int th, int commonSeed)
 {
     assert(handle);
 
@@ -142,7 +143,8 @@ rvle_output_t rvle_manager_thread(rvle_t handle, int th)
         (*logfile) << _("Start log at ") << DateTime::currentDate()
             << "\n\n" << std::flush;
 
-        manager::ManagerRunThread jrm(*logfile, false, th);
+        manager::ManagerRunThread jrm(*logfile, false /*writeFile*/,
+            th /*process*/, false /*storeComb*/, commonSeed);
         jrm.start(*file);
 
         logfile->close();
@@ -156,7 +158,7 @@ rvle_output_t rvle_manager_thread(rvle_t handle, int th)
     return NULL;
 }
 
-rvle_output_t rvle_manager_cluster(rvle_t handle)
+rvle_output_t rvle_manager_cluster(rvle_t handle, int commonSeed)
 {
     assert(handle);
 
@@ -168,7 +170,8 @@ rvle_output_t rvle_manager_cluster(rvle_t handle)
         (*logfile) << _("Start log at ") << DateTime::currentDate()
             << "\n\n" << std::flush;
 
-        manager::ManagerRunDistant jrm(*logfile, false);
+        manager::ManagerRunDistant jrm(*logfile, false /*writeFile*/,
+            false /*storeComb*/, commonSeed);
         jrm.start(*file);
 
         logfile->close();

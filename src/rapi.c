@@ -40,12 +40,12 @@ static SEXP r_rvle_open(SEXP name);
 static SEXP r_rvle_pkg_open(SEXP name, SEXP pkg);
 static SEXP r_rvle_run(SEXP rvle);
 static SEXP r_rvle_run_matrix(SEXP rvle);
-static SEXP r_rvle_manager(SEXP rvle);
-static SEXP r_rvle_manager_matrix(SEXP rvle);
-static SEXP r_rvle_manager_thread(SEXP rvle, SEXP th);
-static SEXP r_rvle_manager_thread_matrix(SEXP rvle, SEXP th);
-static SEXP r_rvle_manager_cluster(SEXP rvle);
-static SEXP r_rvle_manager_cluster_matrix(SEXP rvle);
+static SEXP r_rvle_manager(SEXP rvle, SEXP commonSeed);
+static SEXP r_rvle_manager_matrix(SEXP rvle, SEXP commonSeed);
+static SEXP r_rvle_manager_thread(SEXP rvle, SEXP th, SEXP commonSeed);
+static SEXP r_rvle_manager_thread_matrix(SEXP rvle, SEXP th, SEXP commonSeed);
+static SEXP r_rvle_manager_cluster(SEXP rvle, SEXP commonSeed);
+static SEXP r_rvle_manager_cluster_matrix(SEXP rvle, SEXP commonSeed);
 static void r_rvle_delete(SEXP rvle);
 static SEXP r_rvle_condition_list(SEXP rvle);
 static SEXP r_rvle_condition_size(SEXP rvle);
@@ -83,14 +83,14 @@ R_CallMethodDef callMethods[] = {
         { "open_pkg", (DL_FUNC) r_rvle_pkg_open, 2},
         { "run", (DL_FUNC) r_rvle_run, 1},
         { "run_matrix", (DL_FUNC) r_rvle_run_matrix, 1},
-        { "run_manager", (DL_FUNC) r_rvle_manager, 1},
-        { "run_manager_matrix", (DL_FUNC) r_rvle_manager_matrix, 1},
-        { "run_manager_thread", (DL_FUNC) r_rvle_manager_thread, 2},
+        { "run_manager", (DL_FUNC) r_rvle_manager, 2},
+        { "run_manager_matrix", (DL_FUNC) r_rvle_manager_matrix, 2},
+        { "run_manager_thread", (DL_FUNC) r_rvle_manager_thread, 3},
         { "run_manager_thread_matrix", (DL_FUNC) r_rvle_manager_thread_matrix,
-                2},
-        { "run_manager_manager", (DL_FUNC) r_rvle_manager_cluster, 1},
+                3},
+        { "run_manager_manager", (DL_FUNC) r_rvle_manager_cluster, 2},
         { "run_manager_cluster_matrix", (DL_FUNC) r_rvle_manager_cluster_matrix,
-                1},
+                2},
         { "condition_size", (DL_FUNC) r_rvle_condition_size, 1},
         { "condition_list", (DL_FUNC) r_rvle_condition_list, 1},
         { "condition_port_list", (DL_FUNC) r_rvle_condition_port_list, 2},
@@ -207,12 +207,12 @@ SEXP r_rvle_run_matrix(SEXP rvle)
         return r;
 }
 
-SEXP r_rvle_manager(SEXP rvle)
+SEXP r_rvle_manager(SEXP rvle, SEXP commonSeed)
 {
         SEXP r = R_NilValue;
         rvle_output_t result;
 
-        result = rvle_manager(R_ExternalPtrAddr(rvle));
+        result = rvle_manager(R_ExternalPtrAddr(rvle), INTEGER(commonSeed)[0]);
         if (!result) {
                 Rf_warning("RVLE: empty result, (use output storage)");
         } else {
@@ -223,12 +223,12 @@ SEXP r_rvle_manager(SEXP rvle)
         return r;
 }
 
-SEXP r_rvle_manager_matrix(SEXP rvle)
+SEXP r_rvle_manager_matrix(SEXP rvle, SEXP commonSeed)
 {
         SEXP r = R_NilValue;
         rvle_output_t result;
 
-        result = rvle_manager(R_ExternalPtrAddr(rvle));
+        result = rvle_manager(R_ExternalPtrAddr(rvle), INTEGER(commonSeed)[0]);
         if (!result) {
                 Rf_warning("RVLE: empty result, (use output storage)");
         } else {
@@ -239,13 +239,13 @@ SEXP r_rvle_manager_matrix(SEXP rvle)
         return r;
 }
 
-SEXP r_rvle_manager_thread(SEXP rvle, SEXP th)
+SEXP r_rvle_manager_thread(SEXP rvle, SEXP th, SEXP commonSeed)
 {
         SEXP r = R_NilValue;
         rvle_output_t result;
 
         result = rvle_manager_thread(R_ExternalPtrAddr(rvle),
-                        INTEGER(th)[0]);
+                        INTEGER(th)[0],  INTEGER(commonSeed)[0]);
         if (!result) {
                 Rf_warning("RVLE: empty result, (use output storage)");
         } else {
@@ -256,13 +256,13 @@ SEXP r_rvle_manager_thread(SEXP rvle, SEXP th)
         return r;
 }
 
-SEXP r_rvle_manager_thread_matrix(SEXP rvle, SEXP th)
+SEXP r_rvle_manager_thread_matrix(SEXP rvle, SEXP th, SEXP commonSeed)
 {
         SEXP r = R_NilValue;
         rvle_output_t result;
 
         result = rvle_manager_thread(R_ExternalPtrAddr(rvle),
-                        INTEGER(th)[0]);
+                        INTEGER(th)[0], INTEGER(commonSeed)[0]);
         if (!result) {
                 Rf_warning("RVLE: empty result, (use output storage)");
         } else {
@@ -273,12 +273,13 @@ SEXP r_rvle_manager_thread_matrix(SEXP rvle, SEXP th)
         return r;
 }
 
-SEXP r_rvle_manager_cluster(SEXP rvle)
+SEXP r_rvle_manager_cluster(SEXP rvle, SEXP commonSeed)
 {
         SEXP r = R_NilValue;
         rvle_output_t result;
 
-        result = rvle_manager_cluster(R_ExternalPtrAddr(rvle));
+        result = rvle_manager_cluster(R_ExternalPtrAddr(rvle),
+            INTEGER(commonSeed)[0]);
         if (!result) {
                 Rf_warning("RVLE: empty result, (use output storage)");
         } else {
@@ -289,12 +290,13 @@ SEXP r_rvle_manager_cluster(SEXP rvle)
         return r;
 }
 
-SEXP r_rvle_manager_cluster_matrix(SEXP rvle)
+SEXP r_rvle_manager_cluster_matrix(SEXP rvle, SEXP commonSeed)
 {
         SEXP r = R_NilValue;
         rvle_output_t result;
 
-        result = rvle_manager_cluster(R_ExternalPtrAddr(rvle));
+        result = rvle_manager_cluster(R_ExternalPtrAddr(rvle),
+            INTEGER(commonSeed)[0]);
         if (!result) {
                 Rf_warning("RVLE: empty result, (use output storage)");
         } else {
