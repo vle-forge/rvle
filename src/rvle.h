@@ -266,6 +266,21 @@ int rvle_experiment_linear_combination(rvle_t handle, uint32_t seed,
 int rvle_experiment_total_combination(rvle_t handle, uint32_t seed,
                                       uint32_t repliquas);
 
+/**
+ * @brief Get the list of views.
+ * @param handle The reference to the Vpz file.
+ * @return The reference to a char**. Memory use malloc, don't forget to use
+ * free function.
+ */
+char** rvle_view_list(rvle_t handle);
+
+/**
+ * @brief Get the number of views in views list.
+ * @param handle The reference to the Vpz file.
+ * @return The number of conditions.
+ */
+int rvle_view_size(rvle_t handle);
+
 
 /**
  * @brief Set the plugin output of a view

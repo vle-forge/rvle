@@ -307,6 +307,20 @@ rvle.setTotalCombination <- function(self, seed, repliquas)
     return (invisible(NULL))
 }
 
+rvle.listViews <- function(self)
+{
+	stopifnot(is.rvle(self))
+
+	.Call("view_list", self, PACKAGE="rvle")
+}
+
+rvle.getViewsSize <- function(self)
+{
+	stopifnot(is.rvle(self))
+
+	.Call("view_size", self, PACKAGE="rvle")
+}
+
 rvle.setOutputPlugin <- function(self, viewname, pluginname)
 {
 	stopifnot(is.rvle(self))

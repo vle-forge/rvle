@@ -466,6 +466,38 @@ int rvle_experiment_total_combination(rvle_t handle, uint32_t seed,
     }
 }
 
+char** rvle_view_list(rvle_t handle)
+{
+    assert(handle);
+    char** result = NULL;
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::Views& vle_views = file->project().experiment().views();
+        const vpz::ViewList& vle_views_map = vle_views.viewlist();
+
+        result = (char**)malloc(vle_views_map.size() * sizeof(char*));
+        vpz::ViewList::const_iterator it = vle_views_map.begin();
+
+        for (size_t i = 0; i < vle_views_map.size(); ++i) {
+            result[i] = (char*)malloc((it->first).size() + 1);
+            strcpy(result[i], (it->first).c_str());
+            it++;
+        }
+    } catch(const std::exception& e) {
+        return NULL;
+    }
+    return result;
+}
+
+int rvle_view_size(rvle_t handle)
+{
+    assert(handle);
+
+    vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+    return file->project().experiment().views().viewlist().size();
+
+}
+
 int rvle_set_output_plugin(rvle_t handle,
                            const char* viewname,
                            const char* pluginname)
