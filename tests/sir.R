@@ -82,3 +82,7 @@ checkEquals(rvle.getOutputPlugin(f,"sirview"), "storage")
 rvle.setOutputPlugin(f,"sirview","text")
 checkEquals(rvle.getOutputPlugin(f,"sirview"), "text")
 rvle.setOutputPlugin(f,"sirview","storage")
+
+#check the list of views
+cnd <- rvle.listViews(f)
+checkEquals(cnd[1], "sirview")

@@ -68,6 +68,8 @@ static void r_rvle_experiment_linear_combination(SEXP rvle, SEXP seed, SEXP
                 replicas);
 static void r_rvle_experiment_total_combination(SEXP rvle, SEXP seed, SEXP
                 replicas);
+static SEXP r_rvle_view_list(SEXP rvle);
+static SEXP r_rvle_view_size(SEXP rvle);
 static void r_rvle_set_output_plugin(SEXP rvle, SEXP viewname, SEXP pluginname);
 static SEXP r_rvle_get_output_plugin(SEXP rvle, SEXP viewname);
 static void r_rvle_save(SEXP rvle, SEXP file);
@@ -96,7 +98,7 @@ R_CallMethodDef callMethods[] = {
         { "condition_port_list", (DL_FUNC) r_rvle_condition_port_list, 2},
         { "condition_port_list_size", (DL_FUNC) r_rvle_condition_port_list_size,
                 2},
-	{ "condition_show", (DL_FUNC) r_rvle_condition_show, 3},
+       { "condition_show", (DL_FUNC) r_rvle_condition_show, 3},
         { "condition_clear", (DL_FUNC) r_rvle_condition_clear, 3},
         { "condition_add_real", (DL_FUNC) r_rvle_condition_add_real, 4},
         { "condition_add_integer", (DL_FUNC) r_rvle_condition_add_integer, 4},
@@ -112,6 +114,8 @@ R_CallMethodDef callMethods[] = {
                 r_rvle_experiment_linear_combination, 3},
         { "experiment_total_combination", (DL_FUNC)
                 r_rvle_experiment_total_combination, 3},
+        { "view_size", (DL_FUNC) r_rvle_view_size, 1},
+        { "view_list", (DL_FUNC) r_rvle_view_list, 1},
         { "set_output_plugin", (DL_FUNC)
                 r_rvle_set_output_plugin, 3},
         { "get_output_plugin", (DL_FUNC)
@@ -565,6 +569,44 @@ void r_rvle_experiment_total_combination(SEXP rvle, SEXP seed, SEXP
                         INTEGER(seed)[0], INTEGER(replicas)[0]);
 }
 
+SEXP r_rvle_view_list(SEXP rvle)
+{
+        SEXP r;         /* view list result */
+        char** result;  /* string list from the vle api */
+        int size;       /* size of the view list from the vle api */
+        int i;
+
+        size = rvle_view_size(R_ExternalPtrAddr(rvle));
+        PROTECT(r = allocVector(STRSXP, size));
+
+        if (size > 0) {
+                result = rvle_view_list(R_ExternalPtrAddr(rvle));
+                for (i = 0; i < size; ++i) {
+                        SET_STRING_ELT(r, i, mkChar(result[i]));
+                }
+
+                for (i = 0; i < size; ++i) {
+                        free(result[i]);
+                }
+                free(result);
+        }
+
+        UNPROTECT(1);
+        return r;
+}
+
+SEXP r_rvle_view_size(SEXP rvle)
+{
+        SEXP r;
+        int result;
+
+        PROTECT(r = allocVector(INTSXP, 1));
+        result = rvle_view_size(R_ExternalPtrAddr(rvle));
+        INTEGER(r)[0] = result;
+        UNPROTECT(1);
+
+        return r;
+}
 
 void r_rvle_set_output_plugin(SEXP rvle, SEXP viewname, SEXP pluginname)
 {
