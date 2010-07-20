@@ -204,6 +204,19 @@ int rvle_condition_add_string(rvle_t handle,
  * @param handle The reference to the Vpz file.
  * @param conditionname The name of the condition.
  * @param portname The name of the condition's port.
+ * @param value The value to push.
+ * @return 0 if failed, -1 otherwise.
+ */
+int rvle_condition_add_boolean(rvle_t handle,
+			       const char* conditionname,
+			       const char* portname,
+			       int value);
+
+/**
+ * @brief Set the initial condition of the specified condition and portname.
+ * @param handle The reference to the Vpz file.
+ * @param conditionname The name of the condition.
+ * @param portname The name of the condition's port.
  * @param values The array of double to push.
  * @param size The size of the array.
  * @return 0 if failed, -1 otherwise.

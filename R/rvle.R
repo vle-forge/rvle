@@ -38,7 +38,7 @@ rvle.open <- function(file, pkg = "")
       x <- .Call("open", file, PACKAGE="rvle")
     else
       x <- .Call("open_pkg", file, pkg, PACKAGE="rvle")
-    
+
     stopifnot(!is.null(x))
     class(x) <- 'rvle'
     return(x)
@@ -231,6 +231,30 @@ rvle.addStringCondition <- function(self, condition, port, value)
     return (invisible(NULL))
 }
 
+rvle.addBooleanCondition <- function(f, condition, port, value)
+{
+   stopifnot(is.rvle(f))
+   stopifnot(is.character(condition))
+   stopifnot(is.character(port))
+
+   .Call("condition_add_boolean", f, condition, port, as.logical(value),
+         PACKAGE="rvle")
+
+    return (invisible(NULL))
+}
+
+rvle.setBooleanCondition <- function(f, condition, port, value)
+{
+    stopifnot(is.rvle(f))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+
+    rvle.clearConditionPort(f, condition, port)
+    rvle.addBooleanCondition(f, condition, port, value)
+
+    return (invisible(NULL))
+}
+
 rvle.addIntegerCondition <- function(self, condition, port, value)
 {
     stopifnot(is.rvle(self))
@@ -326,10 +350,10 @@ rvle.setOutputPlugin <- function(self, viewname, pluginname)
 	stopifnot(is.rvle(self))
 	stopifnot(is.character(viewname))
 	stopifnot(is.character(pluginname))
-    
+
 	.Call("set_output_plugin", self, viewname,
 			pluginname, PACKAGE="rvle")
-    
+
 	return (invisible(NULL))
 }
 
@@ -337,7 +361,7 @@ rvle.getOutputPlugin <- function(self, viewname)
 {
 	stopifnot(is.rvle(self))
 	stopifnot(is.character(viewname))
-	
+
 	.Call("get_output_plugin", self, viewname, PACKAGE="rvle")
 }
 
