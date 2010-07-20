@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.getDuration}
 \alias{rvle.getDuration}
 \title{Get the duration of the experiment.}
 \description{Get the duration of the experiment.}

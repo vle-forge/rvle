@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.listConditions}
 \alias{rvle.listConditions}
 \title{Get the condition list name of the Vpz file.}
 \description{Get the condition list name of the Vpz file.}

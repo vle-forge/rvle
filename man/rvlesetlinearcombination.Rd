@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.setLinearCombination}
 \alias{rvle.setLinearCombination}
 \title{Assign a linear experimental frame with specific seed to build seeds of
     simulations and the number of repliquas.}

@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.setOutputPlugin}
 \alias{rvle.setOutputPlugin}
 \title{Set the plugin output of a view.}
 \description{Set the plugin output of a view.}

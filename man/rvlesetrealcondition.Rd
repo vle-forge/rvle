@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.setRealCondition}
 \alias{rvle.setRealCondition}
 \title{Set a real to the specified condition port.}
 \description{Set a real to the specified condition port.}

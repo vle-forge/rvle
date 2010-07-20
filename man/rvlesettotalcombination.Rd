@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.setTotalCombination}
 \alias{rvle.setTotalCombination}
 \title{Assign a total experimental frame with specific seed to build seeds of
     simulations and the number of repliquas.}

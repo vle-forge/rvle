@@ -1,4 +1,4 @@
-\name{rvle}
+\name{is.rvle}
 \alias{is.rvle}
 \title{Check if an object is an rvle handle.}
 \description{Check if an object is an rvle handle.}
