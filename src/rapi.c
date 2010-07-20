@@ -58,6 +58,8 @@ static void r_rvle_condition_add_integer(SEXP rvle, SEXP cnd, SEXP prt, SEXP
                 val);
 static void r_rvle_condition_add_string(SEXP rvle, SEXP cnd, SEXP prt, SEXP
                 val);
+static void r_rvle_condition_add_boolean(SEXP rvle, SEXP cnd, SEXP prt, SEXP
+                val);
 static void r_rvle_condition_add_tuple(SEXP rvle, SEXP cnd, SEXP prt, SEXP
                 values);
 static void r_rvle_experiment_set_duration(SEXP rvle, SEXP val);
@@ -103,6 +105,7 @@ R_CallMethodDef callMethods[] = {
         { "condition_add_real", (DL_FUNC) r_rvle_condition_add_real, 4},
         { "condition_add_integer", (DL_FUNC) r_rvle_condition_add_integer, 4},
         { "condition_add_string", (DL_FUNC) r_rvle_condition_add_string, 4},
+        { "condition_add_boolean", (DL_FUNC) r_rvle_condition_add_boolean, 4},
         { "condition_add_tuple", (DL_FUNC) r_rvle_condition_add_tuple, 4},
         { "experiment_set_duration", (DL_FUNC) r_rvle_experiment_set_duration,
                 2},
@@ -491,6 +494,20 @@ void r_rvle_condition_add_string(SEXP rvle, SEXP cnd, SEXP prt, SEXP val)
                                 CHAR(STRING_ELT(val, 0)),
                                 CHAR(STRING_ELT(cnd, 0)),
                                 CHAR(STRING_ELT(prt, 0)));
+        }
+}
+
+void r_rvle_condition_add_boolean(SEXP rvle, SEXP cnd, SEXP prt, SEXP val)
+{
+        int result = rvle_condition_add_boolean(R_ExternalPtrAddr(rvle),
+                        CHAR(STRING_ELT(cnd, 0)),
+                        CHAR(STRING_ELT(prt, 0)),
+                        LOGICAL(val)[0]);
+
+        if (!result) {
+                Rf_error("RVLE: cannot add %i to condition %s port %s",
+                                LOGICAL(val)[0], CHAR(STRING_ELT(prt, 0)),
+                                CHAR(STRING_ELT(cnd, 0)));
         }
 }
 

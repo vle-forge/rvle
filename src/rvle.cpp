@@ -364,6 +364,25 @@ int rvle_condition_add_string(rvle_t handle,
     }
 }
 
+int rvle_condition_add_boolean(rvle_t handle,
+                               const char* conditionname,
+                               const char* portname,
+                               int value)
+{
+    assert(handle && conditionname && portname);
+
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::Condition& cnd(file->project().experiment().
+                            conditions().get(conditionname));
+
+        cnd.addValueToPort(portname, value::Boolean::create(value));
+        return -1;
+    } catch(const std::exception& e) {
+        return 0;
+    }
+}
+
 int rvle_condition_add_tuple(rvle_t handle,
                              const char* conditionname,
                              const char* portname,
