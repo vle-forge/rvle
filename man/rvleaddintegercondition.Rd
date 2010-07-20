@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.addIntegerCondition}
 \alias{rvle.addIntegerCondition}
 \title{Add an integer to the specified condition port.}
 \description{Add an integer to the specified condition port.}

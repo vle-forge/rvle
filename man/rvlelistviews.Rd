@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.listViews}
 \alias{rvle.listViews}
 \title{Get the list of view names of the Vpz file.}
 \description{Get the list of view names of the Vpz file.}

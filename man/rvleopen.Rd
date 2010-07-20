@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.open}
 \alias{rvle.open}
 \title{Load a new Vpz file.}
 \description{Load a new Vpz file. The Vpz file can either be global, or

@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.listConditionPorts}
 \alias{rvle.listConditionPorts}
 \title{Get the ports attached to a specific condition.}
 \description{Get the ports attached to a specific condition.}

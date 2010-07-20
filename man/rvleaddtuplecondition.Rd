@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.addTupleCondition}
 \alias{rvle.addTupleCondition}
 \title{Add a tuple (list of reals) to the specified condition port.}
 \description{Add a list of reals to the specified condition port.}

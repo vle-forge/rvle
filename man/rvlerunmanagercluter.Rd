@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.runManagerCluster}
 \alias{rvle.runManagerCluster}
 \title{Use an experimental frame and launch simulation onto grid computing.}
 \description{Use an experimental frame from the rvle handle and launch

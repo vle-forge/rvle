@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.runManagerThread}
 \alias{rvle.runManagerThread}
 \title{Use an experimental frame and launch simulation onto local thread.}
 \description{Use an experimental frame from the rvle handle and launch

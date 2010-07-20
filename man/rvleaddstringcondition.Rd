@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.addStringCondition}
 \alias{rvle.addStringCondition}
 \title{Add a string to the specified condition port.}
 \description{Add an string to the specified condition port.}

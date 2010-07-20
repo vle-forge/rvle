@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.setDuration}
 \alias{rvle.setDuration}
 \title{Set the duration of the experiment.}
 \description{Set the duration of the experiment.}

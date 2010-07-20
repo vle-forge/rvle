@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.getSeed}
 \alias{rvle.getSeed}
 \title{Get the seed of the experiment.}
 \description{Get the seed of the experiment.}

@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.getViewsSize}
 \alias{rvle.getViewsSize}
 \title{Get the number of views in Vpz file.}
 \description{Get the number of views in Vpz file.}

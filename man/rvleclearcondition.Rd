@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.clearConditionPort}
 \alias{rvle.clearConditionPort}
 \title{Clear all values from the specified condition port.}
 \description{Clear all values from the specified condition port.}

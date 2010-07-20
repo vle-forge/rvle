@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.getConditionPortsSize}
 \alias{rvle.getConditionPortsSize}
 \title{Get the number of port for a specific condition.}
 \description{Get the number of port for a specific condition.}

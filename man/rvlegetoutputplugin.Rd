@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.getOutputPlugin}
 \alias{rvle.getOutputPlugin}
 \title{Get the plugin output of a view.}
 \description{Get the plugin output of a view.}

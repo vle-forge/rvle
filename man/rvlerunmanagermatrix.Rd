@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.runManagerMatrix}
 \alias{rvle.runManagerMatrix}
 \title{Use an experimental frame and launch simulation.}
 \description{Use an experimental frame from the rvle handle and launch

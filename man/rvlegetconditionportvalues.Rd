@@ -1,4 +1,4 @@
-\name{rvle}
+\name{rvle.getConditionPortValues}
 \alias{rvle.getConditionPortValues}
 \title{Show the contains of a specified condition name, port name couple}
 \description{Show the contains of a specified condition}
