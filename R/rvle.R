@@ -231,26 +231,26 @@ rvle.addStringCondition <- function(self, condition, port, value)
     return (invisible(NULL))
 }
 
-rvle.addBooleanCondition <- function(f, condition, port, value)
+rvle.addBooleanCondition <- function(self, condition, port, value)
 {
-   stopifnot(is.rvle(f))
+   stopifnot(is.rvle(self))
    stopifnot(is.character(condition))
    stopifnot(is.character(port))
 
-   .Call("condition_add_boolean", f, condition, port, as.logical(value),
+   .Call("condition_add_boolean", self, condition, port, as.logical(value),
          PACKAGE="rvle")
 
     return (invisible(NULL))
 }
 
-rvle.setBooleanCondition <- function(f, condition, port, value)
+rvle.setBooleanCondition <- function(self, condition, port, value)
 {
-    stopifnot(is.rvle(f))
+    stopifnot(is.rvle(self))
     stopifnot(is.character(condition))
     stopifnot(is.character(port))
 
-    rvle.clearConditionPort(f, condition, port)
-    rvle.addBooleanCondition(f, condition, port, value)
+    rvle.clearConditionPort(self, condition, port)
+    rvle.addBooleanCondition(self, condition, port, value)
 
     return (invisible(NULL))
 }
