@@ -389,7 +389,6 @@ int rvle_condition_add_tuple(rvle_t handle,
                              double* values,
                              size_t size)
 {
-    std::cout << vle::fmt("rvle_condition_add_tuple\n");
     assert(handle && conditionname && portname && values);
     assert(size > 0);
 
