@@ -212,6 +212,7 @@ setClass("rvle")
 
 setClass("Rvle", representation(sim = "rvle",
                                 file = "character",
+                                pkg = "character",
                                 run = "function",
                                 config = "list",
                                 outlist = "list",
@@ -219,9 +220,15 @@ setClass("Rvle", representation(sim = "rvle",
 
 setMethod("initialize",
           "Rvle",
-          function(.Object, file = character(length = 0)) {
+          function(.Object, file = character(length = 0), pkg = character(length = 0)) {
             .Object@file <- file
-            .Object@sim  <- rvle.open(.Object@file)
+            if(nargs() == 2) {
+              .Object@sim <- rvle.open(.Object@file)
+            } else {
+              .Object@pkg <- pkg
+              .Object@sim <- rvle.open(.Object@file, .Object@pkg)
+            }
+
             .Object@run <- function() {}
             .Object@config <- list(plan = "single", proc = "mono", restype = "dataframe", thread = 1, replicas = 1)
 
