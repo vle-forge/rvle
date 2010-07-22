@@ -70,6 +70,18 @@ conditionMultiSetString<- function(object, conditioname, portname, value) {
          portname)
 }
 
+conditionMultiSetTuple<- function(object, conditioname, portname, value) {
+  rvle.clearConditionPort(object@sim, conditioname, portname)
+
+  lapply(value,
+         function(item, object, conditioname, portname) {
+           rvle.addTupleCondition(object@sim, conditioname, portname, item)
+         },
+         object,
+         conditioname,
+         portname)
+}
+
 switchPlan <- function(object, seed = 12345678) {
   stopifnot(is.rvle(object@sim))
 
@@ -137,7 +149,7 @@ setRun <- function(object) {
 
       ## ajout de la commande d'affectation
       if (length(thevalue) != 0) {
-        cscall <- switch(storage.mode(thevalue),
+        cscall <- switch(EXPR = typeof(thevalue),
                          logical = list(conditionMultiSetBoolean,
                            quote(object),
                            conditioname,
@@ -154,6 +166,11 @@ setRun <- function(object) {
                            portname,
                            as.symbol(sprintf("%s.%s",conditioname,portname))),
                          character = list(conditionMultiSetString,
+                           quote(object),
+                           conditioname,
+                           portname,
+                           as.symbol(sprintf("%s.%s",conditioname,portname))),
+                         list = list(conditionMultiSetTuple,
                            quote(object),
                            conditioname,
                            portname,
@@ -301,12 +318,13 @@ setMethod("show",
                 thevalue = rvle.getConditionPortValues(object@sim,
                                                        conditioname,
                                                        portname)
+
                 if (length(thevalue) == 0) {
                   thestoragemode = ""
                   thevalue = "Experimental Condition not managed"
                 }
                 else {
-                  thestoragemode = sprintf("<%s>", storage.mode(thevalue));
+                  thestoragemode = sprintf("<%s>",  typeof(thevalue));
                 }
                 cat(sprintf("* %s.%s = %s %s\n",
                             conditioname,
