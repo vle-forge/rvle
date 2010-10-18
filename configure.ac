@@ -11,8 +11,8 @@ CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
 AC_PROG_CXX
 AC_PROG_CC
 
-VLE_CFLAGS=`pkg-config --cflags vle-0.9`
-VLE_LIBS=`pkg-config --libs vle-0.9`
+VLE_CFLAGS=`pkg-config --cflags vle-1.0`
+VLE_LIBS=`pkg-config --libs vle-1.0`
 PKG_CPPFLAGS="${PKG_CPPFLAGS} ${VLE_CFLAGS}"
 PKG_LIBS="${PKG_LIBS} ${VLE_LIBS}"
 AC_SUBST(PKG_CPPFLAGS)
