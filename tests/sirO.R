@@ -6,7 +6,7 @@ sir <- new("Rvle", file = "sir.vpz")
 arglist <- as.pairlist(alist(object=,
                              cond_sir.a = 0.5, cond_sir.active = FALSE, cond_sir.dependance = FALSE,
                              cond_sir.r = 0.005, cond_sir.threshold = 1e-10, seed = 12379843L,
-                             duration = 20))
+                             begin = 0, duration = 20))
 
 checkEquals(arglist, formals(run))
 
@@ -55,6 +55,7 @@ arglist <- as.pairlist(alist(object=,
                              cond_sir.r = 0.005,
 			     cond_sir.threshold = 1e-10,
 			     seed = 12379843L,
+                             begin = 0,
                              duration = 20))
 
 checkEquals(arglist, formals(run))

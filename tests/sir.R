@@ -49,6 +49,12 @@ rvle.setSeed(f, 12345678)
 seed = rvle.getSeed(f)
 checkEquals(seed, 12345678)
 
+# check the beginning time
+rvle.setBegin(f, 123.321)
+begin = rvle.getBegin(f)
+checkEqualsNumeric(begin, 123.321, tolerance=1e-5)
+rvle.setBegin(f, 0.0)
+
 # check the duration
 duration = rvle.getDuration(f)
 checkEqualsNumeric(duration, 20, tolerance=1e-5)

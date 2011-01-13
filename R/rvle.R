@@ -311,6 +311,22 @@ rvle.getSeed <- function(self)
     .Call("experiment_get_seed", self, PACKAGE="rvle")
 }
 
+rvle.setBegin <- function(self, value)
+{
+    stopifnot(is.rvle(self))
+
+    .Call("experiment_set_begin", self, as.real(value), PACKAGE="rvle")
+
+    return (invisible(NULL))
+}
+
+rvle.getBegin <- function(self)
+{
+    stopifnot(is.rvle(self))
+
+    .Call("experiment_get_begin", self, PACKAGE="rvle")
+}
+
 rvle.setLinearCombination <- function(self, seed, repliquas)
 {
     stopifnot(is.rvle(self))

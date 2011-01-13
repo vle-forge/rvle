@@ -192,13 +192,18 @@ setRun <- function(object) {
 
   ## to add seed, duration and replicas to the argument list
   alis$seed <- rvle.getSeed(object@sim)
+  alis$begin <- rvle.getBegin(object@sim)
   alis$duration <- rvle.getDuration(object@sim)
 
   formals(object@run) <- alis
 
-  ## to add the set_seed, set_replicas, set_duration, and run
+  ## to add the set_seed, set_replicas, set_duration,
+  ## set_begin and run
   ## to close and to set the body of the simulator
   cscall = call("switchPlan", quote(object), quote(seed))
+  exprlist <- c(exprlist,cscall)
+
+  cscall = call("rvle.setBegin", quote(object@sim), quote(begin))
   exprlist <- c(exprlist,cscall)
 
   cscall = call("rvle.setDuration", quote(object@sim), quote(duration))
@@ -296,6 +301,8 @@ setMethod("show",
             cat("========================\n")
             cat("\n")
             cat("File name : ", object@file, "\n")
+            cat("\n")
+            cat("Begin : ", rvle.getBegin(object@sim), "\n")
             cat("\n")
             cat("Duration : ", rvle.getDuration(object@sim), "\n")
             cat("\n")

@@ -66,6 +66,8 @@ static void r_rvle_experiment_set_duration(SEXP rvle, SEXP val);
 static SEXP r_rvle_experiment_get_duration(SEXP rvle);
 static void r_rvle_experiment_set_seed(SEXP rvle, SEXP val);
 static SEXP r_rvle_experiment_get_seed(SEXP rvle);
+static void r_rvle_experiment_set_begin(SEXP rvle, SEXP val);
+static SEXP r_rvle_experiment_get_begin(SEXP rvle);
 static void r_rvle_experiment_linear_combination(SEXP rvle, SEXP seed, SEXP
                 replicas);
 static void r_rvle_experiment_total_combination(SEXP rvle, SEXP seed, SEXP
@@ -113,6 +115,8 @@ R_CallMethodDef callMethods[] = {
                 1},
         { "experiment_set_seed", (DL_FUNC) r_rvle_experiment_set_seed, 2},
         { "experiment_get_seed", (DL_FUNC) r_rvle_experiment_get_seed, 1},
+        { "experiment_set_begin", (DL_FUNC) r_rvle_experiment_set_begin, 2},
+        { "experiment_get_begin", (DL_FUNC) r_rvle_experiment_get_begin, 1},
         { "experiment_linear_combination", (DL_FUNC)
                 r_rvle_experiment_linear_combination, 3},
         { "experiment_total_combination", (DL_FUNC)
@@ -549,6 +553,24 @@ SEXP r_rvle_experiment_get_seed(SEXP rvle)
         PROTECT(r = allocVector(INTSXP, 1));
         result = rvle_experiment_get_seed(R_ExternalPtrAddr(rvle));
         INTEGER(r)[0] = result;
+        UNPROTECT(1);
+
+        return r;
+}
+
+void r_rvle_experiment_set_begin(SEXP rvle, SEXP val)
+{
+        rvle_experiment_set_begin(R_ExternalPtrAddr(rvle), REAL(val)[0]);
+}
+
+SEXP r_rvle_experiment_get_begin(SEXP rvle)
+{
+        SEXP r;
+        double result;
+
+        PROTECT(r = allocVector(REALSXP, 1));
+        result = rvle_experiment_get_begin(R_ExternalPtrAddr(rvle));
+        REAL(r)[0] = result;
         UNPROTECT(1);
 
         return r;
