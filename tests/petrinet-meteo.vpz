@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE vle_project PUBLIC "-//VLE TEAM//DTD Strict//EN" "http://www.vle-project.org/vle-0.8.0.dtd">
+<!DOCTYPE vle_project PUBLIC "-//VLE TEAM//DTD Strict//EN" "http://www.vle-project.org/vle-1.0.0.dtd">
 <vle_project version="0.5" date="lun, 30 jun 2008 15:36:03 +0200" author="Eric Ramat">
 <structures>
-<model name="top" type="coupled" width="1486" height="639"  >
+<model name="top" type="coupled" width="462" height="341"  >
 <submodels>
-<model name="Meteo" type="atomic" conditions="meteo" dynamics="meteo" observables="meteo" x="108" y="116" width="100" height="45" >
+<model name="Meteo" type="atomic" conditions="meteo" dynamics="meteo" observables="meteo" x="33" y="43" width="100" height="45" >
 <out>
  <port name="no" />
  <port name="yes" />
 </out>
 </model>
-<model name="PetriNet" type="atomic" conditions="petri" dynamics="petri" observables="petri" x="272" y="149" width="100" height="60" >
+<model name="PetriNet" type="atomic" conditions="petri" dynamics="petri" observables="petri" x="93" y="144" width="100" height="60" >
 <in>
  <port name="no" />
  <port name="yes" />
@@ -19,7 +19,7 @@
  <port name="out" />
 </out>
 </model>
-<model name="counter" type="atomic" dynamics="counter" observables="cnt" >
+<model name="counter" type="atomic" dynamics="counter" observables="cnt" x="190" y="237" width="100" height="45" >
 <in>
  <port name="in" />
 </in>
