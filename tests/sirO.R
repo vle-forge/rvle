@@ -29,9 +29,9 @@ checkEqualsNumeric(dim(result)[2], 4)
 # get the first view
 view1 <- result
 checkEqualsNumeric(view1$time[[2000]], 19.99, tolerance=1e-5)
-checkEqualsNumeric(view1$":sir.I"[[2000]], 0.1542165, tolerance=1e-5)
-checkEqualsNumeric(view1$":sir.R"[[2000]], 4.973883e+02, tolerance=1e-5)
-checkEqualsNumeric(view1$":sir.S"[[2000]], 3.457524, tolerance=1e-5)
+checkEqualsNumeric(view1$"Top model:sir.I"[[2000]], 0.1542165, tolerance=1e-5)
+checkEqualsNumeric(view1$"Top model:sir.R"[[2000]], 4.973883e+02, tolerance=1e-5)
+checkEqualsNumeric(view1$"Top model:sir.S"[[2000]], 3.457524, tolerance=1e-5)
 
 # change condition
 result <- run(sir, cond_sir.a = 0.6)@outlist[[1]]
@@ -41,9 +41,9 @@ checkEqualsNumeric(dim(result)[2], 4)
 
 view1 <- result
 checkEqualsNumeric(view1$time[[2000]], 19.99, tolerance=1e-5)
-checkEqualsNumeric(view1$":sir.I"[[2000]], 0.04369215, tolerance=1e-5)
-checkEqualsNumeric(view1$":sir.R"[[2000]], 4.927206e+02, tolerance=1e-5)
-checkEqualsNumeric(view1$":sir.S"[[2000]], 8.235717, tolerance=1e-5)
+checkEqualsNumeric(view1$"Top model:sir.I"[[2000]], 0.04369215, tolerance=1e-5)
+checkEqualsNumeric(view1$"Top model:sir.R"[[2000]], 4.927206e+02, tolerance=1e-5)
+checkEqualsNumeric(view1$"Top model:sir.S"[[2000]], 8.235717, tolerance=1e-5)
 
 # the new list of args
 sir <- run(sir, cond_sir.a = 0.6)

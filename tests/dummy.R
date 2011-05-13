@@ -41,5 +41,14 @@ checkEquals(tuple[[1]][2], 7.0)
 checkEquals(tuple[[1]][3], 8.0)
 checkEquals(tuple[[1]][4], 9.0)
 
+tuple <- rvle.getConditionPortValues(f, "test", "multi_tuple")
+checkEquals(storage.mode(tuple), "list")
+checkEquals(tuple[[1]][1], 0.0)
+checkEquals(tuple[[1]][2], 1.0)
+checkEquals(tuple[[1]][3], 2.0)
+checkEquals(tuple[[2]][1], 3.0)
+checkEquals(tuple[[2]][2], 4.0)
+checkEquals(tuple[[2]][3], 5.0)
+
 # check the case of unmanaged type
 checkException(rvle.getConditionPortValues(f,"test", ",notmanaged"))

@@ -73,13 +73,17 @@ conditionMultiSetString<- function(object, conditioname, portname, value) {
 conditionMultiSetTuple<- function(object, conditioname, portname, value) {
   rvle.clearConditionPort(object@sim, conditioname, portname)
 
-  lapply(value,
-         function(item, object, conditioname, portname) {
-           rvle.addTupleCondition(object@sim, conditioname, portname, item)
-         },
-         object,
-         conditioname,
-         portname)
+  if (typeof(value[1]) == "list") {
+    lapply(value,
+           function(item, object, conditioname, portname) {
+             rvle.addTupleCondition(object@sim, conditioname, portname, item)
+           },
+           object,
+           conditioname,
+           portname)
+  } else {
+    rvle.addTupleCondition(object@sim, conditioname, portname, value)
+  }
 }
 
 switchPlan <- function(object, seed = 12345678) {

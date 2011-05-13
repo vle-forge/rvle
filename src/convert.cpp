@@ -268,7 +268,6 @@ SEXP rvle_convert_vectorvalue(rvle_output_t out)
             break;
         case value::Value::TUPLE:
             PROTECT(sexplst = allocVector(VECSXP, lst->size()));
-            allocated = lst->size();
             break;
         default:
             break;

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE vle_project PUBLIC "-//VLE TEAM//DTD Strict//EN" "http://vle.univ-littoral.fr/vle-0.7.0.dtd">
+<!DOCTYPE vle_project PUBLIC "-//VLE TEAM//DTD Strict//EN" "http://www.vle-project.org/vle-1.0.0.dtd">
 <vle_project version="0.6.0" date="ven, 16 jan 2009" author="Patrick Chabrier">
 <structures>
-<model name="Top model" type="coupled" x="0" y="0" height="305"  >
+<model name="Top model" type="coupled" x="0" y="0" width="462"  >
 <submodels>
 </submodels>
 <connections>
 </connections>
 </model>
 </structures>
-<experiment name="dummy" duration="2.22045e-16" combination="linear" seed="2147483648" >
+<experiment name="dummy" duration="1.000000000000000" begin="0.000000000000000" combination="linear" seed="2147483648" >
 <replicas seed="2147483648" number="1" />
 <conditions>
 <condition name="test" >
@@ -17,7 +17,7 @@
 <boolean>false</boolean>
 </port>
  <port name="double" >
-<double>0.1</double>
+<double>0.100000000000000</double>
 </port>
  <port name="int" >
 <integer>2</integer>
@@ -27,8 +27,8 @@
 <boolean>false</boolean>
 </port>
  <port name="multi_double" >
-<double>0.1</double>
-<double>0.2</double>
+<double>0.100000000000000</double>
+<double>0.200000000000000</double>
 </port>
  <port name="multi_int" >
 <integer>1</integer>
@@ -38,14 +38,18 @@
 <string>aaa</string>
 <string>bbb</string>
 </port>
+ <port name="multi_tuple" >
+<tuple>0.000000000000000 1.000000000000000 2.000000000000000</tuple>
+<tuple>3.000000000000000 4.000000000000000 5.000000000000000</tuple>
+</port>
  <port name="notmanaged" >
-<map><key name="a"><double>0.1</double></key><key name="b"><double>0.2</double></key></map>
+<map><key name="a"><double>0.100000000000000</double></key><key name="b"><double>0.200000000000000</double></key></map>
 </port>
  <port name="string" >
 <string>dummy</string>
 </port>
-<port name="tuple" >
- <tuple>1.0 2.0 3.0 4.0 5.0</tuple>
+ <port name="tuple" >
+<tuple>1.000000000000000 2.000000000000000 3.000000000000000 4.000000000000000 5.000000000000000</tuple>
 </port>
 </condition>
 </conditions>
