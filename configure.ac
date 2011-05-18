@@ -1,4 +1,4 @@
-AC_INIT([rvle],[1.0.0-905],[quesnel@users.sourceforge.net])
+AC_INIT([rvle],[1.0.0-906],[quesnel@users.sourceforge.net])
 
 : ${R_HOME=`R RHOME`}
 if test -z "${R_HOME}"; then
