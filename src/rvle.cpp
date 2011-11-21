@@ -30,8 +30,9 @@
 #include <vle/value.hpp>
 #include <vle/oov.hpp>
 #include <vle/utils.hpp>
-#include <vle/utils/Module.hpp>
+#include <vle/utils/ModuleManager.hpp>
 #include <cassert>
+#include <fstream>
 
 using namespace vle;
 using namespace utils;
@@ -94,9 +95,9 @@ rvle_output_t rvle_run(rvle_t handle)
 
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
-        manager::RunQuiet jrm;
+        utils::ModuleManager man;
+        manager::RunQuiet jrm(man);
         jrm.start(*file);
-        utils::ModuleCache::instance().clear();
         const oov::OutputMatrixViewList& result(jrm.outputs());
         return new oov::OutputMatrixViewList(result);
     } catch(const std::exception& e) {
@@ -121,7 +122,6 @@ rvle_output_t rvle_manager(rvle_t handle, int commonSeed)
         manager::ManagerRunMono jrm(*logfile, false /*writefile*/,
             false /*storeComb*/, commonSeed);
         jrm.start(*file);
-        utils::ModuleCache::instance().clear();
 
         logfile->close();
 
@@ -149,7 +149,6 @@ rvle_output_t rvle_manager_thread(rvle_t handle, int th, int commonSeed)
         manager::ManagerRunThread jrm(*logfile, false /*writeFile*/,
             th /*process*/, false /*storeComb*/, commonSeed);
         jrm.start(*file);
-        utils::ModuleCache::instance().clear();
 
         logfile->close();
 
@@ -177,7 +176,6 @@ rvle_output_t rvle_manager_cluster(rvle_t handle, int commonSeed)
         manager::ManagerRunDistant jrm(*logfile, false /*writeFile*/,
             false /*storeComb*/, commonSeed);
         jrm.start(*file);
-        utils::ModuleCache::instance().clear();
 
         logfile->close();
 
