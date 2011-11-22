@@ -22,9 +22,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <vle/manager.hpp>
-#include <vle/oov.hpp>
-#include <vle/value.hpp>
+#include <vle/manager/VLE.hpp>
+#include <vle/oov/OutputMatrix.hpp>
 #include <vle/value/Boolean.hpp>
 #include <cassert>
 

@@ -25,11 +25,14 @@
 
 
 #include "rvle.h"
-#include <vle/vpz.hpp>
-#include <vle/manager.hpp>
-#include <vle/value.hpp>
-#include <vle/oov.hpp>
-#include <vle/utils.hpp>
+#include <vle/vpz/Vpz.hpp>
+#include <vle/manager/VLE.hpp>
+#include <vle/manager/Run.hpp>
+#include <vle/manager/Manager.hpp>
+#include <vle/oov/OutputMatrix.hpp>
+#include <vle/utils/DateTime.hpp>
+#include <vle/utils/Package.hpp>
+#include <vle/utils/Path.hpp>
 #include <vle/utils/ModuleManager.hpp>
 #include <vle/utils/SharedLibraryManager.hpp>
 #include <cassert>
