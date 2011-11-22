@@ -31,6 +31,7 @@
 #include <vle/oov.hpp>
 #include <vle/utils.hpp>
 #include <vle/utils/ModuleManager.hpp>
+#include <vle/utils/SharedLibraryManager.hpp>
 #include <cassert>
 #include <fstream>
 
@@ -95,6 +96,7 @@ rvle_output_t rvle_run(rvle_t handle)
 
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
+        utils::SharedLibraryManager slm;
         utils::ModuleManager man;
         manager::RunQuiet jrm(man);
         jrm.start(*file);
@@ -117,7 +119,6 @@ rvle_output_t rvle_manager(rvle_t handle, int commonSeed)
 
         (*logfile) << _("Start log at ") << DateTime::currentDate()
             << "\n\n" << std::flush;
-
 
         manager::ManagerRunMono jrm(*logfile, false /*writefile*/,
             false /*storeComb*/, commonSeed);
