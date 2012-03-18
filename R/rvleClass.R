@@ -22,69 +22,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-conditionMultiSetBoolean<- function(object, conditioname, portname, value) {
-  rvle.clearConditionPort(object@sim, conditioname, portname)
-
-  lapply(value,
-         function(item, object, conditioname, portname) {
-           rvle.addBooleanCondition(object@sim, conditioname, portname, item)
-         },
-         object,
-         conditioname,
-         portname)
-}
-
-conditionMultiSetReal<- function(object, conditioname, portname, value) {
-  rvle.clearConditionPort(object@sim, conditioname, portname)
-
-  lapply(value,
-         function(item, object, conditioname, portname) {
-           rvle.addRealCondition(object@sim, conditioname, portname, item)
-         },
-         object,
-         conditioname,
-         portname)
-}
-
-conditionMultiSetInteger<- function(object, conditioname, portname, value) {
-  rvle.clearConditionPort(object@sim, conditioname, portname)
-
-  lapply(value,
-         function(item, object, conditioname, portname) {
-           rvle.addIntegerCondition(object@sim, conditioname, portname, item)
-         },
-         object,
-         conditioname,
-         portname)
-}
-
-conditionMultiSetString<- function(object, conditioname, portname, value) {
-  rvle.clearConditionPort(object@sim, conditioname, portname)
-
-  lapply(value,
-         function(item, object, conditioname, portname) {
-           rvle.addStringCondition(object@sim, conditioname, portname, item)
-         },
-         object,
-         conditioname,
-         portname)
-}
-
-conditionMultiSetTuple<- function(object, conditioname, portname, value) {
-  rvle.clearConditionPort(object@sim, conditioname, portname)
-
-  if (typeof(value[1]) == "list") {
-    lapply(value,
-           function(item, object, conditioname, portname) {
-             rvle.addTupleCondition(object@sim, conditioname, portname, item)
-           },
-           object,
-           conditioname,
-           portname)
-  } else {
-    rvle.addTupleCondition(object@sim, conditioname, portname, value)
-  }
-}
 
 setClass("rvle")
 setClass("Rvle", representation(sim = "rvle",
@@ -196,6 +133,91 @@ setMethod("show", "Rvle", function(object) {
     return(invisible())
 })
 
+setGeneric(".conditionMultiSetBoolean", 
+        function(object, conditioname, portname, value) 
+            standardGeneric(".conditionMultiSetBoolean"))
+setMethod(".conditionMultiSetBoolean", "Rvle", 
+        function(object, conditioname, portname, value) {
+    rvle.clearConditionPort(object@sim, conditioname, portname)
+    
+    lapply(value,
+            function(item, object, conditioname, portname) {
+                rvle.addBooleanCondition(object@sim, conditioname, portname, item)
+            },
+            object,
+            conditioname,
+            portname)
+})
+
+
+setGeneric(".conditionMultiSetReal", 
+        function(object, conditioname, portname, value) 
+            standardGeneric(".conditionMultiSetReal"))
+setMethod(".conditionMultiSetReal", "Rvle", 
+        function(object, conditioname, portname, value) {            
+    rvle.clearConditionPort(object@sim, conditioname, portname)
+    lapply(value,
+            function(item, object, conditioname, portname) {
+                rvle.addRealCondition(object@sim, conditioname, portname, item)
+            },
+            object,
+            conditioname,
+            portname)
+})
+
+setGeneric(".conditionMultiSetInteger", 
+        function(object, conditioname, portname, value) 
+            standardGeneric(".conditionMultiSetInteger"))
+setMethod(".conditionMultiSetInteger", "Rvle", 
+        function(object, conditioname, portname, value) {
+    rvle.clearConditionPort(object@sim, conditioname, portname)
+    
+    lapply(value,
+            function(item, object, conditioname, portname) {
+                rvle.addIntegerCondition(object@sim, conditioname, portname, item)
+            },
+            object,
+            conditioname,
+            portname)
+})
+
+setGeneric(".conditionMultiSetString", 
+        function(object, conditioname, portname, value) 
+            standardGeneric(".conditionMultiSetString"))
+setMethod(".conditionMultiSetString", "Rvle", 
+        function(object, conditioname, portname, value) {
+    rvle.clearConditionPort(object@sim, conditioname, portname)
+    
+    lapply(value,
+            function(item, object, conditioname, portname) {
+                rvle.addStringCondition(object@sim, conditioname, portname, item)
+            },
+            object,
+            conditioname,
+            portname)
+})
+
+setGeneric(".conditionMultiSetTuple", 
+        function(object, conditioname, portname, value) 
+            standardGeneric(".conditionMultiSetTuple"))
+setMethod(".conditionMultiSetTuple", "Rvle", 
+        function(object, conditioname, portname, value) {
+    rvle.clearConditionPort(object@sim, conditioname, portname)
+    
+    if (typeof(value[1]) == "list") {
+        lapply(value,
+                function(item, object, conditioname, portname) {
+                    rvle.addTupleCondition(object@sim, conditioname, portname, item)
+                },
+                object,
+                conditioname,
+                portname)
+    } else {
+        rvle.addTupleCondition(object@sim, conditioname, portname, value)
+    }
+})
+
+
 ###############
 # function run
 ###############
@@ -219,15 +241,15 @@ setMethod("run", "Rvle", function(object, ...) {
                                     val = rvle.getConditionPortValues(
                                             object@sim, condName, condPort))))
                 if(typeof(valArg) == "double"){
-                    conditionMultiSetReal(object, condName, condPort, valArg)
+                    .conditionMultiSetReal(object, condName, condPort, valArg)
                 } else if(typeof(valArg) == "character"){
-                    conditionMultiSetString(object, condName, condPort, valArg)
+                    .conditionMultiSetString(object, condName, condPort, valArg)
                 } else if(typeof(valArg) == "logical"){
-                    conditionMultiSetBoolean(object, condName, condPort, valArg)
+                    .conditionMultiSetBoolean(object, condName, condPort, valArg)
                 } else if(typeof(valArg) == "integer"){
-                    conditionMultiSetInteger(object, condName, condPort, valArg)
+                    .conditionMultiSetInteger(object, condName, condPort, valArg)
                 } else if(typeof(valArg) == "list"){
-                    conditionMultiSetTuple(object, condName, condPort, valArg)
+                    .conditionMultiSetTuple(object, condName, condPort, valArg)
                 } else {
                     cat(sprintf("Error unrecognised type '%s' of object '%s'\n",
                                     typeof(valArg),nameArg))
@@ -274,15 +296,15 @@ setMethod("run", "Rvle", function(object, ...) {
     #restore backup
     lapply(backupConds, function(bu){
         if(typeof(bu$val) == "double"){
-            conditionMultiSetReal(object, bu$cond,bu$port, bu$val)
+            .conditionMultiSetReal(object, bu$cond,bu$port, bu$val)
         } else if(typeof(bu$val) == "character"){
-            conditionMultiSetString(object, bu$cond,bu$port, bu$val)
+            .conditionMultiSetString(object, bu$cond,bu$port, bu$val)
         } else if(typeof(bu$val) == "logical"){
-            conditionMultiSetBoolean(object, bu$cond,bu$port, bu$val)
+            .conditionMultiSetBoolean(object, bu$cond,bu$port, bu$val)
         } else if(typeof(bu$val) == "integer"){
-            conditionMultiSetInteger(object, bu$cond,bu$port, bu$val)
+            .conditionMultiSetInteger(object, bu$cond,bu$port, bu$val)
         } else if(typeof(bu$val) == "list"){
-            conditionMultiSetTuple(object, bu$cond,bu$port, bu$val)
+            .conditionMultiSetTuple(object, bu$cond,bu$port, bu$val)
         }else {
             cat(sprintf("Internal Error unrecognised type '%s'\n",typeof(bu$val)))
             return(invisible(object))
@@ -310,15 +332,15 @@ setMethod("default", "Rvle", function(object, ...) {
             condName = splitNameArg[1]
             condPort = splitNameArg[2]
             if(typeof(valArg) == "double"){
-                conditionMultiSetReal(object, condName, condPort, valArg)
+                .conditionMultiSetReal(object, condName, condPort, valArg)
             } else if(typeof(valArg) == "character"){
-                conditionMultiSetString(object, condName, condPort, valArg)
+                .conditionMultiSetString(object, condName, condPort, valArg)
             } else if(typeof(valArg) == "logical"){
-                conditionMultiSetBoolean(object, condName, condPort, valArg)
+                .conditionMultiSetBoolean(object, condName, condPort, valArg)
             } else if(typeof(valArg) == "integer"){
-                conditionMultiSetInteger(object, condName, condPort, valArg)
+                .conditionMultiSetInteger(object, condName, condPort, valArg)
             } else if(typeof(valArg) == "list"){
-                conditionMultiSetTuple(object, condName, condPort, valArg)
+                .conditionMultiSetTuple(object, condName, condPort, valArg)
             } else {
                 cat(sprintf("Error unrecognised type '%s' of object '%s'\n",typeof(valArg),nameArg))
                 return(invisible(object))
