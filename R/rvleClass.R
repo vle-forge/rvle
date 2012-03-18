@@ -28,14 +28,17 @@ setClass("Rvle", representation(sim = "rvle",
                                 file = "character",
                                 pkg = "character",
                                 config = "list",
-                                config_lastrun = "list",
+                                lastrun = "character",
                                 outlist = "list",
-                                outmatrix = "matrix"))
+                                outmatrix = "matrix",
+                                backup = "list"))
 ##########
 ## Rvle constructor
 ##########
 setMethod("initialize", "Rvle", function(.Object,
-  file = character(length = 0), pkg = character(length = 0)) {
+  file = character(length = 0), pkg = character(length = 0),
+  config = list(NULL), lastrun ="null", outlist = list(),
+  outmatrix = matrix(c(0)), backup = pailist(NULL)){
     .Object@file <- file
     if(nargs() == 2) {
         .Object@sim <- rvle.open(.Object@file)
@@ -43,15 +46,192 @@ setMethod("initialize", "Rvle", function(.Object,
         .Object@pkg <- pkg
         .Object@sim <- rvle.open(.Object@file, .Object@pkg)
     }
-    .Object@config <- list(plan = "single", proc = "mono",
-        restype = "dataframe", thread = 1, replicas = 1,
-        seed = rvle.getSeed(.Object@sim),
-        begin = rvle.getBegin(.Object@sim),
-        duration = rvle.getDuration(.Object@sim),
-        .Object@config_lastrun <- list())
+    .Object@config <- list(
+        plan = "single", 
+        proc = "mono",
+        restype = "dataframe", 
+        thread = 1, 
+        replicas = 1,
+        seed = rvle.getSeed(.Object@sim))
+    .Object@lastrun <- "null"
+    .Object@backup <- list(NULL)
     return(.Object)
 })
 
+
+#######
+# Private functions
+#######
+setGeneric(".conditionMultiSetBoolean",
+        function(object, conditioname, portname, value)
+            standardGeneric(".conditionMultiSetBoolean"))
+setMethod(".conditionMultiSetBoolean", "Rvle",
+        function(object, conditioname, portname, value) {
+  rvle.clearConditionPort(object@sim, conditioname, portname)
+  lapply(value, function(item, object, conditioname, portname) {
+    rvle.addBooleanCondition(object@sim, conditioname, portname, item)
+  },
+  object,
+  conditioname,
+  portname)
+})
+
+setGeneric(".conditionMultiSetReal",
+        function(object, conditioname, portname, value)
+            standardGeneric(".conditionMultiSetReal"))
+setMethod(".conditionMultiSetReal", "Rvle",
+        function(object, conditioname, portname, value) {
+  rvle.clearConditionPort(object@sim, conditioname, portname)
+  lapply(value, function(item, object, conditioname, portname) {
+    rvle.addRealCondition(object@sim, conditioname, portname, item)
+  },
+  object,
+  conditioname,
+  portname)
+})
+
+setGeneric(".conditionMultiSetInteger",
+        function(object, conditioname, portname, value)
+            standardGeneric(".conditionMultiSetInteger"))
+setMethod(".conditionMultiSetInteger", "Rvle",
+        function(object, conditioname, portname, value) {
+  rvle.clearConditionPort(object@sim, conditioname, portname)
+  lapply(value, function(item, object, conditioname, portname) {
+    rvle.addIntegerCondition(object@sim, conditioname, portname, item)
+  },
+  object,
+  conditioname,
+  portname)
+})
+
+setGeneric(".conditionMultiSetString",
+        function(object, conditioname, portname, value)
+            standardGeneric(".conditionMultiSetString"))
+setMethod(".conditionMultiSetString", "Rvle",
+        function(object, conditioname, portname, value) {
+  rvle.clearConditionPort(object@sim, conditioname, portname)
+  lapply(value, function(item, object, conditioname, portname) {
+    rvle.addStringCondition(object@sim, conditioname, portname, item)
+  },
+  object,
+  conditioname,
+  portname)
+})
+
+setGeneric(".conditionMultiSetTuple",
+        function(object, conditioname, portname, value)
+            standardGeneric(".conditionMultiSetTuple"))
+setMethod(".conditionMultiSetTuple", "Rvle",
+        function(object, conditioname, portname, value) {
+  rvle.clearConditionPort(object@sim, conditioname, portname)
+  if (typeof(value[1]) == "list") {
+    lapply(value,function(item, object, conditioname, portname) {
+      rvle.addTupleCondition(object@sim, conditioname, portname, item)
+    },
+    object,
+    conditioname,
+    portname)
+  } else {
+    rvle.addTupleCondition(object@sim, conditioname, portname, value)
+  }
+})
+
+setGeneric(".handleConfig",
+        function(object, name, val)
+            standardGeneric(".handleConfig"))
+setMethod(".handleConfig", "Rvle", function(object, name, val) {
+    backupVal = NULL
+    splitNameArg = strsplit(name,"\\.")[[1]];
+
+    if(length(splitNameArg) == 2){
+        #expect that nameArg = condName.condPort
+        condName = splitNameArg[1]
+        condPort = splitNameArg[2]
+
+        backupVal = rvle.getConditionPortValues(
+                object@sim, condName, condPort)
+
+        if(typeof(val) == "double"){
+            .conditionMultiSetReal(object, condName, condPort, val)
+        } else if(typeof(val) == "character"){
+            .conditionMultiSetString(object, condName, condPort, val)
+        } else if(typeof(val) == "logical"){
+            .conditionMultiSetBoolean(object, condName, condPort, val)
+        } else if(typeof(val) == "integer"){
+            .conditionMultiSetInteger(object, condName, condPort, val)
+        } else if(typeof(val) == "list"){
+            .conditionMultiSetTuple(object, condName, condPort, val)
+        } else {
+            cat(sprintf("Error unrecognised type '%s' of object '%s'\n",
+                            typeof(val),nameArg))
+            return(invisible(object))
+        }
+    } else if(name == "duration"){
+        backupVal = rvle.getDuration(object@sim)
+        rvle.setDuration(object@sim, val)
+    } else if(name == "begin"){
+        backupVal = rvle.setBegin(object@sim)
+        rvle.setBegin(object@sim, val)
+    } else if(name == "plan"){
+        backupVal = object@config["plan"]
+        object@config["plan"] = val
+    } else if(name == "restype"){
+        backupVal = object@config["restype"]
+        object@config["restype"] = val
+    } else if(name == "proc"){
+        backupVal = object@config["proc"]
+        object@config["proc"] = val
+    } else if(name == "thread"){
+        backupVal = object@config["thread"]
+        object@config["thread"] = val
+    } else if(name == "replicas"){
+        backupVal = object@config["replicas"]
+        object@config["replicas"] = val
+    } else if(name == "seed"){
+        backupVal = object@config["seed"]
+        object@config["seed"] = val
+    } else if(name == "outputplugin"){
+        if(is.list(val)){
+            backupVal = list();
+            ovals = names(val)
+            for(i in 1:length(ovals)){
+                oval = names[[i]]
+                pval = val[[i]]
+                backupVal = as.list(append(backupVal,
+                                rvle.getOutputPlugin(object@sim, oval)))
+                rvle.setOutputPlugin(object@sim, oval, pval)
+            }
+        } else {
+            cat(sprintf("Error passing value argument for
+                outputplugin: '%s'",val))
+            .restorebackup(object)
+            return(NULL);
+        }
+    } else {
+        cat(sprintf("Error passing argument: '%s'",name))
+        .restorebackup(object)
+        return(NULL);
+    }
+    #update backup
+    object@backup = as.list(append(object@backup,
+            list(name=name, val=backupVal)))
+})
+
+
+
+setGeneric(".restorebackup", function(object) standardGeneric(".restorebackup"))
+setMethod(".restorebackup", "Rvle", function(object) {
+  namesList = names(object@config)
+  for(i in 1:length(namesList)){
+    nameArg = namesList[[i]]
+    valArg = object@config[[i]]
+    .handleConfig(object,nameArg,valArg)
+  }
+})
+
+#########
+# config methods (deprecated)
+#########
 setGeneric("config", function(object) standardGeneric("config"))
 setMethod("config", "Rvle", function(object) {
     return(object@config)
@@ -63,20 +243,26 @@ setMethod("config<-", "Rvle", function(object, value) {
     return(invisible(object))
 })
 
+#########
+# result method
+#########
 setGeneric("results", function(object) standardGeneric("results"))
 setMethod("results", "Rvle", function(object) {
-   if(length(object@config_lastrun) == 0){
+    if(length(object@lastrun) == "null"){
         cat("Error no registered results: maybe you
             forgot to update Rvle object on simulation ")
         return(NULL)
     }
-    if (object@config_lastrun$plan == "single") {
+    if (object@lastrun == "single") {
         return(object@outlist)
     } else {
         return(object@outmatrix)
     }
 })
 
+#########
+# result method
+#########
 setGeneric("saveVpz", function(object, file) standardGeneric("saveVpz"))
 setMethod("saveVpz", "Rvle", function(object, file) {
     rvle.save(object@sim, file)
@@ -99,13 +285,13 @@ setMethod("show", "Rvle", function(object) {
     cat("VLE Model informations :\n")
     cat("========================\n")
     cat("\n")
-    cat("File name : ", object@file, "\n")
+    cat("Vpz location : file =", object@file, ", pkg =", object@pkg,"\n")
     cat("\n")
     cat("Begin : ", rvle.getBegin(object@sim), "\n")
     cat("\n")
     cat("Duration : ", rvle.getDuration(object@sim), "\n")
     cat("\n")
-    cat("Seed : ", rvle.getSeed(object@sim), "\n")
+    cat("Seed : ", object@config$seed, "\n")
     cat("\n")
     cat("Experimental Condition list and default value :\n")
     conditionlist <- rvle.listConditions(object@sim)
@@ -130,92 +316,28 @@ setMethod("show", "Rvle", function(object) {
         })
     })
     cat("\n")
+    cat("Output plugins :\n")
+    lapply(rvle.listViews(object@sim),function(v){
+        cat(sprintf("   %s = %s\n", v, rvle.getOutputPlugin(object@sim,v)))
+    })
+    cat("\n")
+    cat("Expe : plan =",object@config$plan,
+            ", proc =",object@config$proc ,
+            ", restype =",object@config$restype ,
+            ", thread =",object@config$thread ,
+            ", replicas =",object@config$replicas ,
+            ", seed =",object@config$seed ,"\n")
+    cat("\n")
     return(invisible())
 })
 
-setGeneric(".conditionMultiSetBoolean", 
-        function(object, conditioname, portname, value) 
-            standardGeneric(".conditionMultiSetBoolean"))
-setMethod(".conditionMultiSetBoolean", "Rvle", 
-        function(object, conditioname, portname, value) {
-    rvle.clearConditionPort(object@sim, conditioname, portname)
-    
-    lapply(value,
-            function(item, object, conditioname, portname) {
-                rvle.addBooleanCondition(object@sim, conditioname, portname, item)
-            },
-            object,
-            conditioname,
-            portname)
-})
 
-
-setGeneric(".conditionMultiSetReal", 
-        function(object, conditioname, portname, value) 
-            standardGeneric(".conditionMultiSetReal"))
-setMethod(".conditionMultiSetReal", "Rvle", 
-        function(object, conditioname, portname, value) {            
-    rvle.clearConditionPort(object@sim, conditioname, portname)
-    lapply(value,
-            function(item, object, conditioname, portname) {
-                rvle.addRealCondition(object@sim, conditioname, portname, item)
-            },
-            object,
-            conditioname,
-            portname)
-})
-
-setGeneric(".conditionMultiSetInteger", 
-        function(object, conditioname, portname, value) 
-            standardGeneric(".conditionMultiSetInteger"))
-setMethod(".conditionMultiSetInteger", "Rvle", 
-        function(object, conditioname, portname, value) {
-    rvle.clearConditionPort(object@sim, conditioname, portname)
-    
-    lapply(value,
-            function(item, object, conditioname, portname) {
-                rvle.addIntegerCondition(object@sim, conditioname, portname, item)
-            },
-            object,
-            conditioname,
-            portname)
-})
-
-setGeneric(".conditionMultiSetString", 
-        function(object, conditioname, portname, value) 
-            standardGeneric(".conditionMultiSetString"))
-setMethod(".conditionMultiSetString", "Rvle", 
-        function(object, conditioname, portname, value) {
-    rvle.clearConditionPort(object@sim, conditioname, portname)
-    
-    lapply(value,
-            function(item, object, conditioname, portname) {
-                rvle.addStringCondition(object@sim, conditioname, portname, item)
-            },
-            object,
-            conditioname,
-            portname)
-})
-
-setGeneric(".conditionMultiSetTuple", 
-        function(object, conditioname, portname, value) 
-            standardGeneric(".conditionMultiSetTuple"))
-setMethod(".conditionMultiSetTuple", "Rvle", 
-        function(object, conditioname, portname, value) {
-    rvle.clearConditionPort(object@sim, conditioname, portname)
-    
-    if (typeof(value[1]) == "list") {
-        lapply(value,
-                function(item, object, conditioname, portname) {
-                    rvle.addTupleCondition(object@sim, conditioname, portname, item)
-                },
-                object,
-                conditioname,
-                portname)
-    } else {
-        rvle.addTupleCondition(object@sim, conditioname, portname, value)
-    }
-})
+#$ plan    : chr "single"
+#$ proc    : chr "mono"
+#$ restype : chr "dataframe"
+#$ thread  : num 1
+#$ replicas: num 1
+#$ seed    : int NA
 
 
 ###############
@@ -225,39 +347,11 @@ setGeneric("run", function(object, ...) standardGeneric("run"))
 setMethod("run", "Rvle", function(object, ...) {
     arglist = list(...)
     namesArglist = names(arglist)
-    backupConds = list();
     if(length(arglist)){
         for(i in 1:length(arglist)){
             nameArg = namesArglist[[i]]
             valArg = arglist[[i]]
-            splitNameArg = strsplit(nameArg,"\\.")[[1]];
-            if(length(splitNameArg) == 2){
-                #expect that nameArg = condName.condPort
-                condName = splitNameArg[1]
-                condPort = splitNameArg[2]
-                #update backup
-                backupConds = append(backupConds,
-                    list(list(cond = condName, port = condPort,
-                                    val = rvle.getConditionPortValues(
-                                            object@sim, condName, condPort))))
-                if(typeof(valArg) == "double"){
-                    .conditionMultiSetReal(object, condName, condPort, valArg)
-                } else if(typeof(valArg) == "character"){
-                    .conditionMultiSetString(object, condName, condPort, valArg)
-                } else if(typeof(valArg) == "logical"){
-                    .conditionMultiSetBoolean(object, condName, condPort, valArg)
-                } else if(typeof(valArg) == "integer"){
-                    .conditionMultiSetInteger(object, condName, condPort, valArg)
-                } else if(typeof(valArg) == "list"){
-                    .conditionMultiSetTuple(object, condName, condPort, valArg)
-                } else {
-                    cat(sprintf("Error unrecognised type '%s' of object '%s'\n",
-                                    typeof(valArg),nameArg))
-                    return(invisible(object))
-                }
-            } else {
-                cat(sprintf("Error passing argument: '%s'",nameArg))
-            }
+            .handleConfig(object,nameArg,valArg)
         }
     }
     #prepare simulation plan
@@ -294,61 +388,28 @@ setMethod("run", "Rvle", function(object, ...) {
             matrix = rvle.runManagerClusterMatrix(object@sim)))
     }
     #restore backup
-    lapply(backupConds, function(bu){
-        if(typeof(bu$val) == "double"){
-            .conditionMultiSetReal(object, bu$cond,bu$port, bu$val)
-        } else if(typeof(bu$val) == "character"){
-            .conditionMultiSetString(object, bu$cond,bu$port, bu$val)
-        } else if(typeof(bu$val) == "logical"){
-            .conditionMultiSetBoolean(object, bu$cond,bu$port, bu$val)
-        } else if(typeof(bu$val) == "integer"){
-            .conditionMultiSetInteger(object, bu$cond,bu$port, bu$val)
-        } else if(typeof(bu$val) == "list"){
-            .conditionMultiSetTuple(object, bu$cond,bu$port, bu$val)
-        }else {
-            cat(sprintf("Internal Error unrecognised type '%s'\n",typeof(bu$val)))
-            return(invisible(object))
-        }
-    })
-    object@config_lastrun = object@config
+    .restorebackup(object)
+    #store intell on last run
+    if (object@config$plan == "single") {
+        object@lastrun = "single"
+    } else {
+        object@lastrun = "multi"
+    }
     return(invisible(object))
 })
 
 
 ###############
-# function default
+# function setDefault
 ###############
-setGeneric("default", function(object, ...) standardGeneric("default"))
-setMethod("default", "Rvle", function(object, ...) {
+setGeneric("setDefault", function(object, ...) standardGeneric("setDefault"))
+setMethod("setDefault", "Rvle", function(object, ...) {
     arglist = list(...)
     namesArglist = names(arglist)
-    backupConds = c();
     for(i in 1:length(arglist)){
         nameArg = namesArglist[[i]]
         valArg = arglist[[i]]
-        splitNameArg = strsplit(nameArg,"\\.")[[1]];
-        if(length(splitNameArg) == 2){
-            #expect that nameArg = condName.condPort
-            condName = splitNameArg[1]
-            condPort = splitNameArg[2]
-            if(typeof(valArg) == "double"){
-                .conditionMultiSetReal(object, condName, condPort, valArg)
-            } else if(typeof(valArg) == "character"){
-                .conditionMultiSetString(object, condName, condPort, valArg)
-            } else if(typeof(valArg) == "logical"){
-                .conditionMultiSetBoolean(object, condName, condPort, valArg)
-            } else if(typeof(valArg) == "integer"){
-                .conditionMultiSetInteger(object, condName, condPort, valArg)
-            } else if(typeof(valArg) == "list"){
-                .conditionMultiSetTuple(object, condName, condPort, valArg)
-            } else {
-                cat(sprintf("Error unrecognised type '%s' of object '%s'\n",typeof(valArg),nameArg))
-                return(invisible(object))
-            }
-        } else {
-            cat(sprintf("Error passing argument: '%s'",nameArg))
-            return(invisible(object))
-        }
+        .handleConfig(object,nameArg,valArg)
     }
     return(invisible(object))
 })
