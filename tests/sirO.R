@@ -3,13 +3,6 @@ library(rvle)
 
 sir <- new("Rvle", file = "sir.vpz")
 
-arglist <- as.pairlist(alist(object=,
-                             cond_sir.a = 0.5, cond_sir.active = FALSE, cond_sir.dependance = FALSE,
-                             cond_sir.r = 0.005, cond_sir.threshold = 1e-10, seed = 12379843L,
-                             begin = 0, duration = 20))
-
-checkEquals(arglist, formals(run))
-
 
 # simple run and direct access to the result
 result <- run(sir)@outlist[[1]]
@@ -47,18 +40,6 @@ checkEqualsNumeric(view1$"Top model:sir.S"[[2000]], 8.235717, tolerance=1e-5)
 
 # the new list of args
 sir <- run(sir, cond_sir.a = 0.6)
-
-arglist <- as.pairlist(alist(object=,
-                             cond_sir.a = 0.6,
-			     cond_sir.active = FALSE,
-			     cond_sir.dependance = FALSE,
-                             cond_sir.r = 0.005,
-			     cond_sir.threshold = 1e-10,
-			     seed = 12379843L,
-                             begin = 0,
-                             duration = 20))
-
-checkEquals(arglist, formals(run))
 
 # check the storage of the result
 config(sir)["restype"] <- "matrix"
