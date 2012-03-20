@@ -1,6 +1,7 @@
 \name{run-methods}
 \docType{methods}
-%\alias{run-methods}
+\alias{run}
+\alias{run-methods}
 \alias{run,Rvle-method}
 \title{ ~~ Methods for Function run  ~~}
 \description{
@@ -9,7 +10,7 @@
 \section{Methods}{
 \describe{
 
-\item{object = "Rvle"}{ ~~describe this method here }
+\item{object = "Rvle"}{An object of class Rvle}
 }}
 \keyword{methods}
 %\keyword{ ~~ other possible keyword(s)}
