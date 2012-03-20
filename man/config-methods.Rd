@@ -13,7 +13,7 @@
 \section{Methods}{
 \describe{
 
-\item{object = "Rvle"}{ ~~describe this method here }
+\item{object = "Rvle"}{An object of class Rvle}
 }}
 \keyword{methods}
 %\keyword{ ~~ other possible keyword(s)}

@@ -1,6 +1,7 @@
 \name{Rvle-class}
 \docType{class}
 \alias{Rvle-class}
+\alias{rvle-class}
 %\alias{config<-,Rvle-method}
 %\alias{config,Rvle-method}
 %\alias{initialize,Rvle-method}
@@ -36,8 +37,8 @@ Objects can be created by calls of the form \code{new("Rvle", file)}.
 	 }
 }
 \references{ ~put references to the literature/web site here ~ }
-\author{ ~~who you are~~ }
-\note{ ~~further notes~~ }
+\author{G. Quesnel, P. Chabrier, R. Tr\'epos }
+\note{note for Rvle class}
 
 %Make other sections like Warning with
 \section{Warning }{....}

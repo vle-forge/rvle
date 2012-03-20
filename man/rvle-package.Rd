@@ -113,7 +113,7 @@ Maintainer: Gauthier Quesnel <quesnel@users.sourceforge.net>
 \keyword{ package }
 \seealso{
 ~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
+%~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
 }
 %\examples{
 %~~ simple examples of the most important functions ~~
