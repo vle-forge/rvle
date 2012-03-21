@@ -91,24 +91,28 @@ rvle_t rvle_open(const char* filename)
 rvle_output_t rvle_run(rvle_t handle)
 {
     assert(handle);
-
+    oov::OutputMatrixViewList* res = NULL;
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
         manager::RunQuiet jrm;
         jrm.start(*file);
-        utils::ModuleCache::instance().clear();
-        const oov::OutputMatrixViewList& result(jrm.outputs());
-        return new oov::OutputMatrixViewList(result);
+        if(jrm.haveError()){
+            res = NULL;
+        } else {
+            const oov::OutputMatrixViewList& result(jrm.outputs());
+            res = new oov::OutputMatrixViewList(result);
+        }
     } catch(const std::exception& e) {
-        return NULL;
+        res = NULL;
     }
-    return NULL;
+    utils::ModuleCache::instance().clear();
+    return res;
 }
 
 rvle_output_t rvle_manager(rvle_t handle, int commonSeed)
 {
     assert(handle);
-
+    manager::OutputSimulationMatrix* res = NULL;
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
         std::string filename = Trace::getLogFilename("rvle.log");
@@ -121,23 +125,24 @@ rvle_output_t rvle_manager(rvle_t handle, int commonSeed)
         manager::ManagerRunMono jrm(*logfile, false /*writefile*/,
             false /*storeComb*/, commonSeed);
         jrm.start(*file);
-        utils::ModuleCache::instance().clear();
 
         logfile->close();
 
         const manager::OutputSimulationMatrix& result(
             jrm.outputSimulationMatrix());
-        return new manager::OutputSimulationMatrix(result);
+        res = new manager::OutputSimulationMatrix(result);
     } catch(const std::exception& e) {
-        return NULL;
+        res = NULL;
     }
-    return NULL;
+    utils::ModuleCache::instance().clear();
+    return res;
 }
 
 rvle_output_t rvle_manager_thread(rvle_t handle, int th, int commonSeed)
 {
     assert(handle);
 
+    manager::OutputSimulationMatrix* res = NULL;
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
         std::string filename = Trace::getLogFilename("rvle.log");
@@ -149,23 +154,23 @@ rvle_output_t rvle_manager_thread(rvle_t handle, int th, int commonSeed)
         manager::ManagerRunThread jrm(*logfile, false /*writeFile*/,
             th /*process*/, false /*storeComb*/, commonSeed);
         jrm.start(*file);
-        utils::ModuleCache::instance().clear();
 
         logfile->close();
 
         const manager::OutputSimulationMatrix& result(
             jrm.outputSimulationMatrix());
-        return new manager::OutputSimulationMatrix(result);
+        res = new manager::OutputSimulationMatrix(result);
     } catch(const std::exception& e) {
-        return NULL;
+        res = NULL;
     }
-    return NULL;
+    utils::ModuleCache::instance().clear();
+    return res;
 }
 
 rvle_output_t rvle_manager_cluster(rvle_t handle, int commonSeed)
 {
     assert(handle);
-
+    manager::OutputSimulationMatrix* res = NULL;
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
         std::string filename = Trace::getLogFilename("rvle.log");
@@ -177,17 +182,17 @@ rvle_output_t rvle_manager_cluster(rvle_t handle, int commonSeed)
         manager::ManagerRunDistant jrm(*logfile, false /*writeFile*/,
             false /*storeComb*/, commonSeed);
         jrm.start(*file);
-        utils::ModuleCache::instance().clear();
 
         logfile->close();
 
         const manager::OutputSimulationMatrix& result(
             jrm.outputSimulationMatrix());
-        return new manager::OutputSimulationMatrix(result);
+        res = new manager::OutputSimulationMatrix(result);
     } catch(const std::exception& e) {
-        return NULL;
+        res = NULL;
     }
-    return NULL;
+    utils::ModuleCache::instance().clear();
+    return res;
 }
 
 
