@@ -193,7 +193,8 @@ SEXP r_rvle_run(SEXP rvle)
 
         result = rvle_run(R_ExternalPtrAddr(rvle));
         if (!result) {
-                Rf_warning("RVLE: empty result, (use output storage)");
+                Rf_warning("RVLE: the simulation may have an error"
+                        " or use the output storage");
         } else {
                 r = rvle_convert_dataframe(result);
                 rvle_clear(result);
@@ -209,7 +210,8 @@ SEXP r_rvle_run_matrix(SEXP rvle)
 
         result = rvle_run(R_ExternalPtrAddr(rvle));
         if (!result) {
-                Rf_warning("RVLE: empty result, (use output storage)");
+                Rf_warning("RVLE: the simulation may have an error"
+                        " or use the output storage");
         } else {
                 r = rvle_convert_matrix(result);
                 rvle_clear(result);
