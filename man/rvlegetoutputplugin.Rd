@@ -1,11 +1,19 @@
 \name{rvle.getOutputPlugin}
+\docType{methods}
 \alias{rvle.getOutputPlugin}
-\title{Get the plugin output of a view.}
-\description{Get the plugin output of a view.}
-\usage{rvle.getOutputPlugin(self, viewname)}
-\arguments{
-        \item{self}{handle of the rvle}
-        \item{viewname}{the name of the view.}
+\title{Get the output plugin name of a VPZ.}
+\description{
+	Get the output plugin name of a VPZ, represented by a rvle handle.
+	Part of the basic API of rvle.
 }
-\keyword{models}
-\keyword{optimize}
+\usage{
+ rvle.getOutputPlugin(rvleHandle, view)
+}
+\arguments{
+ \item{rvleHandle}{a rvle handle.}
+ \item{view}{the name of the view.}
+}
+\value{
+ the name of the output plugin attached to view 'view' for 
+ into the VPZ represented by the rvle handle 'rvleHandle'
+}

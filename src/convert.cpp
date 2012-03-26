@@ -26,7 +26,6 @@
 #include <vle/oov.hpp>
 #include <vle/value.hpp>
 #include <vle/value/Boolean.hpp>
-#include <cassert>
 
 #ifdef ENABLE_NLS
 #   undef ENABLE_NLS

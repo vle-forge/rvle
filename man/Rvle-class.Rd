@@ -1,53 +1,28 @@
-\name{Rvle-class}
+\name{Rvle Class}
 \docType{class}
+\alias{Rvle}
 \alias{Rvle-class}
-\alias{rvle-class}
-%\alias{config<-,Rvle-method}
-%\alias{config,Rvle-method}
-%\alias{initialize,Rvle-method}
-%\alias{results,Rvle-method}
-%\alias{saveVpz,Rvle-method}
-%\alias{show,Rvle-method}
 
-\title{Class "Rvle" ~~~ }
-\description{	 ~~ A concise (1-5 lines) description of what the class is.  ~~}
-\section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("Rvle", file)}.
-	 ~~ describe objects here ~~
-}
-\section{Slots}{
-	 \describe{
-    \item{\code{sim}:}{Object of class \code{"rvle"} ~~ }
-    \item{\code{file}:}{Object of class \code{"character"} ~~ }
-    \item{\code{run}:}{Object of class \code{"function"} ~~ }
-    \item{\code{config}:}{Object of class \code{"list"} ~~ }
-    \item{\code{outlist}:}{Object of class \code{"list"} ~~ }
-    \item{\code{outmatrix}:}{Object of class \code{"matrix"} ~~ }
-  }
+\title{Rvle S4 class}
+\description{
+The Rvle S4 class provides user-friendly functionnalities for manipulating
+and simulating VLE models, it relies on the basic API rvle. See 'help(rvle)'
+
+To get information on methods of the class, type 'help(methodname)' where 
+methodname is one of the methods listed here.
 }
 \section{Methods}{
-  \describe{
-    \item{config<-}{\code{signature(object = "Rvle")}: ... }
-    \item{config}{\code{signature(object = "Rvle")}: ... }
-    \item{initialize}{\code{signature(.Object = "Rvle")}: ... }
-    \item{results}{\code{signature(object = "Rvle")}: ... }
-    \item{saveVpz}{\code{signature(object = "Rvle")}: ... }
-    \item{show}{\code{signature(object = "Rvle")}: ... }
-    \item{run}{\code{signature(object = "Rvle")}: ... }
-	 }
+    results : show results of the last simulation process
+    
+    saveVpz : save a Vpz to a file
+    
+    show : show the current settings of Rvle object
+    
+    run : run simulations of VLE
+    
+    setDefault : set default settings to the Rvle object 
+    
+    config<- : set default experiment settings (Deprecated)
+    
+    config : show default experiment settings (Deprecated)
 }
-\references{ ~put references to the literature/web site here ~ }
-\author{G. Quesnel, P. Chabrier, R. Tr\'epos }
-\note{note for Rvle class}
-
-%Make other sections like Warning with
-\section{Warning }{....}
-
-%\seealso{
-%	~~objects to See Also as \code{\link{~~fun~~}}, ~~~
-%	or \code{\linkS4class{CLASSNAME}} for links to other classes
-%}
-\examples{
-showClass("Rvle")
-}
-\keyword{classes}

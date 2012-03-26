@@ -1,10 +1,12 @@
 \name{rvle.setStringCondition}
+\docType{methods}
 \alias{rvle.setStringCondition}
 \title{Set a string to the specified condition port.}
-\description{Set a string to the specified condition port.}
-\usage{rvle.setStringCondition(self, condition, port, value)}
+\description{Set a string to the specified condition port.
+	Part of the basic API of rvle.}
+\usage{rvle.setStringCondition(rvleHandle, condition, port, value)}
 \arguments{
-        \item{self}{handle of the rvle}
+        \item{rvleHandle}{a rvle handle.}
         \item{condition}{string representation of the condition}
         \item{port}{string representation of the condition's port}
         \item{value}{an string}

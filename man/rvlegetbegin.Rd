@@ -1,10 +1,17 @@
 \name{rvle.getBegin}
+\docType{methods}
 \alias{rvle.getBegin}
-\title{Get the begin of the experiment.}
-\description{Get the begin of the experiment.}
-\usage{rvle.getBegin(self)}
-\arguments{
-        \item{self}{handle of the rvle}
+\title{Get the begin date of a VPZ.}
+\description{
+	Get the begin date of a VPZ managed by a rvle handle.
+	Part of the basic API of rvle.
 }
-\keyword{models}
-\keyword{optimize}
+\usage{
+ rvle.getBegin(rvleHandle)
+}
+\arguments{
+ \item{rvleHandle}{a rvle handle.}
+}
+\value{
+	the begin date of the simulation
+}

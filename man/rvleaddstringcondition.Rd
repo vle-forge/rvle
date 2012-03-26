@@ -1,14 +1,39 @@
 \name{rvle.addStringCondition}
+\docType{methods}
 \alias{rvle.addStringCondition}
-\title{Add a string to the specified condition port.}
-\description{Add an string to the specified condition port.}
-\usage{rvle.addStringCondition(self, condition, port, value)}
-\arguments{
-        \item{self}{handle of the rvle}
-        \item{condition}{string representation of the condition}
-        \item{port}{string representation of the condition's port}
-        \item{value}{a string}
+\title{Add a string value to a rvle handle.}
+\description{
+  Add a string value to a rvle handle.
+  Part of the basic API of rvle.
 }
-\keyword{models}
-\keyword{optimize}
+\usage{
+ rvle.addStringCondition(rvleHandle, condition, port, value)
+}
+\arguments{
+ \item{rvleHandle}{a rvle handle.}
+ \item{condition}{name of the condition handled by rvleHandle.} 
+ \item{port}{name of the port of the condition.}
+  \item{value}{a string value to set on the specified port.}
+}
 
+\examples{
+
+	# Assumptions : 
+	# - there is a vle package named "mypkg" 
+	# - this package contains a vpz file named "mymodel.vpz"
+	# - the vpz "mymodel.vpz" contains the condition "mycond"
+	# - the condition "mycond" contains a port "myport"
+
+ 	# Building the rvle hanlde
+
+ 	f = rvle.open(file = "mymodel.vpz", pkg = "mypkg")
+ 	
+ 	# Replace the value on port by "mystring"
+ 	
+ 	rvle.clearConditionPort(f,"mycond","myport")
+ 	rvle.addBooleanCondition(f,"mycond","myport","mystring")
+
+	# Run one simulation 	
+ 	
+ 	results = rvle.run(f)
+}

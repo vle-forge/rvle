@@ -1,10 +1,18 @@
 \name{rvle.getConditionsSize}
+\docType{methods}
 \alias{rvle.getConditionsSize}
-\title{Get the number of condition in Vpz file.}
-\description{Get the number of condition in Vpz file.}
-\usage{rvle.getConditionsSize(self)}
-\arguments{
-	\item{self}{handle of the rvle}
+\title{Gets the number of conditions in VPZ.}
+\description{
+	Gets the number of conditions in VPZ
+	managed by a rvle handle.
+	Part of the basic API of rvle.
 }
-\keyword{models}
-\keyword{optimize}
+\usage{
+ rvle.getConditionsSize(rvleHandle)
+}
+\arguments{
+ \item{rvleHandle}{a rvle handle.}
+}
+\value{
+ the number of conditions of the VPZ managed by 'rvleHandle'.
+}

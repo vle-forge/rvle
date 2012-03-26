@@ -1,16 +1,20 @@
-\name{saveVpz-methods}
+\name{saveVpz}
 \docType{methods}
 \alias{saveVpz}
 \alias{saveVpz-methods}
-\alias{saveVpz,Rvle-method}
-\title{ ~~ Methods for Function saveVpz  ~~}
-\description{
- ~~ Methods for function \code{saveVpz}  ~~
-}
-\section{Methods}{
-\describe{
+\alias{saveVpz,Rvle,char-method}
 
-\item{object = "Rvle"}{An object of class Rvle}
-}}
-\keyword{methods}
-%\keyword{ ~~ other possible keyword(s)}
+\title{Save the VPZ into a file.}
+
+\description{
+Save the VPZ into a file.
+}
+
+\usage{
+ saveVpz(RvleObj, file)
+}
+
+\arguments{
+ \item{RvleObj}{a Rvle object.}
+ \item{file}{the file name where to save the VPZ.}
+}

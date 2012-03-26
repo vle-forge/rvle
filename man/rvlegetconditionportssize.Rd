@@ -1,11 +1,20 @@
 \name{rvle.getConditionPortsSize}
+\docType{methods}
 \alias{rvle.getConditionPortsSize}
-\title{Get the number of port for a specific condition.}
-\description{Get the number of port for a specific condition.}
-\usage{rvle.getConditionPortsSize(self, condition)}
-\arguments{
-	\item{self}{handle of the rvle}
-	\item{condition}{string representation of the condition}
+\title{Get the number of port of a condition.}
+\description{
+	Get the number of port of a condition
+	of a VPZ managed by a rvle handle.
+	Part of the basic API of rvle.
 }
-\keyword{models}
-\keyword{optimize}
+\usage{
+ rvle.getConditionPortsSize(rvleHandle, condition)
+}
+\arguments{
+ \item{rvleHandle}{a rvle handle.}
+ \item{condition}{name of the condition}
+}
+\value{
+ the number of ports of the condition 'condition'
+}
+

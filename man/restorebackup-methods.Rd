@@ -1,16 +1,22 @@
-\name{.restorebackup-methods}
+\name{.restorebackup}
 \docType{methods}
 \alias{.restorebackup}
 \alias{.restorebackup-methods}
 \alias{.restorebackup,Rvle-method}
-\title{ ~~ Methods for Function .restorebackup  ~~}
-\description{
- ~~ Methods for function \code{.restorebackup}  ~~
-}
-\section{Methods}{
-\describe{
+\title{Restores the backup settings.}
 
-\item{object = "Rvle"}{An object of class Rvle}
-}}
-\keyword{methods}
-%\keyword{ ~~ other possible keyword(s)}
+\description{
+Restores the registered backup settings registered so far.
+}
+
+\usage{
+ 	.restorebackup(RvleObj)
+}
+
+\arguments{
+ \item{RvleObj}{a Rvle object.}
+}
+
+\section{Note}{
+	This is an internal function and should be used carefully.
+}
