@@ -1,10 +1,17 @@
 \name{rvle.getDuration}
+\docType{methods}
 \alias{rvle.getDuration}
 \title{Get the duration of the experiment.}
-\description{Get the duration of the experiment.}
-\usage{rvle.getDuration(self)}
-\arguments{
-        \item{self}{handle of the rvle}
+\description{
+	Gets the duration of the experiment by a rvle handle.
+	Part of the basic API of rvle.
 }
-\keyword{models}
-\keyword{optimize}
+\usage{
+ rvle.getDuration(rvleHandle)
+}
+\arguments{
+ \item{rvleHandle}{a rvle handle.}
+}
+\value{
+ the duraton of the experiment handled by 'rvleHandle'
+}

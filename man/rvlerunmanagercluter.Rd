@@ -1,16 +1,23 @@
 \name{rvle.runManagerCluster}
+\docType{methods}
 \alias{rvle.runManagerCluster}
-\title{Use an experimental frame and launch simulation onto grid computing.}
-\description{Use an experimental frame from the rvle handle and launch
-simulation for each instance of the experimental frame onto a grid computing.
-Returns a matrix of list of dataframes.}
-\usage{rvle.runManagerCluster(self, commonSeed = TRUE)}
-\arguments{
-	\item{self}{handle of rvle}
-	\item{commonSeed}{if true, the same seed is used for the simulation
- of different combinations of one replica}
+\title{Use an experimental frame and launch simulation
+on a cluster.}
+\description{
+	Use an experimental frame and launch simulation on a cluster.
+	Part of the basic API of rvle.
 }
-\keyword{models}
-\keyword{optimize}
+\usage{
+ rvle.runManagerCluster(rvleHandle, commonSeed = TRUE)
+}
+\arguments{
+ \item{rvleHandle}{a rvle handle.}
+ \item{commonSeed}{if true, the same seed is used for the simulation
+ of different combinations of one replica} 
+}
+\value{
+Returns a matrix of list of dataframes.
+}
+
 
 

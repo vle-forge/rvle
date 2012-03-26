@@ -1,15 +1,19 @@
-\name{show-methods}
+\name{show}
 \docType{methods}
-%\alias{show-methods}
+\alias{show}
+\alias{show-methods}
 \alias{show,Rvle-method}
-\title{ ~~ Methods for Function show  ~~}
-\description{
- ~~ Methods for function \code{show}  ~~
-}
-\section{Methods}{
-\describe{
 
-\item{object = "Rvle"}{An object of class Rvle}
-}}
-\keyword{methods}
-%\keyword{ ~~ other possible keyword(s)}
+\title{Shows the current settings of a VPZ}
+
+\description{
+Shows the current settings of a VPZ
+}
+
+\usage{
+ show(RvleObj)
+}
+
+\arguments{
+ \item{RvleObj}{a Rvle object.}
+}

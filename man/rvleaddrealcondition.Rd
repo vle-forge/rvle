@@ -1,14 +1,39 @@
 \name{rvle.addRealCondition}
+\docType{methods}
 \alias{rvle.addRealCondition}
-\title{Add a real to the specified condition port.}
-\description{Add a real to the specified condition port.}
-\usage{rvle.addRealCondition(self, condition, port, value)}
-\arguments{
-        \item{self}{handle of the rvle}
-        \item{condition}{string representation of the condition}
-        \item{port}{string representation of the condition's port}
-        \item{value}{a real}
+\title{Add a real value to a rvle handle.}
+\description{
+  Add a real value to a rvle handle.
+  Part of the basic API of rvle.
 }
-\keyword{models}
-\keyword{optimize}
+\usage{
+ rvle.addRealCondition(rvleHandle, condition, port, value)
+}
+\arguments{
+ \item{rvleHandle}{a rvle handle.}
+ \item{condition}{name of the condition handled by rvleHandle.} 
+ \item{port}{name of the port of the condition.}
+ \item{value}{a real value to set on the specified port.}
+}
 
+\examples{
+
+	# Assumptions : 
+	# - there is a vle package named "mypkg" 
+	# - this package contains a vpz file named "mymodel.vpz"
+	# - the vpz "mymodel.vpz" contains the condition "mycond"
+	# - the condition "mycond" contains a port "myport"
+
+ 	# Building the rvle hanlde
+
+ 	f = rvle.open(file = "mymodel.vpz", pkg = "mypkg")
+ 	
+ 	# Replace the value on port by 0.5
+ 	
+ 	rvle.clearConditionPort(f,"mycond","myport")
+ 	rvle.addRealCondition(f,"mycond","myport",0.5)
+
+	# Run one simulation 	
+ 	
+ 	results = rvle.run(f)
+}

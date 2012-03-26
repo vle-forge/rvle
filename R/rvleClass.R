@@ -2,7 +2,6 @@
 # @file rvle.R
 # @author The VLE Development Team
 #
-
 #
 # VLE Environment - the multimodeling and simulation environment
 # This file is a part of the VLE environment (http://vle.univ-littoral.fr)
@@ -32,9 +31,7 @@ setClass("Rvle", representation(sim = "rvle",
                                 outlist = "list",
                                 outmatrix = "matrix",
                                 backup = "list"))
-##########
-## Rvle constructor
-##########
+
 setMethod("initialize", "Rvle", function(.Object,
   file = character(length = 0), pkg = character(length = 0),
   config = list(NULL), lastrun ="null", outlist = list(),
@@ -58,251 +55,227 @@ setMethod("initialize", "Rvle", function(.Object,
     return(.Object)
 })
 
-
-#######
-# Private functions
-#######
 setGeneric(".conditionMultiSetBoolean",
-        function(object, conditioname, portname, value)
+        function(RvleObj, conditionname, portname, value)
             standardGeneric(".conditionMultiSetBoolean"))
 setMethod(".conditionMultiSetBoolean", "Rvle",
-        function(object, conditioname, portname, value) {
-  rvle.clearConditionPort(object@sim, conditioname, portname)
-  lapply(value, function(item, object, conditioname, portname) {
-    rvle.addBooleanCondition(object@sim, conditioname, portname, item)
+        function(RvleObj, conditionname, portname, value) {
+  rvle.clearConditionPort(RvleObj@sim, conditionname, portname)
+  lapply(value, function(item, RvleObj, conditionname, portname) {
+    rvle.addBooleanCondition(RvleObj@sim, conditionname, portname, item)
   },
-  object,
-  conditioname,
+  RvleObj,
+  conditionname,
   portname)
 })
 
 setGeneric(".conditionMultiSetReal",
-        function(object, conditioname, portname, value)
+        function(RvleObj, conditionname, portname, value)
             standardGeneric(".conditionMultiSetReal"))
 setMethod(".conditionMultiSetReal", "Rvle",
-        function(object, conditioname, portname, value) {
-  rvle.clearConditionPort(object@sim, conditioname, portname)
-  lapply(value, function(item, object, conditioname, portname) {
-    rvle.addRealCondition(object@sim, conditioname, portname, item)
+        function(RvleObj, conditionname, portname, value) {
+  rvle.clearConditionPort(RvleObj@sim, conditionname, portname)
+  lapply(value, function(item, RvleObj, conditionname, portname) {
+    rvle.addRealCondition(RvleObj@sim, conditionname, portname, item)
   },
-  object,
-  conditioname,
+  RvleObj,
+  conditionname,
   portname)
 })
 
 setGeneric(".conditionMultiSetInteger",
-        function(object, conditioname, portname, value)
+        function(RvleObj, conditionname, portname, value)
             standardGeneric(".conditionMultiSetInteger"))
 setMethod(".conditionMultiSetInteger", "Rvle",
-        function(object, conditioname, portname, value) {
-  rvle.clearConditionPort(object@sim, conditioname, portname)
-  lapply(value, function(item, object, conditioname, portname) {
-    rvle.addIntegerCondition(object@sim, conditioname, portname, item)
+        function(RvleObj, conditionname, portname, value) {
+  rvle.clearConditionPort(RvleObj@sim, conditionname, portname)
+  lapply(value, function(item, RvleObj, conditionname, portname) {
+    rvle.addIntegerCondition(RvleObj@sim, conditionname, portname, item)
   },
-  object,
-  conditioname,
+  RvleObj,
+  conditionname,
   portname)
 })
 
 setGeneric(".conditionMultiSetString",
-        function(object, conditioname, portname, value)
+        function(RvleObj, conditionname, portname, value)
             standardGeneric(".conditionMultiSetString"))
 setMethod(".conditionMultiSetString", "Rvle",
-        function(object, conditioname, portname, value) {
-  rvle.clearConditionPort(object@sim, conditioname, portname)
-  lapply(value, function(item, object, conditioname, portname) {
-    rvle.addStringCondition(object@sim, conditioname, portname, item)
+        function(RvleObj, conditionname, portname, value) {
+  rvle.clearConditionPort(RvleObj@sim, conditionname, portname)
+  lapply(value, function(item, RvleObj, conditionname, portname) {
+    rvle.addStringCondition(RvleObj@sim, conditionname, portname, item)
   },
-  object,
-  conditioname,
+  RvleObj,
+  conditionname,
   portname)
 })
 
 setGeneric(".conditionMultiSetTuple",
-        function(object, conditioname, portname, value)
+        function(RvleObj, conditionname, portname, value)
             standardGeneric(".conditionMultiSetTuple"))
 setMethod(".conditionMultiSetTuple", "Rvle",
-        function(object, conditioname, portname, value) {
-  rvle.clearConditionPort(object@sim, conditioname, portname)
+        function(RvleObj, conditionname, portname, value) {
+  rvle.clearConditionPort(RvleObj@sim, conditionname, portname)
   if (typeof(value[1]) == "list") {
-    lapply(value,function(item, object, conditioname, portname) {
-      rvle.addTupleCondition(object@sim, conditioname, portname, item)
+    lapply(value,function(item, RvleObj, conditionname, portname) {
+      rvle.addTupleCondition(RvleObj@sim, conditionname, portname, item)
     },
-    object,
-    conditioname,
+    RvleObj,
+    conditionname,
     portname)
   } else {
-    rvle.addTupleCondition(object@sim, conditioname, portname, value)
+    rvle.addTupleCondition(RvleObj@sim, conditionname, portname, value)
   }
 })
 
 setGeneric(".handleConfig",
-        function(object, name, val)
+        function(RvleObj, setting, value)
             standardGeneric(".handleConfig"))
-setMethod(".handleConfig", "Rvle", function(object, name, val) {
+setMethod(".handleConfig", "Rvle", function(RvleObj, setting, value) {
     backupVal = NULL
-    splitNameArg = strsplit(name,"\\.")[[1]];
+    splitNameArg = strsplit(setting,"\\.")[[1]];
 
     if(length(splitNameArg) == 2){
-        #expect that nameArg = condName.condPort
+        #expect that settingArg = condName.condPort
         condName = splitNameArg[1]
         condPort = splitNameArg[2]
 
         backupVal = rvle.getConditionPortValues(
-                object@sim, condName, condPort)
+                RvleObj@sim, condName, condPort)
 
-        if(typeof(val) == "double"){
-            .conditionMultiSetReal(object, condName, condPort, val)
-        } else if(typeof(val) == "character"){
-            .conditionMultiSetString(object, condName, condPort, val)
-        } else if(typeof(val) == "logical"){
-            .conditionMultiSetBoolean(object, condName, condPort, val)
-        } else if(typeof(val) == "integer"){
-            .conditionMultiSetInteger(object, condName, condPort, val)
-        } else if(typeof(val) == "list"){
-            .conditionMultiSetTuple(object, condName, condPort, val)
+        if(typeof(value) == "double"){
+            .conditionMultiSetReal(RvleObj, condName, condPort, value)
+        } else if(typeof(value) == "character"){
+            .conditionMultiSetString(RvleObj, condName, condPort, value)
+        } else if(typeof(value) == "logical"){
+            .conditionMultiSetBoolean(RvleObj, condName, condPort, value)
+        } else if(typeof(value) == "integer"){
+            .conditionMultiSetInteger(RvleObj, condName, condPort, value)
+        } else if(typeof(value) == "list"){
+            .conditionMultiSetTuple(RvleObj, condName, condPort, value)
         } else {
-            cat(sprintf("Error unrecognised type '%s' of object '%s'\n",
-                            typeof(val),nameArg))
-            return(invisible(object))
+            cat(sprintf("Error unrecognised type '%s' of RvleObj '%s'\n",
+                            typeof(value),settingArg))
+            return(invisible(RvleObj))
         }
-    } else if(name == "duration"){
-        backupVal = rvle.getDuration(object@sim)
-        rvle.setDuration(object@sim, val)
-    } else if(name == "begin"){
-        backupVal = rvle.setBegin(object@sim)
-        rvle.setBegin(object@sim, val)
-    } else if(name == "plan"){
-        backupVal = object@config["plan"]
-        object@config["plan"] = val
-    } else if(name == "restype"){
-        backupVal = object@config["restype"]
-        object@config["restype"] = val
-    } else if(name == "proc"){
-        backupVal = object@config["proc"]
-        object@config["proc"] = val
-    } else if(name == "thread"){
-        backupVal = object@config["thread"]
-        object@config["thread"] = val
-    } else if(name == "replicas"){
-        backupVal = object@config["replicas"]
-        object@config["replicas"] = val
-    } else if(name == "seed"){
-        backupVal = object@config["seed"]
-        object@config["seed"] = val
-    } else if(name == "outputplugin"){
-        if(is.list(val)){
+    } else if(setting == "duration"){
+        backupVal = rvle.getDuration(RvleObj@sim)
+        rvle.setDuration(RvleObj@sim, value)
+    } else if(setting == "begin"){
+        backupVal = rvle.setBegin(RvleObj@sim)
+        rvle.setBegin(RvleObj@sim, value)
+    } else if(setting == "plan"){
+        backupVal = RvleObj@config["plan"]
+        RvleObj@config["plan"] = value
+    } else if(setting == "restype"){
+        backupVal = RvleObj@config["restype"]
+        RvleObj@config["restype"] = value
+    } else if(setting == "proc"){
+        backupVal = RvleObj@config["proc"]
+        RvleObj@config["proc"] = value
+    } else if(setting == "thread"){
+        backupVal = RvleObj@config["thread"]
+        RvleObj@config["thread"] = value
+    } else if(setting == "replicas"){
+        backupVal = RvleObj@config["replicas"]
+        RvleObj@config["replicas"] = value
+    } else if(setting == "seed"){
+        backupVal = RvleObj@config["seed"]
+        RvleObj@config["seed"] = value
+    } else if(setting == "outputplugin"){
+        if(is.list(value)){
             backupVal = list();
-            ovals = names(val)
+            ovals = names(value)
             for(i in 1:length(ovals)){
                 oval = names[[i]]
-                pval = val[[i]]
+                pval = value[[i]]
                 backupVal = as.list(append(backupVal,
-                                rvle.getOutputPlugin(object@sim, oval)))
-                rvle.setOutputPlugin(object@sim, oval, pval)
+                                rvle.getOutputPlugin(RvleObj@sim, oval)))
+                rvle.setOutputPlugin(RvleObj@sim, oval, pval)
             }
         } else {
             cat(sprintf("Error passing value argument for
-                outputplugin: '%s'",val))
-            .restorebackup(object)
+                outputplugin: '%s'",value))
+            .restorebackup(RvleObj)
             return(NULL);
         }
     } else {
-        cat(sprintf("Error passing argument: '%s'",name))
-        .restorebackup(object)
+        cat(sprintf("Error passing argument: '%s'",setting))
+        .restorebackup(RvleObj)
         return(NULL);
     }
     #update backup
-    object@backup = as.list(append(object@backup,
-            list(name=name, val=backupVal)))
+    RvleObj@backup = as.list(append(RvleObj@backup,
+            list(setting=setting, value=backupVal)))
 })
 
-
-
-setGeneric(".restorebackup", function(object) standardGeneric(".restorebackup"))
-setMethod(".restorebackup", "Rvle", function(object) {
-  namesList = names(object@config)
+setGeneric(".restorebackup", function(RvleObj) standardGeneric(".restorebackup"))
+setMethod(".restorebackup", "Rvle", function(RvleObj) {
+  namesList = names(RvleObj@config)
   for(i in 1:length(namesList)){
-    nameArg = namesList[[i]]
-    valArg = object@config[[i]]
-    .handleConfig(object,nameArg,valArg)
+    setting = namesList[[i]]
+    value = RvleObj@config[[i]]
+    .handleConfig(RvleObj,setting,value)
   }
 })
 
-#########
-# config methods (deprecated)
-#########
-setGeneric("config", function(object) standardGeneric("config"))
-setMethod("config", "Rvle", function(object) {
-    return(object@config)
+setGeneric("config", function(RvleObj) standardGeneric("config"))
+setMethod("config", "Rvle", function(RvleObj) {
+    return(RvleObj@config)
 })
 
-setGeneric("config<-", function(object, value) standardGeneric("config<-"))
-setMethod("config<-", "Rvle", function(object, value) {
-    object@config <- value
-    return(invisible(object))
+setGeneric("config<-", function(RvleObj, value) standardGeneric("config<-"))
+setMethod("config<-", "Rvle", function(RvleObj, value) {
+    RvleObj@config <- value
+    return(invisible(RvleObj))
 })
 
-#########
-# result method
-#########
-setGeneric("results", function(object) standardGeneric("results"))
-setMethod("results", "Rvle", function(object) {
-    if(length(object@lastrun) == "null"){
+setGeneric("results", function(RvleObj) standardGeneric("results"))
+setMethod("results", "Rvle", function(RvleObj) {
+    if(length(RvleObj@lastrun) == "null"){
         cat("Error no registered results: maybe you
-            forgot to update Rvle object on simulation ")
+            forgot to update Rvle RvleObj on simulation ")
         return(NULL)
     }
-    if (object@lastrun == "single") {
-        return(object@outlist)
+    if (RvleObj@lastrun == "single") {
+        return(RvleObj@outlist)
     } else {
-        return(object@outmatrix)
+        return(RvleObj@outmatrix)
     }
 })
 
-#########
-# result method
-#########
-setGeneric("saveVpz", function(object, file) standardGeneric("saveVpz"))
-setMethod("saveVpz", "Rvle", function(object, file) {
-    rvle.save(object@sim, file)
-    return(invisible(object))
+setGeneric("saveVpz", function(RvleObj, file) standardGeneric("saveVpz"))
+setMethod("saveVpz", "Rvle", function(RvleObj, file) {
+    rvle.save(RvleObj@sim, file)
+    return(invisible(RvleObj))
 })
 
-###########
-# method show
-###########
 #WARNING: in order to avoid to mask function 'show' from package:methods
 if (!isGeneric("show")) {
     if (is.function("show")) {
         fun <- show
     } else {
-        fun <- function(object) standardGeneric("show")
+        fun <- function(RvleObj) standardGeneric("show")
     }
     setGeneric("show", fun)
 }
-setMethod("show", "Rvle", function(object) {
+setMethod("show", "Rvle", function(RvleObj) {
     cat("VLE Model informations :\n")
     cat("========================\n")
     cat("\n")
-    cat("Vpz location : file =", object@file, ", pkg =", object@pkg,"\n")
+    cat("Vpz location : file =", RvleObj@file, ", pkg =", RvleObj@pkg,"\n")
     cat("\n")
-    cat("Begin : ", rvle.getBegin(object@sim), "\n")
-    cat("\n")
-    cat("Duration : ", rvle.getDuration(object@sim), "\n")
-    cat("\n")
-    cat("Seed : ", object@config$seed, "\n")
-    cat("\n")
-    cat("Experimental Condition list and default value :\n")
-    conditionlist <- rvle.listConditions(object@sim)
+    cat("Experiemental condition settings and default value :\n")
+    conditionlist <- rvle.listConditions(RvleObj@sim)
     conditionportlist <- lapply(conditionlist, function(condition) {
-        list(condition, rvle.listConditionPorts(object@sim,condition))
+        list(condition, rvle.listConditionPorts(RvleObj@sim,condition))
     })
     lapply(conditionportlist, function(condition) {
-        conditioname <- condition[[1]]
+        conditionname <- condition[[1]]
         lapply(condition[[2]], function(portname) {
-            thevalue = rvle.getConditionPortValues(object@sim,
-                                                   conditioname,
+            thevalue = rvle.getConditionPortValues(RvleObj@sim,
+                                                   conditionname,
                                                    portname)
             if (length(thevalue) == 0) {
                 thestoragemode = ""
@@ -311,105 +284,91 @@ setMethod("show", "Rvle", function(object) {
                 thestoragemode = sprintf("<%s>",  typeof(thevalue));
             }
             cat(sprintf("* %s.%s = %s %s\n",
-                conditioname,portname,
+                conditionname,portname,
                 toString(thevalue),thestoragemode))
         })
     })
     cat("\n")
-    cat("Output plugins :\n")
-    lapply(rvle.listViews(object@sim),function(v){
-        cat(sprintf("   %s = %s\n", v, rvle.getOutputPlugin(object@sim,v)))
+    cat("Output plugins settings:\n")
+    lapply(rvle.listViews(RvleObj@sim),function(v){
+        cat(sprintf("* %s = %s\n", v, rvle.getOutputPlugin(RvleObj@sim,v)))
     })
     cat("\n")
-    cat("Expe : plan =",object@config$plan,
-            ", proc =",object@config$proc ,
-            ", restype =",object@config$restype ,
-            ", thread =",object@config$thread ,
-            ", replicas =",object@config$replicas ,
-            ", seed =",object@config$seed ,"\n")
-    cat("\n")
+    cat("Experiment settings :\n");
+    cat("* plan =",RvleObj@config$plan,"\n")
+    cat("* proc =",RvleObj@config$proc ,"\n")
+    cat("* restype =",RvleObj@config$restype ,"\n")
+    cat("* thread =",RvleObj@config$thread ,"\n")
+    cat("* replicas =",RvleObj@config$replicas ,"\n")
+    cat("* begin : ", rvle.getBegin(RvleObj@sim), "\n")
+    cat("* duration : ", rvle.getDuration(RvleObj@sim), "\n")
+    cat("* seed : ", RvleObj@config$seed, "\n")
     return(invisible())
 })
 
-
-#$ plan    : chr "single"
-#$ proc    : chr "mono"
-#$ restype : chr "dataframe"
-#$ thread  : num 1
-#$ replicas: num 1
-#$ seed    : int NA
-
-
-###############
-# function run
-###############
-setGeneric("run", function(object, ...) standardGeneric("run"))
-setMethod("run", "Rvle", function(object, ...) {
+setGeneric("run", function(RvleObj, ...) standardGeneric("run"))
+setMethod("run", "Rvle", function(RvleObj, ...) {
     arglist = list(...)
     namesArglist = names(arglist)
     if(length(arglist)){
         for(i in 1:length(arglist)){
             nameArg = namesArglist[[i]]
             valArg = arglist[[i]]
-            .handleConfig(object,nameArg,valArg)
+            .handleConfig(RvleObj,nameArg,valArg)
         }
     }
     #prepare simulation plan
-    if(object@config$plan == "single") {
-        if (object@config$replicas == 1) {
-            rvle.setSeed(object@sim, object@config$seed)
+    if(RvleObj@config$plan == "single") {
+        if (RvleObj@config$replicas == 1) {
+            rvle.setSeed(RvleObj@sim, RvleObj@config$seed)
         } else {
-            rvle.setLinearCombination(object@sim, object@config$seed,
-                    object@config$replicas)
+            rvle.setLinearCombination(RvleObj@sim, RvleObj@config$seed,
+                    RvleObj@config$replicas)
         }
-    } else if (object@config$plan == "linear"){
-        rvle.setLinearCombination(object@sim, object@config$seed,
-                object@config$replicas)
-    } else if (object@config$plan == "total"){
-        rvle.setTotalCombination(object@sim, object@config$seed,
-                object@config$replicas)
+    } else if (RvleObj@config$plan == "linear"){
+        rvle.setLinearCombination(RvleObj@sim, RvleObj@config$seed,
+                RvleObj@config$replicas)
+    } else if (RvleObj@config$plan == "total"){
+        rvle.setTotalCombination(RvleObj@sim, RvleObj@config$seed,
+                RvleObj@config$replicas)
     }
     #simulate
-    if (object@config$plan == "single") {
-        object@outlist <- switch(object@config$restype,
-                dataframe = rvle.run(object@sim),
-                matrix = rvle.runMatrix(object@sim))
+    if (RvleObj@config$plan == "single") {
+        RvleObj@outlist <- switch(RvleObj@config$restype,
+                dataframe = rvle.run(RvleObj@sim),
+                matrix = rvle.runMatrix(RvleObj@sim))
     } else {
-        object@outmatrix <- switch(object@config$proc,
-          mono = switch(object@config$restype,
-            dataframe = rvle.runManager(object@sim),
-            matrix = rvle.runManagerMatrix(object@sim)),
-          thread = switch(object@config$restype,
-            dataframe = rvle.runManagerThread(object@sim, object@config$thread),
-            matrix = rvle.runManagerThreadMatrix(object@sim,
-                    object@config$thread)),
-          cluster = switch(object@config$restype,
-            dataframe = rvle.runManagerCluster(object@sim),
-            matrix = rvle.runManagerClusterMatrix(object@sim)))
+        RvleObj@outmatrix <- switch(RvleObj@config$proc,
+          mono = switch(RvleObj@config$restype,
+            dataframe = rvle.runManager(RvleObj@sim),
+            matrix = rvle.runManagerMatrix(RvleObj@sim)),
+          thread = switch(RvleObj@config$restype,
+            dataframe = rvle.runManagerThread(RvleObj@sim, RvleObj@config$thread),
+            matrix = rvle.runManagerThreadMatrix(RvleObj@sim,
+                    RvleObj@config$thread)),
+          cluster = switch(RvleObj@config$restype,
+            dataframe = rvle.runManagerCluster(RvleObj@sim),
+            matrix = rvle.runManagerClusterMatrix(RvleObj@sim)))
     }
     #restore backup
-    .restorebackup(object)
+    .restorebackup(RvleObj)
     #store intell on last run
-    if (object@config$plan == "single") {
-        object@lastrun = "single"
+    if (RvleObj@config$plan == "single") {
+        RvleObj@lastrun = "single"
     } else {
-        object@lastrun = "multi"
+        RvleObj@lastrun = "multi"
     }
-    return(invisible(object))
+    return(invisible(RvleObj))
 })
 
-
-###############
-# function setDefault
-###############
-setGeneric("setDefault", function(object, ...) standardGeneric("setDefault"))
-setMethod("setDefault", "Rvle", function(object, ...) {
+setGeneric("setDefault", function(RvleObj, ...) standardGeneric("setDefault"))
+setMethod("setDefault", "Rvle", function(RvleObj, ...) {
     arglist = list(...)
     namesArglist = names(arglist)
     for(i in 1:length(arglist)){
         nameArg = namesArglist[[i]]
         valArg = arglist[[i]]
-        .handleConfig(object,nameArg,valArg)
+        .handleConfig(RvleObj,nameArg,valArg)
     }
-    return(invisible(object))
+    return(invisible(RvleObj))
 })

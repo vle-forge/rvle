@@ -25,18 +25,13 @@
 
 
 #include "rvle.h"
-#include <vle/vpz/Vpz.hpp>
-#include <vle/manager/VLE.hpp>
-#include <vle/manager/Run.hpp>
-#include <vle/manager/Manager.hpp>
-#include <vle/oov/OutputMatrix.hpp>
-#include <vle/utils/DateTime.hpp>
-#include <vle/utils/Package.hpp>
-#include <vle/utils/Path.hpp>
-#include <vle/utils/ModuleManager.hpp>
-#include <vle/utils/SharedLibraryManager.hpp>
-#include <cassert>
-#include <fstream>
+
+#include <vle/vpz.hpp>
+#include <vle/manager.hpp>
+#include <vle/value.hpp>
+#include <vle/oov.hpp>
+#include <vle/utils.hpp>
+#include <vle/utils/Module.hpp>
 
 using namespace vle;
 using namespace utils;
@@ -64,9 +59,6 @@ void rvle_init()
 
 rvle_t rvle_pkg_open(const char* pkgname, const char* filename)
 {
-    assert(pkgname);
-    assert(filename);
-
     vpz::Vpz*  file = 0;
 
     try {
@@ -81,8 +73,6 @@ rvle_t rvle_pkg_open(const char* pkgname, const char* filename)
 
 rvle_t rvle_open(const char* filename)
 {
-    assert(filename);
-
     vpz::Vpz*  file = 0;
 
     try {
@@ -95,7 +85,6 @@ rvle_t rvle_open(const char* filename)
 
 rvle_output_t rvle_run(rvle_t handle)
 {
-    assert(handle);
     oov::OutputMatrixViewList* res = NULL;
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
@@ -118,7 +107,6 @@ rvle_output_t rvle_run(rvle_t handle)
 
 rvle_output_t rvle_manager(rvle_t handle, int commonSeed)
 {
-    assert(handle);
     manager::OutputSimulationMatrix* res = NULL;
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
@@ -146,8 +134,6 @@ rvle_output_t rvle_manager(rvle_t handle, int commonSeed)
 
 rvle_output_t rvle_manager_thread(rvle_t handle, int th, int commonSeed)
 {
-    assert(handle);
-
     manager::OutputSimulationMatrix* res = NULL;
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
@@ -175,7 +161,6 @@ rvle_output_t rvle_manager_thread(rvle_t handle, int th, int commonSeed)
 
 rvle_output_t rvle_manager_cluster(rvle_t handle, int commonSeed)
 {
-    assert(handle);
     manager::OutputSimulationMatrix* res = NULL;
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
@@ -204,16 +189,12 @@ rvle_output_t rvle_manager_cluster(rvle_t handle, int commonSeed)
 
 void rvle_delete(rvle_t handle)
 {
-    assert(handle);
-
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     delete file;
 }
 
 char** rvle_condition_list(rvle_t handle)
 {
-    assert(handle);
-
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     std::list < std::string > lst;
 
@@ -236,8 +217,6 @@ char** rvle_condition_list(rvle_t handle)
 
 char** rvle_condition_port_list(rvle_t handle, const char* conditionname)
 {
-    assert(handle);
-
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     std::list < std::string > lst;
     char** result = NULL;
@@ -265,8 +244,6 @@ char** rvle_condition_port_list(rvle_t handle, const char* conditionname)
 
 int rvle_condition_port_list_size(rvle_t handle, const char* conditionname)
 {
-    assert(handle);
-
     int result;
 
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
@@ -283,8 +260,6 @@ int rvle_condition_port_list_size(rvle_t handle, const char* conditionname)
 
 int rvle_condition_size(rvle_t handle)
 {
-    assert(handle);
-
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     return file->project().experiment().conditions().conditionlist().size();
 }
@@ -293,8 +268,6 @@ int rvle_condition_clear(rvle_t handle,
                          const char* conditionname,
                          const char* portname)
 {
-    assert(handle && conditionname && portname);
-
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
         vpz::Condition& cnd(file->project().experiment().
@@ -311,8 +284,6 @@ rvle_output_t rvle_condition_show(rvle_t handle,
                                   const char* conditionname,
                                   const char* portname)
 {
-    assert(handle && conditionname && portname);
-
     try {
         vpz::Vpz* file(reinterpret_cast < vpz::Vpz* >(handle));
         vpz::Condition& cnd(file->project().experiment().
@@ -328,8 +299,6 @@ int rvle_condition_add_real(rvle_t handle,
                             const char* portname,
                             double value)
 {
-    assert(handle && conditionname && portname);
-
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
         vpz::Condition& cnd(file->project().experiment().
@@ -347,8 +316,6 @@ int rvle_condition_add_integer(rvle_t handle,
                                const char* portname,
                                long value)
 {
-    assert(handle && conditionname && portname);
-
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
         vpz::Condition& cnd(file->project().experiment().
@@ -366,8 +333,6 @@ int rvle_condition_add_string(rvle_t handle,
                               const char* portname,
                               const char* value)
 {
-    assert(handle && conditionname && portname);
-
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
         vpz::Condition& cnd(file->project().experiment().
@@ -385,8 +350,6 @@ int rvle_condition_add_boolean(rvle_t handle,
                                const char* portname,
                                int value)
 {
-    assert(handle && conditionname && portname);
-
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
         vpz::Condition& cnd(file->project().experiment().
@@ -405,9 +368,6 @@ int rvle_condition_add_tuple(rvle_t handle,
                              double* values,
                              size_t size)
 {
-    assert(handle && conditionname && portname && values);
-    assert(size > 0);
-
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
         vpz::Condition& cnd(file->project().experiment().
@@ -426,8 +386,6 @@ int rvle_condition_add_tuple(rvle_t handle,
 
 int rvle_experiment_set_duration(rvle_t handle, double value)
 {
-    assert(handle);
-
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     file->project().experiment().setDuration(value);
 
@@ -436,8 +394,6 @@ int rvle_experiment_set_duration(rvle_t handle, double value)
 
 double rvle_experiment_get_duration(rvle_t handle)
 {
-    assert(handle);
-
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
 
@@ -449,8 +405,6 @@ double rvle_experiment_get_duration(rvle_t handle)
 
 int rvle_experiment_set_seed(rvle_t handle, uint32_t value)
 {
-    assert(handle);
-
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     file->project().experiment().setSeed(value);
 
@@ -459,8 +413,6 @@ int rvle_experiment_set_seed(rvle_t handle, uint32_t value)
 
 uint32_t rvle_experiment_get_seed(rvle_t handle)
 {
-    assert(handle);
-
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
 
@@ -472,8 +424,6 @@ uint32_t rvle_experiment_get_seed(rvle_t handle)
 
 int rvle_experiment_set_begin(rvle_t handle, double value)
 {
-    assert(handle);
-
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     file->project().experiment().setBegin(value);
 
@@ -482,8 +432,6 @@ int rvle_experiment_set_begin(rvle_t handle, double value)
 
 double rvle_experiment_get_begin(rvle_t handle)
 {
-    assert(handle);
-
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
 
@@ -496,8 +444,6 @@ double rvle_experiment_get_begin(rvle_t handle)
 int rvle_experiment_linear_combination(rvle_t handle, uint32_t seed,
                                        uint32_t replicas)
 {
-    assert(handle);
-
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
         file->project().experiment().setCombination("linear");
@@ -511,8 +457,6 @@ int rvle_experiment_linear_combination(rvle_t handle, uint32_t seed,
 int rvle_experiment_total_combination(rvle_t handle, uint32_t seed,
                                       uint32_t replicas)
 {
-    assert(handle);
-
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
         file->project().experiment().setCombination("total");
@@ -525,7 +469,6 @@ int rvle_experiment_total_combination(rvle_t handle, uint32_t seed,
 
 char** rvle_view_list(rvle_t handle)
 {
-    assert(handle);
     char** result = NULL;
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
@@ -548,8 +491,6 @@ char** rvle_view_list(rvle_t handle)
 
 int rvle_view_size(rvle_t handle)
 {
-    assert(handle);
-
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     return file->project().experiment().views().viewlist().size();
 
@@ -559,7 +500,6 @@ int rvle_set_output_plugin(rvle_t handle,
                            const char* viewname,
                            const char* pluginname)
 {
-    assert(handle && viewname && pluginname);
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
         vpz::Views& vle_views = file->project().experiment().views();
@@ -575,7 +515,6 @@ int rvle_set_output_plugin(rvle_t handle,
 char* rvle_get_output_plugin(rvle_t handle,
                              const char* viewname)
 {
-    assert(handle && viewname);
     char* result;
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
@@ -593,8 +532,6 @@ char* rvle_get_output_plugin(rvle_t handle,
 
 int rvle_save(rvle_t handle, const char* filename)
 {
-    assert(handle and filename);
-
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
         file->write(filename);

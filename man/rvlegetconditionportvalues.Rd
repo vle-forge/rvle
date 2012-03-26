@@ -1,13 +1,20 @@
 \name{rvle.getConditionPortValues}
+\docType{methods}
 \alias{rvle.getConditionPortValues}
-\title{Show the contains of a specified condition name, port name couple}
-\description{Show the contains of a specified condition}
-\usage{rvle.getConditionPortValues(self, condition, port)}
-\arguments{
-        \item{self}{handle of the rvle}
-        \item{condition}{string representation of the condition}
-        \item{port}{string representation of the condition's port}
+\title{Gets the contain of a port of a condition}
+\description{
+	Gets the contain of a port of a condition
+	of a VPZ managed by a rvle handle.
+	Part of the basic API of rvle.
 }
-\keyword{models}
-\keyword{optimize}
-
+\usage{
+ rvle.getConditionPortValues(rvleHandle, condition,port)
+}
+\arguments{
+ \item{rvleHandle}{a rvle handle.}
+ \item{condition}{name of a condition}
+ \item{port}{name of a port into 'condition'}
+}
+\value{
+ the set of values attached to the port "port".
+}

@@ -1,10 +1,18 @@
 \name{rvle.listConditions}
+\docType{methods}
 \alias{rvle.listConditions}
-\title{Get the condition list name of the Vpz file.}
-\description{Get the condition list name of the Vpz file.}
-\usage{rvle.listConditions(self)}
-\arguments{
-	\item{self}{handle of the rvle}
+\title{Get the list of condition names of the VPZ.}
+\description{
+	Get the list of condition names of the VPZ
+	managed by a rvle handle.
+	Part of the basic API of rvle.
 }
-\keyword{models}
-\keyword{optimize}
+\usage{
+ rvle.listConditions(rvleHandle)
+}
+\arguments{
+ \item{rvleHandle}{a rvle handle.}
+}
+\value{
+ the list of condition names of the VPZ managed by 'rvleHandle'.
+}
