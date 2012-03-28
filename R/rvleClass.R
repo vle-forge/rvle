@@ -334,9 +334,16 @@ setMethod("run", "Rvle", function(RvleObj, ...) {
     }
     #simulate
     if (RvleObj@config$plan == "single") {
-        RvleObj@outlist <- switch(RvleObj@config$restype,
-                dataframe = rvle.run(RvleObj@sim),
-                matrix = rvle.runMatrix(RvleObj@sim))
+        rt = NULL
+        if(RvleObj@config$restype == "dataframe"){
+            rt = rvle.run(RvleObj@sim);
+        } else if(RvleObj@config$restype == "matrix"){
+            rt = rvle.runMatrix(RvleObj@sim)
+        }
+        #update outlist only if no error
+        if(is.list(rt)){
+            RvleObj@outlist = rt
+        }
     } else {
         RvleObj@outmatrix <- switch(RvleObj@config$proc,
           mono = switch(RvleObj@config$restype,
