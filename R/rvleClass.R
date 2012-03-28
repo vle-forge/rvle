@@ -188,7 +188,7 @@ setMethod(".handleConfig", "Rvle", function(RvleObj, setting, value) {
             backupVal = list();
             ovals = names(value)
             for(i in 1:length(ovals)){
-                oval = names[[i]]
+                oval = ovals[[i]]
                 pval = value[[i]]
                 backupVal = as.list(append(backupVal,
                                 rvle.getOutputPlugin(RvleObj@sim, oval)))
