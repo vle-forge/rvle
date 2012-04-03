@@ -18,22 +18,22 @@
 
 \examples{
 
-	# Assumptions : 
-	# - there is a vle package named "mypkg" 
-	# - this package contains a vpz file named "mymodel.vpz"
-	# - the vpz "mymodel.vpz" contains the condition "mycond"
-	# - the condition "mycond" contains a port "myport"
+#	# Assumptions :
+#	# - there is a vle package named "mypkg"
+#	# - this package contains a vpz file named "mymodel.vpz"
+#	# - the vpz "mymodel.vpz" contains the condition "mycond"
+#	# - the condition "mycond" contains a port "myport"
 
- 	# Building the rvle hanlde
-
- 	f = rvle.open(file = "mymodel.vpz", pkg = "mypkg")
- 	
- 	# Replace the value on port by the vector c(1,2,3)
- 	
- 	rvle.clearConditionPort(f,"mycond","myport")
- 	rvle.addTupleCondition(f,"mycond","myport",c(1,2,3))
- 	
-	# Run one simulation 	
- 	
- 	results = rvle.run(f)
+#	# Building the rvle hanlde
+#
+#	f = rvle.open(file = "mymodel.vpz", pkg = "mypkg")
+#
+#	# Replace the value on port by the vector c(1,2,3)
+#
+#	rvle.clearConditionPort(f,"mycond","myport")
+#	rvle.addTupleCondition(f,"mycond","myport",c(1,2,3))
+#
+#	# Run one simulation
+#
+#	results = rvle.run(f)
 }
