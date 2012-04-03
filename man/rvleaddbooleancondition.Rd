@@ -11,29 +11,29 @@
 }
 \arguments{
  \item{rvleHandle}{a rvle handle.}
- \item{condition}{name of the condition handled by rvleHandle.} 
+ \item{condition}{name of the condition handled by rvleHandle.}
  \item{port}{name of the port of the condition.}
  \item{value}{a boolean value to set on the specified port.}
 }
 
 \examples{
 
-	# Assumptions : 
-	# - there is a vle package named "mypkg" 
-	# - this package contains a vpz file named "mymodel.vpz"
-	# - the vpz "mymodel.vpz" contains the condition "mycond"
-	# - the condition "mycond" contains a port "myport"
+#	# Assumptions :
+#	# - there is a vle package named "mypkg"
+#	# - this package contains a vpz file named "mymodel.vpz"
+#	# - the vpz "mymodel.vpz" contains the condition "mycond"
+#	# - the condition "mycond" contains a port "myport"
 
- 	# Building the rvle hanlde
-
- 	f = rvle.open(file = "mymodel.vpz", pkg = "mypkg")
- 	
- 	# Replace the value on port by TRUE
- 	
- 	rvle.clearConditionPort(f,"mycond","myport")
- 	rvle.addBooleanCondition(f,"mycond","myport",TRUE)
-
-	# Run one simulation 	
- 	
- 	results = rvle.run(f)
+#	# Building the rvle hanlde
+#
+#	f = rvle.open(file = "mymodel.vpz", pkg = "mypkg")
+#
+#	# Replace the value on port by TRUE
+#
+#	rvle.clearConditionPort(f,"mycond","myport")
+#	rvle.addBooleanCondition(f,"mycond","myport",TRUE)
+#
+#	# Run one simulation
+#
+#	results = rvle.run(f)
 }
