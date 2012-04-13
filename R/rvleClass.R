@@ -51,7 +51,7 @@ setMethod("initialize", "Rvle", function(.Object,
         replicas = 1,
         seed = rvle.getSeed(.Object@sim))
     .Object@lastrun <- "null"
-    .Object@backup <- list(NULL)
+    .Object@backup <- list()
     return(.Object)
 })
 
@@ -130,10 +130,12 @@ setMethod(".conditionMultiSetTuple", "Rvle",
 })
 
 setGeneric(".handleConfig",
-        function(RvleObj, setting, value)
+        function(RvleObj, setting, value, backup)
             standardGeneric(".handleConfig"))
-setMethod(".handleConfig", "Rvle", function(RvleObj, setting, value) {
+setMethod(".handleConfig", "Rvle",
+        function(RvleObj, setting, value, backup) {
     backupVal = NULL
+
     splitNameArg = strsplit(setting,"\\.")[[1]];
 
     if(length(splitNameArg) == 2){
@@ -163,61 +165,74 @@ setMethod(".handleConfig", "Rvle", function(RvleObj, setting, value) {
         backupVal = rvle.getDuration(RvleObj@sim)
         rvle.setDuration(RvleObj@sim, value)
     } else if(setting == "begin"){
-        backupVal = rvle.setBegin(RvleObj@sim)
+        backupVal = rvle.getBegin(RvleObj@sim)
         rvle.setBegin(RvleObj@sim, value)
     } else if(setting == "plan"){
-        backupVal = RvleObj@config["plan"]
+        backupVal = RvleObj@config[["plan"]]
         RvleObj@config["plan"] = value
     } else if(setting == "restype"){
-        backupVal = RvleObj@config["restype"]
+        backupVal = RvleObj@config[["restype"]]
         RvleObj@config["restype"] = value
     } else if(setting == "proc"){
-        backupVal = RvleObj@config["proc"]
+        backupVal = RvleObj@config[["proc"]]
         RvleObj@config["proc"] = value
     } else if(setting == "thread"){
-        backupVal = RvleObj@config["thread"]
+        backupVal = RvleObj@config[["thread"]]
         RvleObj@config["thread"] = value
     } else if(setting == "replicas"){
-        backupVal = RvleObj@config["replicas"]
+        backupVal = RvleObj@config[["replicas"]]
         RvleObj@config["replicas"] = value
     } else if(setting == "seed"){
-        backupVal = RvleObj@config["seed"]
+        backupVal = RvleObj@config[["seed"]]
         RvleObj@config["seed"] = value
     } else if(setting == "outputplugin"){
-        if(is.list(value)){
-            backupVal = list();
+        backupVal = getDefault(RvleObj,"outputplugin")
+        if(is.vector(value)){
             ovals = names(value)
             for(i in 1:length(ovals)){
                 oval = ovals[[i]]
                 pval = value[[i]]
-                backupVal = as.list(append(backupVal,
-                                rvle.getOutputPlugin(RvleObj@sim, oval)))
                 rvle.setOutputPlugin(RvleObj@sim, oval, pval)
             }
         } else {
-            cat(sprintf("Error passing value argument for
-                outputplugin: '%s'",value))
-            .restorebackup(RvleObj)
+            cat(sprintf("\n Error passing value argument for
+                outputplugin: '%s' \n",value))
+            if(backup){
+                .restorebackup(RvleObj)
+            }
             return(NULL);
         }
     } else {
         cat(sprintf("Error passing argument: '%s'",setting))
-        .restorebackup(RvleObj)
+        if(backup){
+            .restorebackup(RvleObj)
+        }
         return(NULL);
     }
     #update backup
-    RvleObj@backup = as.list(append(RvleObj@backup,
-            list(setting=setting, value=backupVal)))
+    if(backup){
+        if(length(RvleObj@backup) == 0){
+            RvleObj@backup = list(list(setting=setting, value=backupVal))
+        } else {
+            RvleObj@backup = append(RvleObj@backup,
+                list(list(setting=setting, value=backupVal)))
+        }
+        for(i in 1:length(RvleObj@backup)){
+            RvleObj@backup[[i]]$value
+        }
+    }
+    return(invisible(RvleObj))
 })
 
 setGeneric(".restorebackup", function(RvleObj) standardGeneric(".restorebackup"))
 setMethod(".restorebackup", "Rvle", function(RvleObj) {
-  namesList = names(RvleObj@config)
-  for(i in 1:length(namesList)){
-    setting = namesList[[i]]
-    value = RvleObj@config[[i]]
-    .handleConfig(RvleObj,setting,value)
+  if(length(RvleObj@backup)>=1){
+    lapply(1:length(RvleObj@backup),function(x){
+      .handleConfig(RvleObj,RvleObj@backup[[x]]$setting,
+                    RvleObj@backup[[1]]$value, FALSE)
+    })
   }
+  RvleObj@backup = list()
 })
 
 setGeneric("config", function(RvleObj) standardGeneric("config"))
@@ -310,11 +325,11 @@ setGeneric("run", function(RvleObj, ...) standardGeneric("run"))
 setMethod("run", "Rvle", function(RvleObj, ...) {
     arglist = list(...)
     namesArglist = names(arglist)
-    if(length(arglist)){
+    if(length(arglist) > 0){
         for(i in 1:length(arglist)){
             nameArg = namesArglist[[i]]
             valArg = arglist[[i]]
-            .handleConfig(RvleObj,nameArg,valArg)
+            RvleObj = .handleConfig(RvleObj,nameArg,valArg,TRUE)
         }
     }
     #prepare simulation plan
@@ -357,14 +372,14 @@ setMethod("run", "Rvle", function(RvleObj, ...) {
             dataframe = rvle.runManagerCluster(RvleObj@sim),
             matrix = rvle.runManagerClusterMatrix(RvleObj@sim)))
     }
-    #restore backup
-    .restorebackup(RvleObj)
     #store intell on last run
     if (RvleObj@config$plan == "single") {
         RvleObj@lastrun = "single"
     } else {
         RvleObj@lastrun = "multi"
     }
+    #restore backup
+    .restorebackup(RvleObj)
     return(invisible(RvleObj))
 })
 
@@ -375,7 +390,49 @@ setMethod("setDefault", "Rvle", function(RvleObj, ...) {
     for(i in 1:length(arglist)){
         nameArg = namesArglist[[i]]
         valArg = arglist[[i]]
-        .handleConfig(RvleObj,nameArg,valArg)
+        RvleObj = .handleConfig(RvleObj,nameArg,valArg, FALSE)
     }
     return(invisible(RvleObj))
+})
+
+setGeneric("getDefault", function(RvleObj, setting) standardGeneric("getDefault"))
+setMethod("getDefault", "Rvle", function(RvleObj, setting) {
+    defValue = NULL;
+
+    splitNameArg = strsplit(setting,"\\.")[[1]];
+
+    if(length(splitNameArg) == 2){
+        #expect that settingArg = condName.condPort
+        condName = splitNameArg[1]
+        condPort = splitNameArg[2]
+
+        defValue = rvle.getConditionPortValues(
+                        RvleObj@sim, condName, condPort)
+
+    } else if(setting == "duration"){
+        defValue = rvle.getDuration(RvleObj@sim)
+    } else if(setting == "begin"){
+        defValue = rvle.getBegin(RvleObj@sim)
+    } else if(setting == "plan"){
+        defValue = RvleObj@config[["plan"]]
+    } else if(setting == "restype"){
+        defValue = RvleObj@config[["restype"]]
+    } else if(setting == "proc"){
+        defValue = RvleObj@config[["proc"]]
+    } else if(setting == "thread"){
+        defValue = RvleObj@config[["thread"]]
+    } else if(setting == "replicas"){
+        defValue = RvleObj@config[["replicas"]]
+    } else if(setting == "seed"){
+        defValue = RvleObj@config[["seed"]]
+    } else if(setting == "outputplugin"){
+        defValue = unlist(lapply(rvle.listViews(RvleObj@sim), function(x){
+            mylist = list()
+            mylist[[x]] <- rvle.getOutputPlugin(RvleObj@sim,x)
+            return(mylist)
+        }))
+    } else {
+        cat(sprintf("Error passing argument: '%s'",setting))
+    }
+    return(defValue);
 })
