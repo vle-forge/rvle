@@ -10,7 +10,7 @@
  	initial condition settings, observation settings or experiment settings.
 }
 \usage{
-	setDefault(RvleObj, ...)
+	RvleObj = setDefault(RvleObj, ...)
 }
 
 \arguments{
