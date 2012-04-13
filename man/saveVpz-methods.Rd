@@ -2,7 +2,7 @@
 \docType{methods}
 \alias{saveVpz}
 \alias{saveVpz-methods}
-\alias{saveVpz,Rvle,char-method}
+\alias{saveVpz,Rvle,character-method}
 
 \title{Save the VPZ into a file.}
 

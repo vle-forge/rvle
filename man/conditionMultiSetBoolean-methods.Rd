@@ -2,7 +2,7 @@
 \docType{methods}
 \alias{.conditionMultiSetBoolean}
 \alias{.conditionMultiSetBoolean-methods}
-\alias{.conditionMultiSetBoolean,Rvle,char,char,ANY-method}
+\alias{.conditionMultiSetBoolean,Rvle-method}
 
 \title{Sets multiple boolean values}
 

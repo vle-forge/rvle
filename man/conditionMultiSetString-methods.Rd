@@ -2,7 +2,7 @@
 \docType{methods}
 \alias{.conditionMultiSetString}
 \alias{.conditionMultiSetString-methods}
-\alias{.conditionMultiSetString,Rvle,char,char,ANY-method}
+\alias{.conditionMultiSetString,Rvle-method}
 \title{Sets multiple string values}
 
 \description{

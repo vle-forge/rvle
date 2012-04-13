@@ -2,7 +2,7 @@
 \docType{methods}
 \alias{.conditionMultiSetInteger}
 \alias{.conditionMultiSetInteger-methods}
-\alias{.conditionMultiSetInteger,Rvle,char,char,ANY-method}
+\alias{.conditionMultiSetInteger,Rvle-method}
 \title{Sets multiple integer values}
 
 \description{

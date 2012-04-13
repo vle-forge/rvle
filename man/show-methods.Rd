@@ -7,13 +7,9 @@
 \title{Shows the current settings of a VPZ}
 
 \description{
-Shows the current settings of a VPZ
-}
+Shows the current settings of a VPZ.
 
-\usage{
- show(RvleObj)
-}
+\code{show(RvleObj)}
 
-\arguments{
- \item{RvleObj}{a Rvle object.}
+where \code{RvleObj} is Rvle object
 }
