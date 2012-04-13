@@ -1,7 +1,7 @@
 \name{getDefault}
 \docType{methods}
 \alias{getDefault}
-\alias{getDefault,Rvle,ANY-method}
+\alias{getDefault,Rvle,character-method}
 
 \title{Get one default setting of a VPZ}
 
@@ -16,7 +16,7 @@
 
 \arguments{
  \item{RvleObj}{a Rvle object}
- \item{setting}{list of default settings see 'Note'}
+ \item{setting}{a name of a setting}
 }
 
 \value{

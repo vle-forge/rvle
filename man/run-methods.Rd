@@ -2,7 +2,7 @@
 \docType{methods}
 \alias{run}
 \alias{run-methods}
-\alias{run,Rvle,ANY-method}
+\alias{run,Rvle-method}
 \title{Run simulations of a vpz.}
 \description{
 	Runs simulations of a vpz. It has the same signature 

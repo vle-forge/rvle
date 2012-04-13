@@ -2,7 +2,7 @@
 \docType{methods}
 \alias{.conditionMultiSetTuple}
 \alias{.conditionMultiSetTuple-methods}
-\alias{.conditionMultiSetTuple,Rvle,char,char,ANY-method}
+\alias{.conditionMultiSetTuple,Rvle-method}
 \title{Sets multiple tuple values}
 
 \description{

@@ -2,7 +2,7 @@
 \docType{methods}
 \alias{.conditionMultiSetReal}
 \alias{.conditionMultiSetReal-methods}
-\alias{.conditionMultiSetReal,Rvle,char,char,ANY-method}
+\alias{.conditionMultiSetReal,Rvle-method}
 \title{Sets multiple real values}
 
 \description{

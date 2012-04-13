@@ -32,8 +32,8 @@ setClass("Rvle", representation(sim = "rvle",
                                 outmatrix = "matrix",
                                 backup = "list"))
 
-setMethod("initialize", "Rvle", function(.Object,
-  file = character(length = 0), pkg = character(length = 0),
+setMethod("initialize", "Rvle",
+function(.Object, file = character(length = 0), pkg = character(length = 0),
   config = list(NULL), lastrun ="null", outlist = list(),
   outmatrix = matrix(c(0)), backup = pailist(NULL)){
     .Object@file <- file
@@ -59,7 +59,7 @@ setGeneric(".conditionMultiSetBoolean",
         function(RvleObj, conditionname, portname, value)
             standardGeneric(".conditionMultiSetBoolean"))
 setMethod(".conditionMultiSetBoolean", "Rvle",
-        function(RvleObj, conditionname, portname, value) {
+function(RvleObj, conditionname, portname, value) {
   rvle.clearConditionPort(RvleObj@sim, conditionname, portname)
   lapply(value, function(item, RvleObj, conditionname, portname) {
     rvle.addBooleanCondition(RvleObj@sim, conditionname, portname, item)
@@ -73,7 +73,7 @@ setGeneric(".conditionMultiSetReal",
         function(RvleObj, conditionname, portname, value)
             standardGeneric(".conditionMultiSetReal"))
 setMethod(".conditionMultiSetReal", "Rvle",
-        function(RvleObj, conditionname, portname, value) {
+function(RvleObj, conditionname, portname, value) {
   rvle.clearConditionPort(RvleObj@sim, conditionname, portname)
   lapply(value, function(item, RvleObj, conditionname, portname) {
     rvle.addRealCondition(RvleObj@sim, conditionname, portname, item)
@@ -87,7 +87,7 @@ setGeneric(".conditionMultiSetInteger",
         function(RvleObj, conditionname, portname, value)
             standardGeneric(".conditionMultiSetInteger"))
 setMethod(".conditionMultiSetInteger", "Rvle",
-        function(RvleObj, conditionname, portname, value) {
+function(RvleObj, conditionname, portname, value) {
   rvle.clearConditionPort(RvleObj@sim, conditionname, portname)
   lapply(value, function(item, RvleObj, conditionname, portname) {
     rvle.addIntegerCondition(RvleObj@sim, conditionname, portname, item)
@@ -101,7 +101,7 @@ setGeneric(".conditionMultiSetString",
         function(RvleObj, conditionname, portname, value)
             standardGeneric(".conditionMultiSetString"))
 setMethod(".conditionMultiSetString", "Rvle",
-        function(RvleObj, conditionname, portname, value) {
+function(RvleObj, conditionname, portname, value) {
   rvle.clearConditionPort(RvleObj@sim, conditionname, portname)
   lapply(value, function(item, RvleObj, conditionname, portname) {
     rvle.addStringCondition(RvleObj@sim, conditionname, portname, item)
@@ -115,7 +115,7 @@ setGeneric(".conditionMultiSetTuple",
         function(RvleObj, conditionname, portname, value)
             standardGeneric(".conditionMultiSetTuple"))
 setMethod(".conditionMultiSetTuple", "Rvle",
-        function(RvleObj, conditionname, portname, value) {
+function(RvleObj, conditionname, portname, value) {
   rvle.clearConditionPort(RvleObj@sim, conditionname, portname)
   if (typeof(value[1]) == "list") {
     lapply(value,function(item, RvleObj, conditionname, portname) {
@@ -133,7 +133,7 @@ setGeneric(".handleConfig",
         function(RvleObj, setting, value, backup)
             standardGeneric(".handleConfig"))
 setMethod(".handleConfig", "Rvle",
-        function(RvleObj, setting, value, backup) {
+function(RvleObj, setting, value, backup) {
     backupVal = NULL
 
     splitNameArg = strsplit(setting,"\\.")[[1]];
@@ -225,7 +225,8 @@ setMethod(".handleConfig", "Rvle",
 })
 
 setGeneric(".restorebackup", function(RvleObj) standardGeneric(".restorebackup"))
-setMethod(".restorebackup", "Rvle", function(RvleObj) {
+setMethod(".restorebackup", "Rvle",
+function(RvleObj) {
   if(length(RvleObj@backup)>=1){
     lapply(1:length(RvleObj@backup),function(x){
       .handleConfig(RvleObj,RvleObj@backup[[x]]$setting,
@@ -236,18 +237,21 @@ setMethod(".restorebackup", "Rvle", function(RvleObj) {
 })
 
 setGeneric("config", function(RvleObj) standardGeneric("config"))
-setMethod("config", "Rvle", function(RvleObj) {
+setMethod("config", "Rvle",
+function(RvleObj) {
     return(RvleObj@config)
 })
 
 setGeneric("config<-", function(RvleObj, value) standardGeneric("config<-"))
-setMethod("config<-", "Rvle", function(RvleObj, value) {
+setMethod("config<-", "Rvle",
+function(RvleObj, value) {
     RvleObj@config <- value
     return(invisible(RvleObj))
 })
 
 setGeneric("results", function(RvleObj) standardGeneric("results"))
-setMethod("results", "Rvle", function(RvleObj) {
+setMethod("results", signature(RvleObj="Rvle"),
+function(RvleObj) {
     if(length(RvleObj@lastrun) == "null"){
         cat("Error no registered results: maybe you
             forgot to update Rvle RvleObj on simulation ")
@@ -261,7 +265,8 @@ setMethod("results", "Rvle", function(RvleObj) {
 })
 
 setGeneric("saveVpz", function(RvleObj, file) standardGeneric("saveVpz"))
-setMethod("saveVpz", "Rvle", function(RvleObj, file) {
+setMethod("saveVpz", signature(RvleObj="Rvle", file="character"),
+function(RvleObj, file) {
     rvle.save(RvleObj@sim, file)
     return(invisible(RvleObj))
 })
@@ -275,21 +280,22 @@ if (!isGeneric("show")) {
     }
     setGeneric("show", fun)
 }
-setMethod("show", "Rvle", function(RvleObj) {
+setMethod("show", "Rvle",
+function(object) {
     cat("VLE Model informations :\n")
     cat("========================\n")
     cat("\n")
-    cat("Vpz location : file =", RvleObj@file, ", pkg =", RvleObj@pkg,"\n")
+    cat("Vpz location : file =", object@file, ", pkg =", object@pkg,"\n")
     cat("\n")
     cat("Experiemental condition settings and default value :\n")
-    conditionlist <- rvle.listConditions(RvleObj@sim)
+    conditionlist <- rvle.listConditions(object@sim)
     conditionportlist <- lapply(conditionlist, function(condition) {
-        list(condition, rvle.listConditionPorts(RvleObj@sim,condition))
+        list(condition, rvle.listConditionPorts(object@sim,condition))
     })
     lapply(conditionportlist, function(condition) {
         conditionname <- condition[[1]]
         lapply(condition[[2]], function(portname) {
-            thevalue = rvle.getConditionPortValues(RvleObj@sim,
+            thevalue = rvle.getConditionPortValues(object@sim,
                                                    conditionname,
                                                    portname)
             if (length(thevalue) == 0) {
@@ -305,24 +311,25 @@ setMethod("show", "Rvle", function(RvleObj) {
     })
     cat("\n")
     cat("Output plugins settings:\n")
-    lapply(rvle.listViews(RvleObj@sim),function(v){
-        cat(sprintf("* %s = %s\n", v, rvle.getOutputPlugin(RvleObj@sim,v)))
+    lapply(rvle.listViews(object@sim),function(v){
+        cat(sprintf("* %s = %s\n", v, rvle.getOutputPlugin(object@sim,v)))
     })
     cat("\n")
     cat("Experiment settings :\n");
-    cat("* plan =",RvleObj@config$plan,"\n")
-    cat("* proc =",RvleObj@config$proc ,"\n")
-    cat("* restype =",RvleObj@config$restype ,"\n")
-    cat("* thread =",RvleObj@config$thread ,"\n")
-    cat("* replicas =",RvleObj@config$replicas ,"\n")
-    cat("* begin : ", rvle.getBegin(RvleObj@sim), "\n")
-    cat("* duration : ", rvle.getDuration(RvleObj@sim), "\n")
-    cat("* seed : ", RvleObj@config$seed, "\n")
+    cat("* plan =",object@config$plan,"\n")
+    cat("* proc =",object@config$proc ,"\n")
+    cat("* restype =",object@config$restype ,"\n")
+    cat("* thread =",object@config$thread ,"\n")
+    cat("* replicas =",object@config$replicas ,"\n")
+    cat("* begin : ", rvle.getBegin(object@sim), "\n")
+    cat("* duration : ", rvle.getDuration(object@sim), "\n")
+    cat("* seed : ", object@config$seed, "\n")
     return(invisible())
 })
 
 setGeneric("run", function(RvleObj, ...) standardGeneric("run"))
-setMethod("run", "Rvle", function(RvleObj, ...) {
+setMethod("run", signature(RvleObj = "Rvle"),
+function(RvleObj, ...) {
     arglist = list(...)
     namesArglist = names(arglist)
     if(length(arglist) > 0){
@@ -384,7 +391,8 @@ setMethod("run", "Rvle", function(RvleObj, ...) {
 })
 
 setGeneric("setDefault", function(RvleObj, ...) standardGeneric("setDefault"))
-setMethod("setDefault", "Rvle", function(RvleObj, ...) {
+setMethod("setDefault", signature(RvleObj = "Rvle"),
+function(RvleObj, ...) {
     arglist = list(...)
     namesArglist = names(arglist)
     for(i in 1:length(arglist)){
@@ -396,7 +404,8 @@ setMethod("setDefault", "Rvle", function(RvleObj, ...) {
 })
 
 setGeneric("getDefault", function(RvleObj, setting) standardGeneric("getDefault"))
-setMethod("getDefault", "Rvle", function(RvleObj, setting) {
+setMethod("getDefault", signature(RvleObj = "Rvle", setting = "character"),
+function(RvleObj, setting) {
     defValue = NULL;
 
     splitNameArg = strsplit(setting,"\\.")[[1]];

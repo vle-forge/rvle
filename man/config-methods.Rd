@@ -5,7 +5,9 @@
 \alias{config,Rvle-method}
 \alias{config<-}
 \alias{config<--methods}
-\alias{config<-,Rvle,ANY-method}
+\alias{config<-,Rvle-method}
+\alias{[<-}
+
 \title{Configuration of experiment}
 
 \description{

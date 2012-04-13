@@ -2,7 +2,7 @@
 \docType{methods}
 \alias{.handleConfig}
 \alias{.handleConfig-methods}
-\alias{.handleConfig,Rvle,char,ANY,bool-method}
+\alias{.handleConfig,Rvle-method}
 \title{Handles one setting}
 
 \description{

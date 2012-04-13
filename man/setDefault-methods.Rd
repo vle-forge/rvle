@@ -1,7 +1,7 @@
 \name{setDefault}
 \docType{methods}
 \alias{setDefault}
-\alias{setDefault,Rvle,ANY-method}
+\alias{setDefault,Rvle-method}
 
 \title{Set default settings of a VPZ}
 
@@ -10,7 +10,7 @@
  	initial condition settings, observation settings or experiment settings.
 }
 \usage{
-	RvleObj = setDefault(RvleObj, ...)
+	setDefault(RvleObj, ...)
 }
 
 \arguments{
@@ -51,4 +51,7 @@
 
     9) outputplugin : with v is a list where names refer to VPZ views and values 
            are output plugin names, such as 'storage' or 'text'.
+}
+\value{
+The Rvle object \code{RvleObj} modified with the new setting
 }

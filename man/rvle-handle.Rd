@@ -1,6 +1,8 @@
 \name{rvle handle}
-\alias{rvle-handle}
 \docType{package}
+\alias{rvle-handle}
+\alias{rvle-class}
+
 \title{
  Basic API of the rvle package
 }
