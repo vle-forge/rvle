@@ -33,66 +33,76 @@ extern "C" {
 #include <R.h>
 #include <Rinternals.h>
 
-/**
- * @brief Build an output of simulations result int a Vector (each cell is a
- * list of view) of Matrix of real (the result of the simulation). Values of
- * type boolean, integer or double from the vle are transformed into double
- * value, other value return a NA value.
- *
- * @param out The output of simulations.
- *
- * @return A SEXP representationof Lst of Matrix.
- */
-SEXP rvle_convert_matrix(rvle_output_t out);
 
 /**
- * @brief Build an output of a vle::value::VectorValue. Value of type boolean,
- * integer, double from the vle are transformed into double value, other value
- * returns a NA value.
+ * @brief Converts a vle value into a SEXP object
  *
- * @param out The vle::value::VectorValue.
+ * @param val, the vle value to convert
  *
- * @return a SEXP representation of the vle::value::VectorValue.
+ * @param with_class_names, if true:
+ * attribute class of returned SEXP is set in order to identify the type of
+ * value and avoid ambiguous conversions. Class names are :  VleBOOLEAN,
+ * VleINTEGER, VleDOUBLE, VleSTRING, VleSET, VleMAP, VleTUPLE, VleTABLE,
+ * VleXMLTYPE, VleNIL, VleMATRIX and VleMULTIPLE_VALUES. Multiple values
+ * represent a set of different values for designing experiment plans
+ *
+ * @param multiple_values, if true and val is a SET:
+ * val is considered as multiple values. Essentially developped for multiple
+ * values on condition ports used for experiment plans
+ *
+ * @param unlist_multiple_values,
+ * if true and multiple_values=true and val is a SET of size 1:
+ * the conversion returns the first and only value of the SET rather than a
+ * list of one element (required for backward compatibility)
+ *
+ * @param matrix_type, (depends on matrix_type_depth)
+ * - if matrix_type = 0 and val is a MATRIX:
+ * the returned SEXP is a list with attribute 'dim'
+ * - if matrix_type = 1 and val is a MATRIX:
+ * the returned SEXP is a dataframe, expecting that first row contains names.
+ * A dataframe contains only atomic data ('character', 'logical, 'double')
+ * - if matrix_type = 2 and val is a MATRIX:
+ * the returned SEXP is a matrix of doubles, expecting that all data
+ * are doubles. A dataframe contains only 'double'
+ *
+ * @param matrix_type_depth,
+ * defines the depth (in terms of number of recursivity) at which the parameter
+ * matrix_type is taken into account. Before the detph is reached,
+ * the matrix_type is 0. If matrix_type_depth <= 0,
+ * then it concerns the current depth.
+ *
+ * Notes:
+ * - 'multiple_values', 'unlist_multiple_values' are not used recusrively.
+ * Default values (ie. 0) are used for conversion of vle values contained
+ * into 'val'.
+ * - 'without_class_names' and 'matrix_type' are used recursively.
+ * - 'matrix_type_depth' is decreased by one at each recursive call
+ *
+ * @return the SEXP value
  */
-SEXP rvle_convert_vectorvalue(rvle_output_t out);
+SEXP rvle_toRvalue(rvle_value_t val,
+        int without_class_names,
+        int multiple_values,
+        int unlist_multiple_values,
+        int matrix_type,
+        int matrix_type_depth);
+
 
 /**
- * @brief Build an output of simulations result into a Matrix (replicas x
- * combination) of Vector (each cell is a list of view) of Matrix of real (the
- * result of the simulation). Values of type boolean, integer or double from the
- * vle are transformed into double value, other value return a NA value.
+ * @brief Converts a SEXP object into vle value into. Either:
+ * -  if the 'class' attribute of the SEXP object exists and corresponds
+ * to a specific rvle class (VleBOOLEAN, VleINTEGER, VleDOUBLE, VleSTRING,
+ * VleSET, VleMAP, VleTUPLE, VleTABLE, VleXMLTYPE, VleNIL, VleMATRIX or
+ * VleMULTIPLE_VALUES) then perform the corresponding conversion whitout risk
+ * of error. This is an explicit conversion
+ * - otherwise, perform an implicit conversion based on the 'class' attribute
+ * of the SEXP object if it exists, on its type
  *
- * @param out The output of simulations.
+ * @param rval, the SEXP object
  *
- * @return A SEXP representation of: Matrix of List of Matrix.
-*/
-SEXP rvle_convert_simulation_matrix(rvle_output_t out);
-
-/**
- * @brief Build an output of simulations result into a Vector (each cell is a
- * list of view) of Data frame. Values of type boolean, integer, double, string
- * conserve their type but by column. If in a column, different values are
- * returned, the value are set to NA. Only the first value of the column is used
- * to get the type of the column.
- *
- * @param out The output of simulations.
- *
- * @return A SEXP representation of: List of Data frames.
+ * @return the vle value pointer
  */
-SEXP rvle_convert_dataframe(rvle_output_t out);
-
-/**
- * @brief Build an output of simulations result into a Matrix (replicas x
- * conbination) of Vector (each cell is a list of view) of Data frame. Values of
- * type boolean, integer, double, string conserve their type but by column. If
- * in a column, different values are returned, the value are set to NA. Only the
- * first value of the column is used to get the type of the column.
- *
- * @param out The output of simulations.
- *
- * @return A SEXP representation of: Matrix of List of Data frames.
- */
-SEXP rvle_convert_simulation_dataframe(rvle_output_t out);
+rvle_value_t  rvle_toVleValue(SEXP rval);
 
 #ifdef __cplusplus
 }

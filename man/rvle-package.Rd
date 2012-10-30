@@ -6,7 +6,8 @@
 R package for VLE framework
 }
 \description{
-This package couples the VLE framework to R sofwtware.
+This package couples the VLE modelisation and simulation 
+software framework to R framework.
 It provides methods for simulating VLE models from R.
 
 Functionnalities allow the user to modify inputs of a VLE model, to 
@@ -25,8 +26,8 @@ pointer on a VPZ c++ structure). Methods of the basic API are most often
 prefixed by "rvle.". Type 'help("rvle-handle")' for more information.
 
 2) a user friendly set of functionnalities provided into an S4 class 
-implementation "Rvle". It relies on the basic API. This is prefered to use this
-family rather than the basic API. Type 'help(Rvle)' for more information
+implementation "Rvle". It relies on the basic API and provides the same and even more 
+functionnalities than the basic API. Type 'help(Rvle)' for more information
 }
 \author{
 Gauthier Quesnel <quesnel@users.sourceforge.net>, 

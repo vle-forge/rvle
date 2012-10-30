@@ -16,6 +16,11 @@
  \item{value}{a tuple value to set on the specified port.}
 }
 
+\note{
+This function is DEPRECATED.
+Consider using the function 'setDefault'.
+}
+
 \examples{
 
 #	# Assumptions :

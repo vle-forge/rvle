@@ -55,6 +55,7 @@ function(.Object, file = character(length = 0), pkg = character(length = 0),
     return(.Object)
 })
 
+##DEPRECATED
 setGeneric(".conditionMultiSetBoolean",
         function(RvleObj, conditionname, portname, value)
             standardGeneric(".conditionMultiSetBoolean"))
@@ -69,6 +70,7 @@ function(RvleObj, conditionname, portname, value) {
   portname)
 })
 
+##DEPRECATED
 setGeneric(".conditionMultiSetReal",
         function(RvleObj, conditionname, portname, value)
             standardGeneric(".conditionMultiSetReal"))
@@ -83,6 +85,7 @@ function(RvleObj, conditionname, portname, value) {
   portname)
 })
 
+##DEPRECATED
 setGeneric(".conditionMultiSetInteger",
         function(RvleObj, conditionname, portname, value)
             standardGeneric(".conditionMultiSetInteger"))
@@ -97,6 +100,7 @@ function(RvleObj, conditionname, portname, value) {
   portname)
 })
 
+##DEPRECATED
 setGeneric(".conditionMultiSetString",
         function(RvleObj, conditionname, portname, value)
             standardGeneric(".conditionMultiSetString"))
@@ -111,6 +115,7 @@ function(RvleObj, conditionname, portname, value) {
   portname)
 })
 
+##DEPRECATED
 setGeneric(".conditionMultiSetTuple",
         function(RvleObj, conditionname, portname, value)
             standardGeneric(".conditionMultiSetTuple"))
@@ -140,28 +145,63 @@ function(RvleObj, setting, value, backup) {
 
     if(length(splitNameArg) == 2){
         #expect that settingArg = condName.condPort
+        #value is considered as a multiple value
         condName = splitNameArg[1]
         condPort = splitNameArg[2]
-
+        if(length(value) > 1){
+            class(value) = "VleMULTIPLE_VALUES"
+        }
         backupVal = rvle.getConditionPortValues(
                 RvleObj@sim, condName, condPort)
+        rvle.setValueCondition(RvleObj@sim, condName, condPort, value)
 
-        if(typeof(value) == "double"){
-            .conditionMultiSetReal(RvleObj, condName, condPort, value)
-        } else if(typeof(value) == "character"){
-            .conditionMultiSetString(RvleObj, condName, condPort, value)
-        } else if(typeof(value) == "logical"){
-            .conditionMultiSetBoolean(RvleObj, condName, condPort, value)
-        } else if(typeof(value) == "integer"){
-            .conditionMultiSetInteger(RvleObj, condName, condPort, value)
-        } else if(typeof(value) == "list"){
-            .conditionMultiSetTuple(RvleObj, condName, condPort, value)
-        } else {
-            cat(sprintf("Error unrecognised type '%s' of RvleObj '%s'\n",
-                            typeof(value),settingArg))
+    } else if (length(splitNameArg) == 3) {
+        #expect that settingArg = condName.condPort.as_single
+        #value is considered as a simple value
+        condName = splitNameArg[1]
+        condPort = splitNameArg[2]
+        assingle = splitNameArg[3]
+        if(assingle != "as_single"){
+            cat(sprintf("\n Error setting not recognized: '%s' \n",setting))
+            if(backup){
+                RvleObj = .restorebackup(RvleObj)
+            }
             return(invisible(RvleObj))
         }
-    } else if(setting == "duration"){
+        backupVal = rvle.getConditionPortValues(
+                RvleObj@sim, condName, condPort)
+        rvle.setValueCondition(RvleObj@sim, condName, condPort, value)
+    } else if (setting == "inputs"){
+        if(class(value)!="data.frame"){
+            cat(sprintf("\n Error value for setting 'inputs' if of class
+                '%s' and should be a 'data.frame' \n",class(value)))
+            if(backup){
+                RvleObj = .restorebackup(RvleObj)
+            }
+            return(invisible(RvleObj))
+        }
+        for(i in 1:length(names(value))){
+            namei = names(value)[i]
+            splitNameArg = strsplit(namei,"\\.")[[1]];
+            if(length(splitNameArg) != 2){
+                cat(sprintf("\n Error, for 'inputs' setting, column name '%s' 
+                    must have the form 'condName.portName' \n",namei))
+                if(backup){
+                    RvleObj = .restorebackup(RvleObj)
+                }
+                return(invisible(RvleObj))
+            } 
+            #expect that namei = condName.condPort
+            #value is considered as a multiple value
+            condName = splitNameArg[1]
+            condPort = splitNameArg[2]
+            frameColumn = value[[i]]
+            backupVal = rvle.getConditionPortValues(
+                    RvleObj@sim, condName, condPort)
+            class(frameColumn) = "VleMULTIPLE_VALUES"
+            rvle.setValueCondition(RvleObj@sim, condName, condPort, frameColumn)
+        }
+    } else if (setting == "duration") {
         backupVal = rvle.getDuration(RvleObj@sim)
         rvle.setDuration(RvleObj@sim, value)
     } else if(setting == "begin"){
@@ -169,22 +209,22 @@ function(RvleObj, setting, value, backup) {
         rvle.setBegin(RvleObj@sim, value)
     } else if(setting == "plan"){
         backupVal = RvleObj@config[["plan"]]
-        RvleObj@config["plan"] = value
+        RvleObj@config[["plan"]] = value
     } else if(setting == "restype"){
         backupVal = RvleObj@config[["restype"]]
-        RvleObj@config["restype"] = value
+        RvleObj@config[["restype"]] = value
     } else if(setting == "proc"){
         backupVal = RvleObj@config[["proc"]]
-        RvleObj@config["proc"] = value
+        RvleObj@config[["proc"]] = value
     } else if(setting == "thread"){
         backupVal = RvleObj@config[["thread"]]
-        RvleObj@config["thread"] = value
+        RvleObj@config[["thread"]] = value
     } else if(setting == "replicas"){
         backupVal = RvleObj@config[["replicas"]]
-        RvleObj@config["replicas"] = value
+        RvleObj@config[["replicas"]] = value
     } else if(setting == "seed"){
         backupVal = RvleObj@config[["seed"]]
-        RvleObj@config["seed"] = value
+        RvleObj@config[["seed"]] = value
     } else if(setting == "outputplugin"){
         backupVal = getDefault(RvleObj,"outputplugin")
         if(is.vector(value)){
@@ -198,16 +238,16 @@ function(RvleObj, setting, value, backup) {
             cat(sprintf("\n Error passing value argument for
                 outputplugin: '%s' \n",value))
             if(backup){
-                .restorebackup(RvleObj)
+                RvleObj = .restorebackup(RvleObj)
             }
-            return(NULL);
+            return(invisible(RvleObj))
         }
     } else {
         cat(sprintf("Error passing argument: '%s'",setting))
         if(backup){
-            .restorebackup(RvleObj)
+            RvleObj = .restorebackup(RvleObj)
         }
-        return(NULL);
+        return(invisible(RvleObj))
     }
     #update backup
     if(backup){
@@ -217,9 +257,6 @@ function(RvleObj, setting, value, backup) {
             RvleObj@backup = append(RvleObj@backup,
                 list(list(setting=setting, value=backupVal)))
         }
-        for(i in 1:length(RvleObj@backup)){
-            RvleObj@backup[[i]]$value
-        }
     }
     return(invisible(RvleObj))
 })
@@ -228,25 +265,13 @@ setGeneric(".restorebackup", function(RvleObj) standardGeneric(".restorebackup")
 setMethod(".restorebackup", "Rvle",
 function(RvleObj) {
   if(length(RvleObj@backup)>=1){
-    lapply(1:length(RvleObj@backup),function(x){
-      .handleConfig(RvleObj,RvleObj@backup[[x]]$setting,
-                    RvleObj@backup[[1]]$value, FALSE)
-    })
+    for(x in 1:length(RvleObj@backup)){
+      RvleObj = .handleConfig(RvleObj,RvleObj@backup[[x]]$setting,
+                    RvleObj@backup[[x]]$value, FALSE)
+    }
   }
   RvleObj@backup = list()
-})
-
-setGeneric("config", function(RvleObj) standardGeneric("config"))
-setMethod("config", "Rvle",
-function(RvleObj) {
-    return(RvleObj@config)
-})
-
-setGeneric("config<-", function(RvleObj, value) standardGeneric("config<-"))
-setMethod("config<-", "Rvle",
-function(RvleObj, value) {
-    RvleObj@config <- value
-    return(invisible(RvleObj))
+  return(invisible(RvleObj))
 })
 
 setGeneric("results", function(RvleObj) standardGeneric("results"))
@@ -302,7 +327,7 @@ function(object) {
                 thestoragemode = ""
                 thevalue = "Experimental Condition not managed"
             } else {
-                thestoragemode = sprintf("<%s>",  typeof(thevalue));
+                thestoragemode = sprintf("<%s>",  class(thevalue));
             }
             cat(sprintf("* %s.%s = %s %s\n",
                 conditionname,portname,
@@ -361,6 +386,8 @@ function(RvleObj, ...) {
             rt = rvle.run(RvleObj@sim);
         } else if(RvleObj@config$restype == "matrix"){
             rt = rvle.runMatrix(RvleObj@sim)
+        } else if(RvleObj@config$restype == "poly"){
+            rt = rvle.runPoly(RvleObj@sim)
         }
         #update outlist only if no error
         if(is.list(rt)){
@@ -386,7 +413,7 @@ function(RvleObj, ...) {
         RvleObj@lastrun = "multi"
     }
     #restore backup
-    .restorebackup(RvleObj)
+    RvleObj = .restorebackup(RvleObj)
     return(invisible(RvleObj))
 })
 

@@ -23,9 +23,7 @@ methodname is one of the methods listed here.
     
     setDefault : set default settings to the Rvle object 
     
-    config<- : set default experiment settings (Deprecated)
-    
-    config : show default experiment settings (Deprecated)
+    getDefault : get default settings of the Rvle object 
 }
 
 \examples{
@@ -44,7 +42,7 @@ methodname is one of the methods listed here.
 #   # Sets the output plugin of "myview" to "storage"
 #   # and requires only one simulation (ie sets "plan" to "single")
 #
-#   f = f.setDefault(outputplugin = c(myview = "storage"),
+#   f = setDefault(f, outputplugin = c(myview = "storage"),
 #                    plan = "single")
 #
 #   # Runs the simulation
@@ -57,12 +55,12 @@ methodname is one of the methods listed here.
 #   res = results(f)
 #   print(res[[1]][2,"MyModel:MyDyn.myPort"])
 #
-#   # Sets  requires the simulation of an experiment plan 'linear' and
-#   # sets the number of replica to 2, There will be two simulations of the
+#   # Ask for the simulation of an experiment plan 'linear' and
+#   # sets the number of replica to 2. There will be two simulations of the
 #   # same combination with different seeds (useless if the model is not
 #   # stochastic)
 #
-#   f = f.setDefault(replica = 2, plan = "linear")
+#   f = setDefault(f, replica = 2, plan = "linear")
 #
 #   # Runs the simulation
 #

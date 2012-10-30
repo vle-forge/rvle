@@ -3,7 +3,9 @@
 \alias{rvle.setStringCondition}
 \title{Set a string to the specified condition port.}
 \description{Set a string to the specified condition port.
-	Part of the basic API of rvle.}
+	Part of the basic API of rvle.
+	This function is DEPRECATED.  
+}
 \usage{rvle.setStringCondition(rvleHandle, condition, port, value)}
 \arguments{
         \item{rvleHandle}{a rvle handle.}

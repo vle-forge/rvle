@@ -8,12 +8,10 @@
 	Part of the basic API of rvle.
 }
 \usage{
- rvle.runManagerMatrix(rvleHandle, commonSeed = TRUE)
+ rvle.runManagerMatrix(rvleHandle)
 }
 \arguments{
  \item{rvleHandle}{a rvle handle.}
- \item{commonSeed}{if true, the same seed is used for the simulation
- of different combinations of one replica} 
 }
 \value{
 Returns a matrix of list of matrices of reals.

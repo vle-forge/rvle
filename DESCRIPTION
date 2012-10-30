@@ -1,6 +1,6 @@
 Package: rvle
-Version: 1.1.0-900
-Date: 2007-11-13
+Version: 1.1.0-0
+Date: 2012-09-26
 Title: VLE R package
 Author: Gauthier Quesnel <quesnel@users.sourceforge.net>.
 Maintainer: Gauthier Quesnel <quesnel@users.sourceforge.net>

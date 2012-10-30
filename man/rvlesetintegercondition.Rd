@@ -5,6 +5,7 @@
 \description{
 	Set a integer to the specified condition port.
 	Part of the basic API of rvle.
+	This function is DEPRECATED.  
 }
 \usage{
  rvle.setIntegerCondition(rvleHandle, condition, port, value)
