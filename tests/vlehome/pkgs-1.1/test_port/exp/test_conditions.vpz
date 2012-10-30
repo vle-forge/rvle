@@ -10,7 +10,6 @@
 </model>
 </structures>
 <experiment name="dummy" duration="1.000000000000000" begin="0.000000000000000" combination="linear" seed="2147483648" >
-<replicas seed="2147483648" number="1" />
 <conditions>
 <condition name="test" >
  <port name="bool" >

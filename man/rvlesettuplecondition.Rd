@@ -3,7 +3,9 @@
 \alias{rvle.setTupleCondition}
 \title{Set a tuple (list of reals) to the specified condition port.}
 \description{Set a list of reals to the specified condition port.
-	Part of the basic API of rvle.}
+	Part of the basic API of rvle.
+	This function is DEPRECATED.  
+}
 \usage{rvle.setTupleCondition(rvleHandle, condition, port, value)}
 \arguments{
         \item{rvleHandle}{a rvle handle.}

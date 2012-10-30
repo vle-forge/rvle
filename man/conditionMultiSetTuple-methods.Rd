@@ -10,6 +10,7 @@ Sets multiple tuple values on a condition port or alternatively,
 if the argument value is not a list, sets one tuple value on the condition port.
 This is used as an internal function for 
 storing multiple inputs, thus defining a design of experiments.
+This function is DEPRECATED.
 }
 
 \usage{

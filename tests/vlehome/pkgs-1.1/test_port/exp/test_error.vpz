@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE vle_project PUBLIC "-//VLE TEAM//DTD Strict//EN" "http://www.vle-project.org/vle-1.1.0.dtd">
+<vle_project version="1.0.1" date="ven., 03 févr. 2012" author="test_conditions">
+<structures>
+<model name="test1" type="coupled" x="0" y="0" width="484" height="397"  >
+<submodels>
+<model name="coupled" type="coupled" x="40" y="42" width="100" height="30"  >
+<submodels>
+<model name="test1" type="atomic" conditions="cond" dynamics="dyn" observables="obs1" x="39" y="31" width="100" height="30" >
+</model>
+</submodels>
+<connections>
+</connections>
+</model>
+</submodels>
+<connections>
+</connections>
+</model>
+</structures>
+<dynamics>
+<dynamic name="dyn" library="testError" package="test_port"  />
+</dynamics>
+<experiment name="test_conditions" duration="10.000000000000000" begin="0.000000000000000" combination="linear" >
+<conditions>
+<condition name="cond" >
+ <port name="cBOOL" >
+<boolean>true</boolean>
+</port>
+ <port name="cDOUBLE" >
+<double>4.800000000000000</double>
+</port>
+ <port name="cINTEGER" >
+<integer>3</integer>
+</port>
+ <port name="cMAP" >
+<map><key name="key1"><double>2.700000000000000</double></key><key name="key2"><boolean>false</boolean></key></map>
+</port>
+ <port name="cMATRIX" >
+<matrix rows="2" columns="4" columnmax="4" rowmax="2" columnstep="0" rowstep="0" ><double>0.200000000000000</double> <boolean>false</boolean> <integer>4</integer> <double>9.300000000000001</double> 
+<double>0.500000000000000</double> <integer>6</integer> <double>0.400000000000000</double> <set><double>0.800000000000000</double><integer>3</integer></set> 
+</matrix>
+</port>
+ <port name="cSET" >
+<set><double>7.600000000000000</double><tuple>1.900000000000000 2.700000000000000</tuple></set>
+</port>
+ <port name="cSTRING" >
+<string>hello</string>
+</port>
+ <port name="cTABLE" >
+<table width="2" height="3" >1.000000000000000 0.000000000000000 5.000000000000000 2.000000000000000 0.000000000000000 3.000000000000000 </table>
+</port>
+ <port name="cTUPLE" >
+<tuple>0.000000000000000 0.000000000000000 0.000000000000000</tuple>
+</port>
+ <port name="cVALUE" >
+<boolean>false</boolean>
+</port>
+ <port name="cXML" >
+<xml>
+<![CDATA[<mytag>hello</mytag>]]>
+</xml>
+</port>
+</condition>
+</conditions>
+<views>
+<outputs>
+<output name="view1" location="" format="local" package="vle.output"  plugin="console" />
+
+</outputs>
+<observables>
+<observable name="obs1" >
+<port name="Port1" >
+ <attachedview name="view1" />
+</port>
+
+</observable>
+
+</observables>
+<view name="view1" output="view1" type="timed" timestep="1.000000000000000" />
+
+</views>
+</experiment>
+</vle_project>

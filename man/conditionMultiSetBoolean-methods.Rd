@@ -9,7 +9,8 @@
 \description{
 Sets multiple boolean values on a condition port 
 of a condition of a model. This is used as an internal function for 
-storing multiple inputs, thus defining a design of experiments.  
+storing multiple inputs, thus defining a design of experiments.
+This function is DEPRECATED.  
 }
 
 \usage{

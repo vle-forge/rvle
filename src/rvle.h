@@ -34,6 +34,8 @@ extern "C" {
 #endif
 
 
+typedef void* rvle_value_t;
+
 /**
  * @brief An hande to an obscure structure. A vpz::Vpz::Vpz class in fact.
  */
@@ -44,6 +46,14 @@ typedef void* rvle_t;
  * fact.
  */
 typedef void* rvle_output_t;
+
+
+/**
+ * @brief Compile test packages (vle.output and test_port)
+ * @return -1 if no error is detected, 0 otherwise
+ */
+
+int rvle_compileTestPackages();
 
 /**
  * @brief Initialize the API of VLE.
@@ -68,37 +78,28 @@ rvle_t rvle_open(const char* filename);
 /**
  * @brief Run a simulation using the rvle_t object.
  * @param handle The reference to the Vpz file.
+ * @param withColNames If 1, first line of outputs contain the column names
  * @return A rvle_output_t object or NULL if error.
  */
-rvle_output_t rvle_run(rvle_t handle);
+rvle_output_t rvle_run(rvle_t handle, int withColNames);
 
 /**
  * @brief Run an experimental frames using the rvle_t object.
  * @param handle The reference to the Vpz file.
- * @param commonSeed if true, the same seed is used for the simulation
- * of different combinations of one replica.
+ * @param withColNames If 1, first line of outputs contain the column names
  * @return A rvle_output_t object or NULL if error.
  */
-rvle_output_t rvle_manager(rvle_t handle, int commonSeed);
+rvle_output_t rvle_manager(rvle_t handle, int withColNames);
 
 /**
  * @brief Run an experimental frames int thread using the rvle_t object.
  * @param handle The reference to the Vpz file.
  * @param th The number of thread.
- * @param commonSeed if true, the same seed is used for the simulation
+ * @param withColNames If 1, first line of outputs contain the column names
  * of different combinations of one replica.
  * @return A rvle_output_t object or NULL if error.
  */
-rvle_output_t rvle_manager_thread(rvle_t handle, int th, int commonSeed);
-
-/**
- * @brief Run an experimental frames on cluster using the rvle_t object.
- * @param handle The reference to the Vpz file.
- * @param commonSeed if true, the same seed is used for the simulation
- * of different combinations of one replica.
- * @return A rvle_output_t object or NULL if error.
- */
-rvle_output_t rvle_manager_cluster(rvle_t handle, int commonSeed);
+rvle_output_t rvle_manager_thread(rvle_t handle, int th, int withColNames);
 
 /**
  * @brief Destruction of the rvle_t object.
@@ -157,8 +158,14 @@ int rvle_condition_clear(rvle_t handle,
  * @return A rvle_output_t object or NULL if error.
  */
 rvle_output_t rvle_condition_show(rvle_t handle,
-		                  const char* conditionname,
-				  const char* portname);
+        const char* conditionname,
+        const char* portname);
+
+
+int rvlecpp_addValueCondition(rvle_t handle,
+        const char* conditionname,
+        const char* portname,
+        rvle_value_t value);
 
 /**
  * @brief Set the initial condition of the specified condition and portname.
@@ -284,17 +291,6 @@ int rvle_experiment_linear_combination(rvle_t handle, uint32_t seed,
                                        uint32_t repliquas);
 
 /**
- * @brief Assign a linear experimental frame with specific seed to build seeds
- * of simulations and the number of repliquas.
- * @param handle the reference to the Vpz file.
- * @param seed the seed to set to the experimental frame.
- * @param repliquas the number of repliquas.
- * @return 0 if failed, -1 otherwise.
- */
-int rvle_experiment_total_combination(rvle_t handle, uint32_t seed,
-                                      uint32_t repliquas);
-
-/**
  * @brief Get the list of views.
  * @param handle The reference to the Vpz file.
  * @return The reference to a char**. Memory use malloc, don't forget to use
@@ -315,11 +311,13 @@ int rvle_view_size(rvle_t handle);
  * @param handle The reference to the Vpz file.
  * @param viewname The name of the view.
  * @param pluginname The name of the plugin.
+ * @param package The name of the package that contains the plugin.
  * @return 0 if failed, -1 otherwise.
  */
 int rvle_set_output_plugin(rvle_t handle,
                               const char* viewname,
-                              const char* pluginname);
+                              const char* pluginname,
+                              const char* package);
 
 /**
  * @brief Set the plugin output of a view
@@ -338,10 +336,10 @@ char* rvle_get_output_plugin(rvle_t handle,
 int rvle_save(rvle_t handle, const char* filename);
 
 /**
- * @brief Delete te value::VectorValue.
- * @param out The value::VectorValue to delete.
+ * @brief Delete te value::Set.
+ * @param out The value::Set to delete.
  */
-void rvle_clear_vectorvalue(rvle_output_t out);
+void rvle_clear_set(rvle_output_t out);
 
 /**
  * @brief Delete the output matrix of simulation.
@@ -353,7 +351,7 @@ void rvle_clear_matrix(rvle_output_t out);
  * @brief Delete the output of simulation.
  * @param out The output of to delete.
  */
-void rvle_clear(rvle_output_t out);
+void rvle_clear_map(rvle_output_t out);
 
 #ifdef __cplusplus
 }

@@ -14,6 +14,6 @@
  \item{view}{the name of the view.}
 }
 \value{
- the name of the output plugin attached to view 'view' for 
+ the name of the output plugin attached to view 'view'
  into the VPZ represented by the rvle handle 'rvleHandle'
 }

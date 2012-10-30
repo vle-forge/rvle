@@ -28,6 +28,11 @@
     library.dynam("rvle", pkg, lib)
 }
 
+.rvle.compileTestPackages = function()
+{
+    x = .Call("__compileTestPackages", PACKAGE="rvle")
+}
+
 rvle.open <- function(file, pkg = "")
 {
     stopifnot(is.character(file))
@@ -41,6 +46,13 @@ rvle.open <- function(file, pkg = "")
     stopifnot(!is.null(x))
     class(x) <- 'rvle'
     return(x)
+}
+
+rvle.runPoly <- function(rvleHandle)
+{
+    stopifnot(is.rvle(rvleHandle))
+    
+    .Call("run_poly", rvleHandle, PACKAGE="rvle")
 }
 
 rvle.run <- function(rvleHandle)
@@ -57,49 +69,50 @@ rvle.runMatrix <- function(rvleHandle)
     .Call("run_matrix", rvleHandle, PACKAGE="rvle")
 }
 
-rvle.runManager <- function(rvleHandle, commonSeed = TRUE)
+rvle.runManagerPoly <- function(rvleHandle)
 {
     stopifnot(is.rvle(rvleHandle))
-
-    .Call("run_manager", rvleHandle, as.logical(commonSeed), PACKAGE="rvle")
+    
+    .Call("run_manager_poly", rvleHandle, PACKAGE="rvle")
 }
 
-rvle.runManagerMatrix <- function(rvleHandle, commonSeed = TRUE)
+
+rvle.runManager <- function(rvleHandle)
 {
     stopifnot(is.rvle(rvleHandle))
 
-    .Call("run_manager_matrix", rvleHandle, as.logical(commonSeed), PACKAGE="rvle")
+    .Call("run_manager", rvleHandle, PACKAGE="rvle")
 }
 
-rvle.runManagerThread <- function(rvleHandle, th, commonSeed = TRUE)
+rvle.runManagerMatrix <- function(rvleHandle)
 {
     stopifnot(is.rvle(rvleHandle))
 
-    .Call("run_manager_thread", rvleHandle, as.integer(th), as.logical(commonSeed),
+    .Call("run_manager_matrix", rvleHandle, PACKAGE="rvle")
+}
+
+rvle.runManagerThreadPoly <- function(rvleHandle, th)
+{
+    stopifnot(is.rvle(rvleHandle))
+
+    .Call("run_manager_thread_poly", rvleHandle, as.integer(th),
+            PACKAGE="rvle")
+}
+
+rvle.runManagerThread <- function(rvleHandle, th)
+{
+    stopifnot(is.rvle(rvleHandle))
+
+    .Call("run_manager_thread", rvleHandle, as.integer(th),
 			PACKAGE="rvle")
 }
 
-rvle.runManagerThreadMatrix <- function(rvleHandle, th, commonSeed = TRUE)
+rvle.runManagerThreadMatrix <- function(rvleHandle, th)
 {
     stopifnot(is.rvle(rvleHandle))
 
-    .Call("run_manager_thread_matrix", rvleHandle, as.integer(th),
-			as.logical(commonSeed), PACKAGE="rvle")
-}
-
-rvle.runManagerCluster <- function(rvleHandle, commonSeed = TRUE)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("run_manager_cluster", rvleHandle, as.logical(commonSeed), PACKAGE="rvle")
-}
-
-rvle.runManagerClusterMatrix <- function(rvleHandle, commonSeed = TRUE)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("run_manager_cluster_matrix", rvleHandle, as.logical(commonSeed),
-			PACKAGE="rvle")
+    .Call("run_manager_thread_matrix", rvleHandle, as.integer(th), 
+            PACKAGE="rvle")
 }
 
 is.rvle <- function(object)
@@ -155,127 +168,6 @@ rvle.getConditionPortValues <- function(rvleHandle, condition, port)
     stopifnot(is.character(port))
 
     .Call("condition_show", rvleHandle, condition, port, PACKAGE="rvle")
-}
-
-rvle.addRealCondition <- function(rvleHandle, condition, port, value)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-
-    .Call("condition_add_real", rvleHandle, condition, port, as.real(value),
-            PACKAGE="rvle")
-
-    return (invisible(NULL))
-}
-
-rvle.setRealCondition <- function(rvleHandle, condition, port, value)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-
-    rvle.clearConditionPort(rvleHandle, condition, port)
-    rvle.addRealCondition(rvleHandle, condition, port, value)
-
-    return (invisible(NULL))
-}
-
-rvle.addTupleCondition <- function(rvleHandle, condition, port, value)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-
-    .Call("condition_add_tuple", rvleHandle, condition, port, as.list(value),
-            PACKAGE="rvle")
-
-    return (invisible(NULL))
-}
-
-rvle.setTupleCondition <- function(rvleHandle, condition, port, value)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-
-    rvle.clearConditionPort(rvleHandle, condition, port)
-    rvle.addTupleCondition(rvleHandle, condition, port, as.list(value))
-
-    return (invisible(NULL))
-}
-
-rvle.setStringCondition <- function(rvleHandle, condition, port, value)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-    stopifnot(is.character(value))
-
-    rvle.clearConditionPort(rvleHandle, condition, port)
-    rvle.addStringCondition(rvleHandle, condition, port, value)
-
-    return (invisible(NULL))
-}
-
-rvle.addStringCondition <- function(rvleHandle, condition, port, value)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-    stopifnot(is.character(value))
-
-    .Call("condition_add_string", rvleHandle, condition, port, value, PACKAGE="rvle")
-
-    return (invisible(NULL))
-}
-
-rvle.addBooleanCondition <- function(rvleHandle, condition, port, value)
-{
-   stopifnot(is.rvle(rvleHandle))
-   stopifnot(is.character(condition))
-   stopifnot(is.character(port))
-
-   .Call("condition_add_boolean", rvleHandle, condition, port, as.logical(value),
-         PACKAGE="rvle")
-
-    return (invisible(NULL))
-}
-
-rvle.setBooleanCondition <- function(rvleHandle, condition, port, value)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-
-    rvle.clearConditionPort(rvleHandle, condition, port)
-    rvle.addBooleanCondition(rvleHandle, condition, port, value)
-
-    return (invisible(NULL))
-}
-
-rvle.addIntegerCondition <- function(rvleHandle, condition, port, value)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-
-    .Call("condition_add_integer", rvleHandle, condition, port, as.integer(value),
-            PACKAGE="rvle")
-
-    return (invisible(NULL))
-}
-
-rvle.setIntegerCondition <- function(rvleHandle, condition, port, value)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-
-    rvle.clearConditionPort(rvleHandle, condition, port)
-    rvle.addIntegerCondition(rvleHandle, condition, port, value)
-
-    return (invisible(NULL))
 }
 
 rvle.setDuration <- function(rvleHandle, value)
@@ -336,16 +228,6 @@ rvle.setLinearCombination <- function(rvleHandle, seed, repliquas)
     return (invisible(NULL))
 }
 
-rvle.setTotalCombination <- function(rvleHandle, seed, repliquas)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("experiment_total_combination", rvleHandle, as.integer(seed),
-	    as.integer(repliquas), PACKAGE="rvle")
-
-    return (invisible(NULL))
-}
-
 rvle.listViews <- function(rvleHandle)
 {
 	stopifnot(is.rvle(rvleHandle))
@@ -365,10 +247,16 @@ rvle.setOutputPlugin <- function(rvleHandle, viewname, pluginname)
 	stopifnot(is.rvle(rvleHandle))
 	stopifnot(is.character(viewname))
 	stopifnot(is.character(pluginname))
-
-	.Call("set_output_plugin", rvleHandle, viewname,
-			pluginname, PACKAGE="rvle")
-
+    
+    resplit = strsplit(pluginname,"/")[[1]]
+    if (length(resplit) == 2){
+        .Call("set_output_plugin", rvleHandle, viewname,
+                resplit[2], resplit[1], PACKAGE="rvle")
+    } else {
+        
+        .Call("set_output_plugin", rvleHandle, viewname, 
+                pluginname, "vle.output" , PACKAGE="rvle")
+    }
 	return (invisible(NULL))
 }
 
@@ -389,5 +277,154 @@ rvle.save <- function(rvleHandle, file)
 
     return (invisible(NULL))
 }
+
+##NEW
+
+rvle.addValueCondition <- function(rvleHandle, condition, port, value)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+    
+    .Call("rvle_addValueCondition", rvleHandle, condition, port, value,
+            PACKAGE="rvle")
+    
+    return (invisible(NULL))
+}
+
+rvle.setValueCondition <- function(rvleHandle, condition, port, value)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+    
+    rvle.clearConditionPort(rvleHandle, condition, port)
+    rvle.addValueCondition(rvleHandle, condition, port, value)
+    
+    return (invisible(NULL))
+}
+
+##DEPRECATED
+rvle.addRealCondition <- function(rvleHandle, condition, port, value)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+    
+    .Call("condition_add_real", rvleHandle, condition, port, as.real(value),
+            PACKAGE="rvle")
+    
+    return (invisible(NULL))
+}
+
+rvle.setRealCondition <- function(rvleHandle, condition, port, value)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+    
+    rvle.clearConditionPort(rvleHandle, condition, port)
+    rvle.addRealCondition(rvleHandle, condition, port, value)
+    
+    return (invisible(NULL))
+}
+
+rvle.addTupleCondition <- function(rvleHandle, condition, port, value)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+    
+    .Call("condition_add_tuple", rvleHandle, condition, port, as.list(value),
+            PACKAGE="rvle")
+    
+    return (invisible(NULL))
+}
+
+rvle.setTupleCondition <- function(rvleHandle, condition, port, value)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+    
+    rvle.clearConditionPort(rvleHandle, condition, port)
+    rvle.addTupleCondition(rvleHandle, condition, port, as.list(value))
+    
+    return (invisible(NULL))
+}
+
+rvle.setStringCondition <- function(rvleHandle, condition, port, value)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+    stopifnot(is.character(value))
+    
+    rvle.clearConditionPort(rvleHandle, condition, port)
+    rvle.addStringCondition(rvleHandle, condition, port, value)
+    
+    return (invisible(NULL))
+}
+
+rvle.addStringCondition <- function(rvleHandle, condition, port, value)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+    stopifnot(is.character(value))
+    
+    .Call("condition_add_string", rvleHandle, condition, port, value, PACKAGE="rvle")
+    
+    return (invisible(NULL))
+}
+
+rvle.addBooleanCondition <- function(rvleHandle, condition, port, value)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+    
+    .Call("condition_add_boolean", rvleHandle, condition, port, as.logical(value),
+            PACKAGE="rvle")
+    
+    return (invisible(NULL))
+}
+
+rvle.setBooleanCondition <- function(rvleHandle, condition, port, value)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+    
+    rvle.clearConditionPort(rvleHandle, condition, port)
+    rvle.addBooleanCondition(rvleHandle, condition, port, value)
+    
+    return (invisible(NULL))
+}
+
+rvle.addIntegerCondition <- function(rvleHandle, condition, port, value)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+    
+    .Call("condition_add_integer", rvleHandle, condition, port, as.integer(value),
+            PACKAGE="rvle")
+    
+    return (invisible(NULL))
+}
+
+rvle.setIntegerCondition <- function(rvleHandle, condition, port, value)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+    
+    rvle.clearConditionPort(rvleHandle, condition, port)
+    rvle.addIntegerCondition(rvleHandle, condition, port, value)
+    
+    return (invisible(NULL))
+}
+
 
 # vim:tw=80:ts=8:sw=4:sts=4

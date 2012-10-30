@@ -5,6 +5,7 @@
 \description{
   Add a boolean value to a rvle handle. 
   Part of the basic API of rvle.
+  
 }
 \usage{
  rvle.addBooleanCondition(rvleHandle, condition, port, value)
@@ -14,6 +15,11 @@
  \item{condition}{name of the condition handled by rvleHandle.}
  \item{port}{name of the port of the condition.}
  \item{value}{a boolean value to set on the specified port.}
+}
+
+\note{
+This function is DEPRECATED.
+Consider using the function 'setDefault'.
 }
 
 \examples{
