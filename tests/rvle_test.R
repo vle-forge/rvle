@@ -3,11 +3,11 @@
 library(rvle)
 
 
-## tmpdir = "/tmp"
+#tmpdir = "/tmp"
 tmpdir = tempdir()
+file.copy("vlehome",tmpdir,recursive = TRUE)
 vlehome = normalizePath(paste(tmpdir,"/vlehome",sep=""))
 Sys.setenv(VLE_HOME=vlehome)
-file.copy("vlehome",tmpdir,recursive = TRUE)
 .rvle.compileTestPackages()
 
 ##########
