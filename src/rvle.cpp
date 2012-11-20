@@ -76,7 +76,7 @@ rvle_t rvle_pkg_open(const char* pkgname, const char* filename)
         file = new vpz::Vpz(filepath);
         return file;
     } catch(const std::exception& e) {
-        return NULL;
+        return 0;
     }
 }
 
@@ -131,14 +131,14 @@ rvle_t rvle_open(const char* filename)
         file = new vpz::Vpz(filename);
         return file;
     } catch(const std::exception& e) {
-        return NULL;
+        return 0;
     }
 }
 
 rvle_output_t rvle_run(rvle_t handle,  int withColNames)
 {
     assert(handle);
-    value::Map* res = NULL;
+    value::Map* res = 0;
 
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
@@ -146,7 +146,7 @@ rvle_output_t rvle_run(rvle_t handle,  int withColNames)
         manager::Error error;
         manager::Simulation sim(manager::LOG_NONE,
                 manager::SIMULATION_NONE,
-                NULL);
+                0);
         //configure output plugins for column names
         vpz::Outputs::iterator itb =
                 file->project().experiment().views().outputs().begin();
@@ -159,8 +159,6 @@ rvle_output_t rvle_run(rvle_t handle,  int withColNames)
                 value::Map* configOutput = new value::Map();
                 if (withColNames == 1){
                     configOutput->addString("header","top");
-                } else {
-                    configOutput->addString("header","none");
                 }
                 output.setData(configOutput);
             }
@@ -176,21 +174,21 @@ rvle_output_t rvle_run(rvle_t handle,  int withColNames)
         }
         return res;
     } catch(const std::exception& e) {
-        res = NULL;
+        res = 0;
     }
     return res;
 }
 
 rvle_output_t rvle_manager(rvle_t handle, int withColNames)
 {
-    value::Matrix* res = NULL;
+    value::Matrix* res = 0;
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
         utils::ModuleManager man;
         manager::Error error;
         manager::Manager sim(manager::LOG_NONE,
                 manager::SIMULATION_NONE,
-                NULL);
+                0);
 
         //configure output plugins for column names
         vpz::Outputs::iterator itb =
@@ -204,8 +202,6 @@ rvle_output_t rvle_manager(rvle_t handle, int withColNames)
                 value::Map* configOutput = new value::Map();
                 if (withColNames == 1){
                     configOutput->addString("header","top");
-                } else {
-                    configOutput->addString("header","none");
                 }
                 output.setData(configOutput);
             }
@@ -220,18 +216,18 @@ rvle_output_t rvle_manager(rvle_t handle, int withColNames)
                     << error.message
                     << "\n\n" << std::flush;
             logfile->close();
-            res = NULL;
+            res = 0;
         }
         return res;
     } catch(const std::exception& e) {
-        res = NULL;
+        res = 0;
     }
     return res;
 }
 
 rvle_output_t rvle_manager_thread(rvle_t handle, int th, int withColNames)
 {
-    value::Matrix* res = NULL;
+    value::Matrix* res = 0;
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
 
@@ -239,7 +235,7 @@ rvle_output_t rvle_manager_thread(rvle_t handle, int th, int withColNames)
         manager::Error error;
         manager::Manager sim(manager::LOG_NONE,
                 manager::SIMULATION_NONE,
-                NULL);
+                0);
 
         //configure output plugins for column names
         vpz::Outputs::iterator itb =
@@ -253,8 +249,6 @@ rvle_output_t rvle_manager_thread(rvle_t handle, int th, int withColNames)
                 value::Map* configOutput = new value::Map();
                 if (withColNames == 1){
                     configOutput->addString("header","top");
-                } else {
-                    configOutput->addString("header","none");
                 }
                 output.setData(configOutput);
             }
@@ -273,7 +267,7 @@ rvle_output_t rvle_manager_thread(rvle_t handle, int th, int withColNames)
         return res;
 
     } catch(const std::exception& e) {
-        res = NULL;
+        res = 0;
     }
     return res;
 }
@@ -290,7 +284,7 @@ char** rvle_condition_list(rvle_t handle)
     std::list < std::string > lst;
 
     file->project().experiment().conditions().conditionnames(lst);
-    char** result = NULL;
+    char** result = 0;
 
     if (lst.size()) {
         result = (char**)malloc(lst.size() * sizeof(char*));
@@ -310,7 +304,7 @@ char** rvle_condition_port_list(rvle_t handle, const char* conditionname)
 {
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     std::list < std::string > lst;
-    char** result = NULL;
+    char** result = 0;
 
     try {
         const vpz::Condition& cnd(
@@ -327,7 +321,7 @@ char** rvle_condition_port_list(rvle_t handle, const char* conditionname)
             it++;
         }
     } catch(const std::exception& e) {
-        return NULL;
+        return 0;
     }
 
     return result;
@@ -380,7 +374,6 @@ rvle_output_t rvle_condition_show(rvle_t handle,
         vpz::Condition& cnd(file->project().experiment().
                             conditions().get(conditionname));
 
-//        return new value::VectorValue(cnd.getSetValues(portname).value());//RD
         return new value::Set(cnd.getSetValues(portname));
 
     } catch (const std::exception& e) {
@@ -476,7 +469,7 @@ int rvle_experiment_total_combination(rvle_t handle, uint32_t /*seed*/,
 
 char** rvle_view_list(rvle_t handle)
 {
-    char** result = NULL;
+    char** result = 0;
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
         vpz::Views& vle_views = file->project().experiment().views();
@@ -491,7 +484,7 @@ char** rvle_view_list(rvle_t handle)
             it++;
         }
     } catch(const std::exception& e) {
-        return NULL;
+        return 0;
     }
     return result;
 }
@@ -535,7 +528,7 @@ char* rvle_get_output_plugin(rvle_t handle,
         strcpy(result, concatName.c_str());
         return result;
     } catch(const std::exception& e) {
-        return NULL;
+        return 0;
     }
 }
 
@@ -549,12 +542,6 @@ int rvle_save(rvle_t handle, const char* filename)
         return 0;
     }
 }
-
-//void rvle_clear_vectorvalue(rvle_output_t out)
-//{
-//    value::VectorValue* vect(reinterpret_cast < value::VectorValue* >(out));
-//    delete vect;
-//}
 
 void rvle_clear_set(rvle_output_t out)
 {
