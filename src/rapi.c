@@ -36,9 +36,6 @@
  * forward declarations
  *
  */
-
-static SEXP r_rvle_compileTestPackages();
-
 static SEXP r_rvle_compileTestPackages();
 static SEXP r_rvle_open(SEXP name);
 static SEXP r_rvle_pkg_open(SEXP name, SEXP pkg);
