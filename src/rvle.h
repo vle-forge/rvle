@@ -58,7 +58,12 @@ int rvle_compileTestPackages();
 /**
  * @brief Initialize the API of VLE.
  */
-void rvle_init();
+void rvle_onload();
+
+/**
+ * @brief Finishes the API of VLE.
+ */
+void rvle_onunload();
 
 /**
  * @brief Open the file vpz filename using vpz library.
