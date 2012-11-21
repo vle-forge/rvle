@@ -45,6 +45,8 @@ using namespace utils;
 // C++ utilities
 //
 
+static vle::Init* vle_init = 0;
+
 static void rvle_build_matrix(const value::Matrix& view,
                             value::Matrix& matrix)
 {
@@ -57,14 +59,18 @@ static void rvle_build_matrix(const value::Matrix& view,
 // R interface
 //
 
-void rvle_init()
+void rvle_onload()
 {
-    //nothing to do?
+    vle_init = new vle::Init();
+}
+
+void rvle_onunload()
+{
+    delete vle_init;
 }
 
 rvle_t rvle_pkg_open(const char* pkgname, const char* filename)
 {
-    vle::Init app;//TODO should be a global object ?
     assert(pkgname);
     assert(filename);
 

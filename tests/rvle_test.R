@@ -1,6 +1,5 @@
 #!/usr/bin/Rscript
 
-library(rvle)
 
 
 #tmpdir = "/tmp"
@@ -8,6 +7,9 @@ tmpdir = tempdir()
 file.copy("vlehome",tmpdir,recursive = TRUE)
 vlehome = normalizePath(paste(tmpdir,"/vlehome",sep=""))
 Sys.setenv(VLE_HOME=vlehome)
+
+library(rvle)
+
 .rvle.compileTestPackages()
 
 ##########
@@ -125,7 +127,6 @@ checkException(rvle.getConditionPortValues(f,"test", "notexisting"))
 # Test Vle values handling on conditions
 ##########
 
-library(rvle)
 f <- rvle.open(file="test_conditions.vpz",pkg="test_port")
 
 c = rvle.getConditionPortValues(f,"test","bool")
@@ -178,7 +179,6 @@ checkEquals(class(c[[1]]),"VleTUPLE")
 checkEquals(class(c[[2]]),"VleTUPLE")
 
 ##implicit conversion
-library(rvle)
 f <- rvle.open(file="test_conditions.vpz",pkg="test_port")
 
 c = list(1,2,3)
@@ -290,8 +290,6 @@ checkEqualsNumeric(dim(c)[[1]],4, tolerance=1e-5)
 checkEquals(dim(c)[[2]],2, tolerance=1e-5)
 checkEquals(c[[1,2]],"X2")
 checkEquals(c[[4,1]],"3", tolerance=1e-5)
-
-library(rvle)
 f <- rvle.open(file="test_conditions.vpz",pkg="test_port")
 
 ##########
@@ -337,7 +335,6 @@ checkEquals(rvle.getOutputPlugin(f,"view"), "mypackage/myplugin")
 ##########
 # Test simulation
 ##########
-library(rvle)
 f <- rvle.open(file="test_simulation.vpz", pkg="test_port")
 
 ### normal run 
@@ -387,7 +384,6 @@ checkEqualsNumeric(view1[[5,2]], 1.5, tolerance=1e-5)
 ##########
 # Test manager
 ##########
-library(rvle)
 f <- rvle.open(file="test_simulation.vpz", pkg="test_port")
 
 ### manager  
@@ -442,7 +438,6 @@ checkEquals(names(warnings())[[1]], "RVLE: error during simulation or empty resu
 # Test Rvle class
 ########
 
-library(rvle)
 f <- new("Rvle",file="test_simulation.vpz", pkg="test_port")
 
 op = getDefault(f,"outputplugin")
@@ -472,7 +467,6 @@ checkEqualsNumeric(c1,2.8, tolerance=1e-5)
 ########
 # Test Rvle class + Generic value handling + Simulations sequence 
 ########
-library(rvle)
 f <- new("Rvle",file="test_simulation.vpz", pkg="test_port")
 
 f = run(f, outputplugin = c(view = "storage"), cond.message.as_single = list(1,"hello"))

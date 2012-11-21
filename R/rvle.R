@@ -23,9 +23,16 @@
 #
 
 
-.First.lib <- function(lib, pkg)
+.onLoad <- function(lib, pkg)
 {
     library.dynam("rvle", pkg, lib)
+    x = .Call("__rvle_onload", PACKAGE="rvle")
+}
+
+.onUnload <- function(libpath)
+{
+    library.dynam("rvle", pkg, lib)
+    x = .Call("__rvle_onunload", PACKAGE="rvle")
 }
 
 .rvle.compileTestPackages = function()

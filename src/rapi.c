@@ -36,6 +36,9 @@
  * forward declarations
  *
  */
+
+static SEXP r_rvle_onload();
+static SEXP r_rvle_onunload();
 static SEXP r_rvle_compileTestPackages();
 static SEXP r_rvle_open(SEXP name);
 static SEXP r_rvle_pkg_open(SEXP name, SEXP pkg);
@@ -91,6 +94,8 @@ static void r_rvle_condition_add_tuple(SEXP rvle, SEXP cnd, SEXP prt, SEXP
  */
 
 R_CallMethodDef callMethods[] = {
+        { "__rvle_onload", (DL_FUNC) r_rvle_onload, 0},
+        { "__rvle_onunload", (DL_FUNC) r_rvle_onunload, 0},
         { "__compileTestPackages", (DL_FUNC) r_rvle_compileTestPackages, 0},
         { "open", (DL_FUNC) r_rvle_open, 1},
         { "open_pkg", (DL_FUNC) r_rvle_pkg_open, 2},
@@ -143,8 +148,7 @@ R_CallMethodDef callMethods[] = {
 
 void R_init_rvle(DllInfo* info)
 {
-        R_registerRoutines(info, NULL, callMethods, NULL, NULL);
-        rvle_init();
+    R_registerRoutines(info, NULL, callMethods, NULL, NULL);
 }
 
 void R_unload_rvle(DllInfo* info)
@@ -163,6 +167,18 @@ void R_unload_rvle(DllInfo* info)
 SEXP r_rvle_compileTestPackages()
 {
     int r = rvle_compileTestPackages();
+    return R_NilValue;
+}
+
+SEXP r_rvle_onload()
+{
+    rvle_onload();
+    return R_NilValue;
+}
+
+SEXP r_rvle_onunload()
+{
+    rvle_onunload();
     return R_NilValue;
 }
 
