@@ -141,14 +141,14 @@ public:
             if(nbBags == 0){
                 vd::ExternalEvent* ee = new vd::ExternalEvent("p");
                 ee->putAttribute("p",message->clone());
-                output.addEvent(ee);
+                output.push_back(ee);
             }
             break;
         } case DURING_PERT: {
             if(currentBag == nbBags){
                 vd::ExternalEvent* ee = new vd::ExternalEvent("p");
                 ee->putAttribute("p", message->clone());
-                output.addEvent(ee);
+                output.push_back(ee);
             }
             break;
         } case AFTER_PERT: {
