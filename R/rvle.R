@@ -35,9 +35,14 @@
     x = .Call("__rvle_onunload", PACKAGE="rvle")
 }
 
-.rvle.compileTestPackages = function()
+.rvle.compile_vle_output = function()
 {
-    x = .Call("__compileTestPackages", PACKAGE="rvle")
+    x = .Call("__compile_vle_output", PACKAGE="rvle")
+}
+
+.rvle.compile_test_port = function()
+{
+    x = .Call("__compile_test_port", PACKAGE="rvle")
 }
 
 rvle.open <- function(file, pkg = "")

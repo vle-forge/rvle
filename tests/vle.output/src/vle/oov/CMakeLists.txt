@@ -11,5 +11,4 @@ MACRO(DeclareOovPlugin name sources)
     LIBRARY DESTINATION plugins/output)
 ENDMACRO(DeclareOovPlugin name sources)
 
-DeclareOovPlugin(dummy "Dummy.cpp;Dummy.hpp")
 DeclareOovPlugin(storage "Storage.cpp")

@@ -49,11 +49,18 @@ typedef void* rvle_output_t;
 
 
 /**
- * @brief Compile test packages (vle.output and test_port)
+ * @brief Compile vle.output test package
  * @return -1 if no error is detected, 0 otherwise
  */
 
-int rvle_compileTestPackages();
+int rvle_compile_vle_output();
+
+/**
+ * @brief Compile test_port test package
+ * @return -1 if no error is detected, 0 otherwise
+ */
+
+int rvle_compile_test_port();
 
 /**
  * @brief Initialize the API of VLE.
