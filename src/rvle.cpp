@@ -36,6 +36,7 @@
 #include <vle/manager/Manager.hpp>
 #include <vle/manager/Simulation.hpp>
 #include <cassert>
+#include <cstring>
 #include <fstream>
 #include <cstring>
 
@@ -87,14 +88,14 @@ rvle_t rvle_pkg_open(const char* pkgname, const char* filename)
     }
 }
 
-int rvle_compileTestPackages()
+int rvle_compile_vle_output()
 {
     std::string filename = Trace::getLogFilename("rvle.log");
     std::ofstream* logfile = new std::ofstream(filename.c_str());
 
     try {
         //homedir is set before calling this method
-
+        //current dir contains vle.ouput pkg
 
         vle::utils::Package::package().refresh();
 
@@ -122,13 +123,43 @@ int rvle_compileTestPackages()
             }
         }
     }  catch(const std::exception& e) {
-        (*logfile) << _("Error while compiling test_port an output")
-                << "\n\n" << std::flush;
+        (*logfile) << _("Error while compiling vle.output: ")
+                << e.what() << "\n\n" << std::flush;
         return 0;
     }
     logfile->close();
     return -1;
 }
+
+int rvle_compile_test_port()
+{
+    std::string filename = Trace::getLogFilename("rvle.log");
+    std::ofstream* logfile = new std::ofstream(filename.c_str());
+
+    try {
+        //homedir is set before calling this method
+        //current dir contains tert_port pkg
+
+        Package::package().select("test_port");
+        Package::package().configure();
+        Package::package().wait((*logfile), (*logfile));
+        if (Package::package().isSuccess()) {
+            Package::package().build();
+            Package::package().wait((*logfile), (*logfile));
+            if (Package::package().isSuccess()) {
+                Package::package().install();
+                Package::package().wait((*logfile), (*logfile));
+            }
+        }
+    }  catch(const std::exception& e) {
+        (*logfile) << _("Error while compiling test_port: ")
+                << e.what() << "\n\n" << std::flush;
+        return 0;
+    }
+    logfile->close();
+    return -1;
+}
+
 
 rvle_t rvle_open(const char* filename)
 {

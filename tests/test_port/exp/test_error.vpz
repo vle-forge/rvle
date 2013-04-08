@@ -64,7 +64,7 @@
 </conditions>
 <views>
 <outputs>
-<output name="view1" location="" format="local" package="vle.output"  plugin="console" />
+<output name="view1" location="" format="local" package="vle.output"  plugin="storage" />
 
 </outputs>
 <observables>

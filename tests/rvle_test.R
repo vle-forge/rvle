@@ -1,7 +1,5 @@
 #!/usr/bin/Rscript
 
-
-
 #tmpdir = "/tmp"
 tmpdir = tempdir()
 file.copy("vlehome",tmpdir,recursive = TRUE)
@@ -10,7 +8,14 @@ Sys.setenv(VLE_HOME=vlehome)
 
 library(rvle)
 
-.rvle.compileTestPackages()
+currentdir = getwd();
+.rvle.compile_vle_output()
+setwd(currentdir)
+.rvle.compile_test_port()
+setwd(currentdir)
+unlink("./vle.output/buildvle", recursive=TRUE, force = TRUE)
+unlink("./test_port/buildvle", recursive=TRUE, force = TRUE)
+
 
 ##########
 # Test conditions
