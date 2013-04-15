@@ -37,6 +37,7 @@
 #include <vle/manager/Simulation.hpp>
 #include <cassert>
 #include <fstream>
+#include <cstring>
 
 using namespace vle;
 using namespace utils;
