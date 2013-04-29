@@ -49,10 +49,7 @@
     6) thread : the return value is the number of threads to be used for 
              simulation of experiment plans (only usefull if proc = 'thread')
 
-    7) seed : the returned value is the seed used for single simulation or the
-            seed used for the generation of seeds into an experiment plan
-
-    8) outputplugin : the returned value is a list where names refer to
+    7) outputplugin : the returned value is a list where names refer to
             VPZ views and values are output plugin names,
             such as 'storage' or 'text' (for recovering smimulations results
             you should use the 'storage' plugin)

@@ -510,14 +510,15 @@ checkEquals(class(getDefault(f,"cond.message")), "VleMAP")
 setDefault(f,cond.message=t)
 checkEquals(class(getDefault(f,"cond.message")), "VleMULTIPLE_VALUES")
 
+setDefault(f,cond.message.as_single="my message")
 t = data.frame(matrix(c(1:20,20:1), ncol=2))
 names(t) = c("cond.message","cond.sendTime")
 t$cond.sendTime = as.double(t$cond.sendTime)#otherwise error
-f = setDefault(f,inputs=t, plan = 'linear')
-res = results(run(f))
+res = results(run(f,inputs=t, plan = 'linear'))
 checkEquals(class(res), "matrix")
 checkEquals(class(res[[1,20]]), "list")
 checkEquals(length(res[[1,20]]), 2)
+checkEquals(class(getDefault(f,"cond.message")), "character")
 
 
 
