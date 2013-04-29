@@ -180,6 +180,7 @@ function(RvleObj, setting, value, backup) {
             }
             return(invisible(RvleObj))
         }
+        backupVal = list();
         for(i in 1:length(names(value))){
             namei = names(value)[i]
             splitNameArg = strsplit(namei,"\\.")[[1]];
@@ -196,11 +197,14 @@ function(RvleObj, setting, value, backup) {
             condName = splitNameArg[1]
             condPort = splitNameArg[2]
             frameColumn = value[[i]]
-            backupVal = rvle.getConditionPortValues(
-                    RvleObj@sim, condName, condPort)
+            backupVal = append(backupVal,
+                               list(list(setting=namei,
+                                    value=rvle.getConditionPortValues(
+                                           RvleObj@sim, condName, condPort))))
             class(frameColumn) = "VleMULTIPLE_VALUES"
             rvle.setValueCondition(RvleObj@sim, condName, condPort, frameColumn)
         }
+        class(backupVal) = "__backup_multiple";
     } else if (setting == "duration") {
         backupVal = rvle.getDuration(RvleObj@sim)
         rvle.setDuration(RvleObj@sim, value)
@@ -251,11 +255,24 @@ function(RvleObj, setting, value, backup) {
     }
     #update backup
     if(backup){
-        if(length(RvleObj@backup) == 0){
-            RvleObj@backup = list(list(setting=setting, value=backupVal))
+        if(class(backupVal) == "__backup_multiple"){
+            for(i in 1:length(backupVal)){
+                if (i==1 && length(RvleObj@backup) == 0) {
+                   RvleObj@backup = list(list(setting=backupVal[[i]]$setting, 
+                                                value=backupVal[[i]]$value))
+                } else {
+                   RvleObj@backup = append(RvleObj@backup,
+                                    list(list(setting=backupVal[[i]]$setting, 
+                                                value=backupVal[[i]]$value)))
+                }
+            }
         } else {
-            RvleObj@backup = append(RvleObj@backup,
-                list(list(setting=setting, value=backupVal)))
+            if(length(RvleObj@backup) == 0){
+               RvleObj@backup = list(list(setting=setting, value=backupVal))
+            } else {
+               RvleObj@backup = append(RvleObj@backup,
+                 list(list(setting=setting, value=backupVal)))
+            }
         }
     }
     return(invisible(RvleObj))

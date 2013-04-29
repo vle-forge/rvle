@@ -30,7 +30,7 @@
     2) cond.port.as_single : it has the same semantic as 'cond.port'
                 setting except that v is taken as one single value.
                 It can be used to specify the fact that complex data
-                such as list will not be taken as multiple values 
+                such as list will not be taken as multiple values
                 of one condition port (which is the default case)
 
     3) inputs : where v is a data frame. This can be used 
@@ -54,9 +54,6 @@
 
     8) thread : if proc = 'thread'. Then v is the number of threads to be used for
              simulation of experiment plans
-
-    8) seed : v is the seed used for single simulation or the seed used for
-           the generation of seeds into an experiment plan.
 
     9) outputplugin : with v is a list where names refer to VPZ views and values
            are output plugin names, such as 'storage' or 'text'.

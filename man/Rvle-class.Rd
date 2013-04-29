@@ -77,4 +77,11 @@ methodname is one of the methods listed here.
 #
 #   print(getDefault(f,"outputplugin")["myview"])
 #
+#   # Simulate an experiment plan using a data.frame
+#
+#   inValues = data.frame(matrix(c(6:8,3:5),ncol=2)
+#   names(inValues) = c("mycond.mycondPort","mycond2.mycondPort2")
+#   res = results(run(f, inputs = inValues, plan = "linear",
+#                        outputplugin = c(myview = "vle.output/storage"))
+#   str(res)
 }
