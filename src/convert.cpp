@@ -247,6 +247,15 @@ SEXP rvle_toRvalue(rvle_value_t vlevalToCast, int without_class_names,
     value::Value* vleval = reinterpret_cast<value::Value*>(vlevalToCast);
 
     SEXP res;
+    if (!vleval) {
+        PROTECT(res = allocVector(REALSXP, 1));
+        REAL(res)[0] = NA_REAL; //WARNING NILSXP can lead to seg faults
+        if (without_class_names == 0) {
+            SET_CLASS(res, mkString("VleNIL"));
+        }
+        UNPROTECT(1); //res
+        return(res);
+    }
     switch (vleval->getType()) {
     case value::Value::BOOLEAN: {
         PROTECT(res = NEW_LOGICAL(1));
