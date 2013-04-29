@@ -376,8 +376,8 @@ function(RvleObj, ...) {
         rvle.setLinearCombination(RvleObj@sim, RvleObj@config$seed,
                 RvleObj@config$replicas)
     } else if (RvleObj@config$plan == "total"){
-        rvle.setTotalCombination(RvleObj@sim, RvleObj@config$seed,
-                RvleObj@config$replicas)
+        #rvle.setTotalCombination(RvleObj@sim, RvleObj@config$seed,
+        #        RvleObj@config$replicas)
     }
     #simulate
     if (RvleObj@config$plan == "single") {
@@ -401,10 +401,10 @@ function(RvleObj, ...) {
           thread = switch(RvleObj@config$restype,
             dataframe = rvle.runManagerThread(RvleObj@sim, RvleObj@config$thread),
             matrix = rvle.runManagerThreadMatrix(RvleObj@sim,
-                    RvleObj@config$thread)),
-          cluster = switch(RvleObj@config$restype,
-            dataframe = rvle.runManagerCluster(RvleObj@sim),
-            matrix = rvle.runManagerClusterMatrix(RvleObj@sim)))
+                    RvleObj@config$thread)))
+          #cluster = switch(RvleObj@config$restype,
+          #  dataframe = rvle.runManagerCluster(RvleObj@sim),
+          #  matrix = rvle.runManagerClusterMatrix(RvleObj@sim)))
     }
     #store intell on last run
     if (RvleObj@config$plan == "single") {

@@ -31,7 +31,7 @@
 
 .onUnload <- function(libpath)
 {
-    library.dynam("rvle", pkg, lib)
+    library.dynam.unload("rvle", libpath)
     x = .Call("__rvle_onunload", PACKAGE="rvle")
 }
 

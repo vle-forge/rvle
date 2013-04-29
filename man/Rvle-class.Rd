@@ -34,7 +34,9 @@ methodname is one of the methods listed here.
 #   # - the vpz "myvpz" contains only one view named "myview"
 #   # - the view "myview" contains a column "MyModel:MyDyn.myPort"
 #   # - the view "myview" contains at least 10 lines
-
+#   # - the vpz "myvpz" contains a condition port named "mycondPort"
+#   #   attached to a condition "mycond"
+#
 #   # Building the Rvle object
 #
 #   f = new("Rvle",file = "myvpz", pkg = "mypkg")
@@ -42,7 +44,7 @@ methodname is one of the methods listed here.
 #   # Sets the output plugin of "myview" to "storage"
 #   # and requires only one simulation (ie sets "plan" to "single")
 #
-#   f = setDefault(f, outputplugin = c(myview = "storage"),
+#   f = setDefault(f, outputplugin = c(myview = "vle.output/storage"),
 #                    plan = "single")
 #
 #   # Runs the simulation
@@ -53,23 +55,26 @@ methodname is one of the methods listed here.
 #   # of the first view "myview"
 #
 #   res = results(f)
-#   print(res[[1]][2,"MyModel:MyDyn.myPort"])
+#   print(res$myview[2,"MyModel:MyDyn.myPort"])
 #
-#   # Ask for the simulation of an experiment plan 'linear' and
-#   # sets the number of replica to 2. There will be two simulations of the
-#   # same combination with different seeds (useless if the model is not
-#   # stochastic)
+#   # Ask for the simulation of an experiment plan 'linear'.
+#   # There will be two simulations, one with mycond.mycondPort=1 and
+#   # the other with mycond.mycondPort=2
 #
-#   f = setDefault(f, replica = 2, plan = "linear")
+#   f = setDefault(f, mycond.mycondPort = c(1,2), plan = "linear")
 #
 #   # Runs the simulation
 #
 #   f = run(f)
 #
 #   # Prints the value at line 9, column "MyModel:MyDyn.myPort"
-#   # of the first view "myview" for the 2nd replica of the first
-#   # combination
+#   # of the first view "myview" for the 2nd combination
 #
 #   res = results(f)
-#   print(res[2,1][[1]][9,"MyModel:MyDyn.myPort"])
+#   print(res[2]$myview[9,"MyModel:MyDyn.myPort"])
+#
+#   # Get the default output plugin used for the view "myview"
+#
+#   print(getDefault(f,"outputplugin")["myview"])
+#
 }
