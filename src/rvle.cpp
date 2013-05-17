@@ -79,8 +79,9 @@ rvle_t rvle_pkg_open(const char* pkgname, const char* filename)
     vpz::Vpz*  file = 0;
 
     try {
-        Package::package().select(pkgname);
-        std::string filepath = Path::path().getPackageExpFile(filename);
+        vle::utils::Package pack(pkgname);
+        std::string filepath = pack.getExpFile(filename,
+                vle::utils::PKG_BINARY);
         file = new vpz::Vpz(filepath);
         return file;
     } catch(const std::exception& e) {
@@ -97,29 +98,16 @@ int rvle_compile_vle_output()
         //homedir is set before calling this method
         //current dir contains vle.ouput pkg
 
-        vle::utils::Package::package().refresh();
+        vle::utils::Package pack("vle.output");
 
-        Package::package().select("vle.output");
-        Package::package().configure();
-        Package::package().wait((*logfile), (*logfile));
-        if (Package::package().isSuccess()) {
-            Package::package().build();
-            Package::package().wait((*logfile), (*logfile));
-            if (Package::package().isSuccess()) {
-                Package::package().install();
-                Package::package().wait((*logfile), (*logfile));
-            }
-        }
-
-        Package::package().select("test_port");
-        Package::package().configure();
-        Package::package().wait((*logfile), (*logfile));
-        if (Package::package().isSuccess()) {
-            Package::package().build();
-            Package::package().wait((*logfile), (*logfile));
-            if (Package::package().isSuccess()) {
-                Package::package().install();
-                Package::package().wait((*logfile), (*logfile));
+        pack.configure();
+        pack.wait((*logfile), (*logfile));
+        if (pack.isSuccess()) {
+            pack.build();
+            pack.wait((*logfile), (*logfile));
+            if (pack.isSuccess()) {
+                pack.install();
+                pack.wait((*logfile), (*logfile));
             }
         }
     }  catch(const std::exception& e) {
@@ -140,15 +128,16 @@ int rvle_compile_test_port()
         //homedir is set before calling this method
         //current dir contains tert_port pkg
 
-        Package::package().select("test_port");
-        Package::package().configure();
-        Package::package().wait((*logfile), (*logfile));
-        if (Package::package().isSuccess()) {
-            Package::package().build();
-            Package::package().wait((*logfile), (*logfile));
-            if (Package::package().isSuccess()) {
-                Package::package().install();
-                Package::package().wait((*logfile), (*logfile));
+        vle::utils::Package pack("test_port");
+
+        pack.configure();
+        pack.wait((*logfile), (*logfile));
+        if (pack.isSuccess()) {
+            pack.build();
+            pack.wait((*logfile), (*logfile));
+            if (pack.isSuccess()) {
+                pack.install();
+                pack.wait((*logfile), (*logfile));
             }
         }
     }  catch(const std::exception& e) {
@@ -159,7 +148,6 @@ int rvle_compile_test_port()
     logfile->close();
     return -1;
 }
-
 
 rvle_t rvle_open(const char* filename)
 {
