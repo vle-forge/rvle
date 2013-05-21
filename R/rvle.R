@@ -186,7 +186,8 @@ rvle.setDuration <- function(rvleHandle, value)
 {
     stopifnot(is.rvle(rvleHandle))
 
-    .Call("experiment_set_duration", rvleHandle, as.real(value), PACKAGE="rvle")
+    .Call("experiment_set_duration", rvleHandle, as.numeric(value),
+                                     PACKAGE="rvle")
 
     return (invisible(NULL))
 }
@@ -218,7 +219,7 @@ rvle.setBegin <- function(rvleHandle, value)
 {
     stopifnot(is.rvle(rvleHandle))
 
-    .Call("experiment_set_begin", rvleHandle, as.real(value), PACKAGE="rvle")
+    .Call("experiment_set_begin", rvleHandle, as.numeric(value), PACKAGE="rvle")
 
     return (invisible(NULL))
 }
@@ -323,7 +324,7 @@ rvle.addRealCondition <- function(rvleHandle, condition, port, value)
     stopifnot(is.character(condition))
     stopifnot(is.character(port))
     
-    .Call("condition_add_real", rvleHandle, condition, port, as.real(value),
+    .Call("condition_add_real", rvleHandle, condition, port, as.numeric(value),
             PACKAGE="rvle")
     
     return (invisible(NULL))
