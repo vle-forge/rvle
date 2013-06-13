@@ -25,6 +25,14 @@
 
 .onLoad <- function(lib, pkg)
 {
+    if (.Platform$OS.type == "windows") {
+      library(utils)
+      registryKey = readRegistry("SOFTWARE\\VLE Development Team\\VLE 1.1.0");
+      stopifnot(is.list(registryKey))
+      stopifnot(length(registryKey) > 0)
+      pathAdd = file.path(registryKey[[1]], "bin");
+      Sys.setenv(PATH=paste(pathAdd, Sys.getenv("PATH"), sep=";"));
+    }
     library.dynam("rvle", pkg, lib)
     x = .Call("__rvle_onload", PACKAGE="rvle")
 }
