@@ -1,15 +1,23 @@
 AC_INIT([rvle],[1.1.0-0],[quesnel@users.sourceforge.net])
+AC_PREREQ([2.60])
+AC_CONFIG_SRCDIR([configure.ac])
+AC_CONFIG_MACRO_DIR([m4])
+AM_INIT_AUTOMAKE([1.6 foreign])
 
+dnl Now find the compiler and compiler flags to use
 : ${R_HOME=`R RHOME`}
 if test -z "${R_HOME}"; then
 	echo "could not determine R_HOME"
 	exit 1
 fi
-CC=`"${R_HOME}/bin/R" CMD config CC`
-CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
 
-AC_PROG_CXX
+CC=`"${R_HOME}/bin/R" CMD config CC`
+CPP=`"${R_HOME}/bin/R" CMD config CPP`
+CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
+CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
+AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_CC
+AC_PROG_CXX
 
 BOOST_REQUIRE
 
@@ -20,5 +28,6 @@ PKG_LIBS="${PKG_LIBS} ${VLE_LIBS}"
 AC_SUBST(PKG_CPPFLAGS)
 AC_SUBST(PKG_LIBS)
 
+AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_FILES([src/Makevars])
 AC_OUTPUT
