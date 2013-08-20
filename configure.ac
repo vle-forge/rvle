@@ -1,8 +1,7 @@
 AC_INIT([rvle],[1.1.0-1],[quesnel@users.sourceforge.net])
-AC_PREREQ([2.60])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE([1.6 foreign])
+AM_INIT_AUTOMAKE
 
 dnl Now find the compiler and compiler flags to use
 : ${R_HOME=`R RHOME`}
@@ -15,9 +14,10 @@ CC=`"${R_HOME}/bin/R" CMD config CC`
 CPP=`"${R_HOME}/bin/R" CMD config CPP`
 CFLAGS=`"${R_HOME}/bin/R" CMD config CFLAGS`
 CPPFLAGS=`"${R_HOME}/bin/R" CMD config CPPFLAGS`
-AC_USE_SYSTEM_EXTENSIONS
-AC_PROG_CC
-AC_PROG_CXX
+AC_LANG(C++)
+#AC_USE_SYSTEM_EXTENSIONS
+#AC_PROG_CC
+#AC_PROG_CXX
 
 BOOST_REQUIRE
 
@@ -29,5 +29,6 @@ AC_SUBST(PKG_CPPFLAGS)
 AC_SUBST(PKG_LIBS)
 
 AC_CONFIG_HEADERS([src/config.h])
-AC_CONFIG_FILES([src/Makevars])
+AC_CONFIG_FILES([src/Makevars Makefile])
+
 AC_OUTPUT
