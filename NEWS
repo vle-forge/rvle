@@ -5,8 +5,17 @@ RVLE 1.1.0-dev
 Changes from rvle-1.1.0-beta2
 =============================
 
-README: add an rst file
-remove warning about Makefile.am
+- README: add an rst file
+- Remove warning about Makefile.am
+- Add default autotools files
+
+Changes from rvle-1.1.0-beta1
+=============================
+
+- Update autotools scripts
+- rvle-1.1.0-beta2
+- win32: dynamically modify the path in onLoad
+
 
 Release highlights
 ==================
