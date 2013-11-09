@@ -73,6 +73,34 @@ void rvle_onload();
 void rvle_onunload();
 
 /**
+ * @brief List the set of vle packages installed
+ * @return the list of packages
+ */
+char** rvle_list_packages();
+
+/**
+ * @brief Gives the size of the vector of string
+ * given by the list of packages
+ * @return the size of the vector
+ */
+int rvle_list_packages_size();
+
+/**
+ * @brief List the content of a vle package
+ * @brief pkgname, param the name of vle package
+ * @return the content of a packages
+ */
+char** rvle_list_content(const char* pkgname);
+
+/**
+ * @brief Gives the size of the vector of string
+ * given by the content of a package
+ * @brief pkgname, param the name of vle package
+ * @return the size of the vector
+ */
+int rvle_list_content_size(const char* pkgname);
+
+/**
  * @brief Open the file vpz filename using vpz library.
  * @param filename The vpz file to load with his path.
  * @param pkgname The package name of the file.

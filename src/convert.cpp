@@ -240,6 +240,36 @@ value::Value* rvle_toVleValue_implicit(SEXP rval)
 //        public API
 ///////////////////////////////////
 
+SEXP rvle_convertCharToSEXP(char** val, unsigned int size)
+{
+    SEXP r;         /* condition list result */
+    int i;
+    PROTECT(r = allocVector(STRSXP, size));
+    if (size > 0) {
+        for (i = 0; i < size; ++i) {
+            SET_STRING_ELT(r, i, mkChar(val[i]));
+        }
+
+        for (i = 0; i < size; ++i) {
+            free(val[i]);
+        }
+        free(val);
+    }
+    UNPROTECT(1);
+    return r;
+}
+
+
+SEXP rvle_convertIntToSEXP(int val)
+{
+    SEXP r;
+    PROTECT(r = allocVector(INTSXP, 1));
+    INTEGER(r)[0] = val;
+    UNPROTECT(1);
+    return r;
+}
+
+
 SEXP rvle_toRvalue(rvle_value_t vlevalToCast, int without_class_names,
         int multiple_values, int unlist_multiple_values, int matrix_type,
         int matrix_type_depth)
