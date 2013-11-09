@@ -57,6 +57,21 @@ static void rvle_build_matrix(const value::Matrix& view,
     matrix.set(0, 0, view);
 }
 
+static char** rvle_convertVectorToChar(const std::vector<std::string>& vec)
+{
+    char** result = 0;
+    if (vec.size()) {
+        result = (char**)malloc(vec.size() * sizeof(char*));
+        std::vector < std::string >::const_iterator it = vec.begin();
+        for (size_t i = 0; i < vec.size(); ++i) {
+            result[i] = (char*)malloc((*it).size() + 1);
+            strcpy(result[i], (*it).c_str());
+            it++;
+        }
+    }
+    return result;
+}
+
 //
 // R interface
 //
@@ -69,6 +84,54 @@ void rvle_onload()
 void rvle_onunload()
 {
     delete vle_init;
+}
+
+char** rvle_list_packages()
+{
+    std::vector<std::string> pkglist;
+    try {
+        vle::utils::Path::path().fillBinaryPackagesList(pkglist);
+    } catch(const std::exception& e) {
+        pkglist.clear();
+        pkglist.push_back("Error while listing the binary packages");
+    }
+    return rvle_convertVectorToChar(pkglist);
+}
+
+int rvle_list_packages_size()
+{
+    std::vector<std::string> pkglist;
+    try {
+        vle::utils::Path::path().fillBinaryPackagesList(pkglist);
+    } catch(const std::exception& e) {
+        return 1;
+    }
+    return pkglist.size();
+}
+
+char** rvle_list_content(const char* pkgname)
+{
+    vle::utils::Package pkg(pkgname);
+    std::vector<std::string> pkgcontent;
+    try {
+        pkg.fillBinaryContent(pkgcontent);
+    } catch (const std::exception &e) {
+        pkgcontent.clear();
+        pkgcontent.push_back("Show package content error \n");
+    }
+    return rvle_convertVectorToChar(pkgcontent);
+}
+
+int rvle_list_content_size(const char* pkgname)
+{
+    vle::utils::Package pkg(pkgname);
+    std::vector<std::string> pkgcontent;
+    try {
+        pkg.fillBinaryContent(pkgcontent);
+    } catch (const std::exception &e) {
+        return 1;
+    }
+    return pkgcontent.size();
 }
 
 rvle_t rvle_pkg_open(const char* pkgname, const char* filename)

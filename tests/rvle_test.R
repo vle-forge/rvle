@@ -18,6 +18,16 @@ unlink("./test_port/buildvle", recursive=TRUE, force = TRUE)
 
 
 ##########
+# Test packages function
+##########
+
+pkgs = rvle.listPackages(justprint=FALSE)
+checkEquals(length(pkgs),3)
+checkEquals(pkgs[3],"vle.output")
+pkgContent = rvle.packageContent("test_port", justprint=FALSE)
+checkEquals(length(pkgContent),12)
+
+##########
 # Test conditions
 ##########
 f <- rvle.open(file="test_conditions.vpz",pkg="test_port")
