@@ -53,6 +53,27 @@
     x = .Call("__compile_test_port", PACKAGE="rvle")
 }
 
+rvle.listPackages <- function(justprint=TRUE)
+{
+    x <- .Call("list_packages", PACKAGE="rvle")
+    if (justprint) {
+        lapply(x,function(v){cat(v);cat("\n")});
+    } else {
+        return(x)
+    }
+}
+
+rvle.packageContent <- function(pkgname, justprint=TRUE)
+{
+    stopifnot(is.character(pkgname))
+    x <- .Call("package_content", pkgname, PACKAGE="rvle")
+    if (justprint) {
+        lapply(x,function(v){cat(v);cat("\n")});
+    } else {
+        return(x)
+    }
+}
+
 rvle.open <- function(file, pkg = "")
 {
     stopifnot(is.character(file))

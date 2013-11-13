@@ -43,19 +43,23 @@ rvle.getConditionsSize : Get the number of conditions of a VPZ.
 
 rvle.getDuration : Get the duration of the simulation.
 
-rvle.getOutputPlugin : Get the output plugin name of a view of a VPZ. 
+rvle.getOutputPlugin : Get the output plugin name of a view of a VPZ.
 
 rvle.getSeed : Get the seed used fo simulation
 
 rvle.getViewsSize : Get the number of views of a VPZ.
 
-rvle.listConditionPorts : List the ports of a condition of a VPZ. 
+rvle.listConditionPorts : List the ports of a condition of a VPZ.
 
 rvle.listConditions : List the conditions of a VPZ.
+
+rvle.listPackages : List the installed VLE packages.
 
 rvle.listViews : List the view of a VPZ.
 
 rvle.open : Load a VPZ from a file.
+
+rvle.packageContent : list the content of an installed VLE package.
 
 rvle.run : Run single simulation.
 

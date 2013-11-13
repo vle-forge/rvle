@@ -41,6 +41,8 @@ static SEXP r_rvle_onload();
 static SEXP r_rvle_onunload();
 static SEXP r_rvle_compile_vle_output();
 static SEXP r_rvle_compile_test_port();
+static SEXP r_rvle_list_packages();
+static SEXP r_rvle_list_content(SEXP pkgname);
 static SEXP r_rvle_open(SEXP name);
 static SEXP r_rvle_pkg_open(SEXP name, SEXP pkg);
 static SEXP r_rvle_run_poly(SEXP rvle);
@@ -86,13 +88,12 @@ static void r_rvle_condition_add_boolean(SEXP rvle, SEXP cnd, SEXP prt, SEXP
 static void r_rvle_condition_add_tuple(SEXP rvle, SEXP cnd, SEXP prt, SEXP
                 values);
 
-
-
 /*
  *
  * R function registration
  *
  */
+
 
 R_CallMethodDef callMethods[] = {
         { "__rvle_onload", (DL_FUNC) r_rvle_onload, 0},
@@ -100,6 +101,8 @@ R_CallMethodDef callMethods[] = {
         { "__compile_vle_output", (DL_FUNC) r_rvle_compile_vle_output, 0},
         { "__compile_test_port", (DL_FUNC) r_rvle_compile_test_port, 0},
         { "open", (DL_FUNC) r_rvle_open, 1},
+        { "list_packages", (DL_FUNC) r_rvle_list_packages, 0},
+        { "package_content", (DL_FUNC) r_rvle_list_content,1},
         { "open_pkg", (DL_FUNC) r_rvle_pkg_open, 2},
         { "run_poly", (DL_FUNC) r_rvle_run_poly, 1},
         { "run", (DL_FUNC) r_rvle_run, 1},
@@ -189,6 +192,21 @@ SEXP r_rvle_onunload()
     rvle_onunload();
     return R_NilValue;
 }
+
+static SEXP r_rvle_list_packages()
+{
+    unsigned int size = rvle_list_packages_size();
+    char** val = rvle_list_packages();
+    return rvle_convertCharToSEXP(val, size);
+}
+
+static SEXP r_rvle_list_content(SEXP pkgname)
+{
+    unsigned int size = rvle_list_content_size(CHAR(STRING_ELT(pkgname, 0)));
+    char** val = rvle_list_content(CHAR(STRING_ELT(pkgname, 0)));
+    return rvle_convertCharToSEXP(val, size);
+}
+
 
 SEXP r_rvle_open(SEXP name)
 {
