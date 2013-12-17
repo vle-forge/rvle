@@ -2,6 +2,12 @@
 RVLE 1.1.0-dev
 ==============
 
+Changes from rvle-1.1.0-beta4
+=============================
+
+- Add listPackages and packageContent functions
+- fix warning for package dependency 'methods'
+
 Changes from rvle-1.1.0-beta2
 =============================
 
