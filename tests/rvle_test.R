@@ -34,10 +34,11 @@ f <- rvle.open(file="test_conditions.vpz",pkg="test_port")
 
 cnd <- rvle.listConditions(f)
 
-checkEquals(cnd[1], "test")
+checkEquals(cnd[1], "simulation_engine")
+checkEquals(cnd[2], "test")
 
 # show port list
-ports <- rvle.listConditionPorts(f, cnd[1])
+ports <- rvle.listConditionPorts(f, cnd[2])
 checkEquals(ports[1], "bool")
 checkEquals(ports[2], "double")
 checkEquals(ports[3], "int")
