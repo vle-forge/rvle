@@ -9,6 +9,8 @@ Sys.setenv(VLE_HOME=vlehome)
 library(rvle)
 
 currentdir = getwd();
+unlink("./vle.output/buildvle", recursive=TRUE, force = TRUE)
+unlink("./test_port/buildvle", recursive=TRUE, force = TRUE)
 .rvle.compile_vle_output()
 setwd(currentdir)
 .rvle.compile_test_port()
