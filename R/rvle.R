@@ -27,7 +27,7 @@
 {
     if (.Platform$OS.type == "windows") {
       library(utils)
-      registryKey = readRegistry("SOFTWARE\\VLE Development Team\\VLE 1.1.0");
+      registryKey = readRegistry("SOFTWARE\\VLE Development Team\\VLE 1.2.0");
       stopifnot(is.list(registryKey))
       stopifnot(length(registryKey) > 0)
       pathAdd = file.path(registryKey[[1]], "bin");
