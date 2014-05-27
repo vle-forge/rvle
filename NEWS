@@ -1,29 +1,12 @@
-==============
-RVLE 1.1.0-dev
-==============
-
-Changes from rvle-1.1.0-beta4
-=============================
-
-- Add listPackages and packageContent functions
-- fix warning for package dependency 'methods'
-
-Changes from rvle-1.1.0-beta2
-=============================
-
-- README: add an rst file
-- Remove warning about Makefile.am
-- Add default autotools files
-
-Changes from rvle-1.1.0-beta1
-=============================
-
-- Update autotools scripts
-- rvle-1.1.0-beta2
-- win32: dynamically modify the path in onLoad
-
-
-Release highlights
-==================
+RVLE 1.2
+========
 
 A R wrapper to VLE.
+
+## Changes since rvle-1.1.0
+
+Ronan Trépos (2):
+
+- win32: update the read of registry for VLE 1.2.0
+- tests: put begin and duration into conditions
+- switch to VLE 1.2
