@@ -1,4 +1,4 @@
-AC_INIT([rvle],[1.2.0-1],[quesnel@users.sourceforge.net])
+AC_INIT([rvle],[1.2.0-0],[quesnel@users.sourceforge.net])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE
