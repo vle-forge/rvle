@@ -1,4 +1,4 @@
-AC_INIT([rvle],[1.2.0-0],[quesnel@users.sourceforge.net])
+AC_INIT([rvle],[1.3.0-0],[quesnel@users.sourceforge.net])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE
@@ -21,8 +21,8 @@ AC_LANG(C++)
 
 BOOST_REQUIRE
 
-VLE_CFLAGS=`pkg-config --cflags vle-1.2`
-VLE_LIBS=`pkg-config --libs vle-1.2`
+VLE_CFLAGS=`pkg-config --cflags vle-1.3`
+VLE_LIBS=`pkg-config --libs vle-1.3`
 PKG_CPPFLAGS="${PKG_CPPFLAGS} ${VLE_CFLAGS} ${BOOST_CPPFLAGS}"
 PKG_LIBS="${PKG_LIBS} ${VLE_LIBS}"
 AC_SUBST(PKG_CPPFLAGS)

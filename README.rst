@@ -1,6 +1,6 @@
-====================================
-Virtual Laboratory Environment 1.1.0
-====================================
+==================================
+Virtual Laboratory Environment 1.3
+==================================
 
 A R binding for the VFL.
 
@@ -10,7 +10,7 @@ Requirements
 ------------
 
 * R (>= 2.10)
-* vle (>= 1.1)
+* vle (>= 1.3)
 * boost (>= 1.41)
 * cmake (>= 2.8.0)
 * make (>= 1.8)
