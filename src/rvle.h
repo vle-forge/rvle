@@ -208,6 +208,66 @@ int rvlecpp_addValueCondition(rvle_t handle,
         rvle_value_t value);
 
 /**
+ * @brief Add a condition to the vpz object
+ * @param handle The reference to the Vpz file.
+ * @param conditionname The name of the condition.
+ * @return 0 if failed, -1 otherwise.
+ */
+int rvle_add_condition(rvle_t handle, const char* conditionname);
+
+/**
+ * @brief Remove a condition to the vpz object
+ * @param handle The reference to the Vpz file.
+ * @param conditionname The name of the condition.
+ * @return 0 if failed, -1 otherwise.
+ */
+int rvle_remove_condition(rvle_t handle, const char* conditionname);
+
+/**
+ * @brief Add a port to a condition containing a default value of 0
+ * @param handle The reference to the Vpz file.
+ * @param conditionname The name of the condition.
+ * @param portname The name of the port.
+ * @return 0 if failed, -1 otherwise.
+ */
+int rvle_add_port(rvle_t handle,
+        const char* conditionname,
+        const char* portname);
+
+/**
+ * @brief Remove a port to a condition
+ * @param handle The reference to the Vpz file.
+ * @param conditionname The name of the condition.
+ * @param portname The name of the port.
+ * @return 0 if failed, -1 otherwise.
+ */
+int rvle_remove_port(rvle_t handle,
+        const char* conditionname,
+        const char* portname);
+
+/**
+ * @brief Attach a condition to an atomic model
+ * @param handle The reference to the Vpz file.
+ * @param atomicpath Path to an atomic model
+ * @param conditionname The name of the condition.
+ * @return 0 if failed, -1 otherwise.
+ */
+int rvle_attach_condition(rvle_t handle,
+        const char* atomicpath,
+        const char* conditionname);
+
+/**
+ * @brief Detach a condition to an atomic model
+ * @param handle The reference to the Vpz file.
+ * @param atomicpath Path to an atomic model
+ * @param conditionname The name of the condition.
+ * @return 0 if failed, -1 otherwise.
+ */
+int rvle_detach_condition(rvle_t handle,
+        const char* atomicpath,
+        const char* conditionname);
+
+/**
  * @brief Set the initial condition of the specified condition and portname.
  * @param handle The reference to the Vpz file.
  * @param conditionname The name of the condition.

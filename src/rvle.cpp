@@ -27,6 +27,7 @@
 #include "rvle.h"
 #include <vle/vle.hpp>
 #include <vle/vpz/Vpz.hpp>
+#include <vle/vpz/AtomicModel.hpp>
 #include <vle/value/Matrix.hpp>
 #include <vle/utils/DateTime.hpp>
 #include <vle/utils/Package.hpp>
@@ -693,6 +694,95 @@ int rvlecpp_addValueCondition(rvle_t handle,
         return 0;
     }
     return 0;
+}
+
+
+int rvle_add_condition(rvle_t handle, const char* conditionname)
+{
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::Conditions& cnds(file->project().experiment().
+                            conditions());
+        vpz::Condition condToAdd(conditionname);
+        cnds.add(condToAdd);
+        return -1;
+    } catch(const std::exception& e) {
+        return 0;
+    }
+}
+
+int rvle_remove_condition(rvle_t handle, const char* conditionname)
+{
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::Conditions& cnds(file->project().experiment().
+                            conditions());
+        cnds.del(conditionname);
+        return -1;
+    } catch(const std::exception& e) {
+        return 0;
+    }
+}
+
+int rvle_add_port(rvle_t handle, const char* conditionname,
+        const char* portname)
+{
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::Condition& cnd(file->project().experiment().
+                            conditions().get(conditionname));
+        cnd.add(portname);
+        cnd.addValueToPort(portname, new vle::value::Double(0));
+        return -1;
+    } catch(const std::exception& e) {
+        return 0;
+    }
+}
+
+int rvle_remove_port(rvle_t handle, const char* conditionname,
+        const char* portname)
+{
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::Condition& cnd(file->project().experiment().
+                            conditions().get(conditionname));
+        cnd.del(portname);
+        return -1;
+    } catch(const std::exception& e) {
+        return 0;
+    }
+}
+
+int rvle_attach_condition(rvle_t handle,
+        const char* atomicpath,
+        const char* conditionname)
+{
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::BaseModel* mdl =
+                file->project().model().model()->findModelFromPath(atomicpath);
+        vpz::AtomicModel* atomg = mdl->toAtomic();
+        atomg->addCondition(conditionname);
+        return -1;
+    } catch(const std::exception& e) {
+        return 0;
+    }
+}
+
+int rvle_detach_condition(rvle_t handle,
+        const char* atomicpath,
+        const char* conditionname)
+{
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::BaseModel* mdl =
+                file->project().model().model()->findModelFromPath(atomicpath);
+        vpz::AtomicModel* atomg = mdl->toAtomic();
+        atomg->delCondition(conditionname);
+        return -1;
+    } catch(const std::exception& e) {
+        return 0;
+    }
 }
 
 //DEPRECATED

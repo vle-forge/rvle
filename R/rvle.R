@@ -346,6 +346,76 @@ rvle.setValueCondition <- function(rvleHandle, condition, port, value)
     return (invisible(NULL))
 }
 
+rvle.addCondition <- function(rvleHandle, condition)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+
+    .Call("r_rvle_add_condition", rvleHandle, condition,
+            PACKAGE="rvle")
+
+    return (invisible(NULL))
+}
+
+rvle.removeCondition <- function(rvleHandle, condition)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+
+    .Call("r_rvle_remove_condition", rvleHandle, condition,
+            PACKAGE="rvle")
+
+    return (invisible(NULL))
+}
+
+rvle.addPort <- function(rvleHandle, condition, port)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+
+    .Call("r_rvle_add_port", rvleHandle, condition, port,
+            PACKAGE="rvle")
+
+    return (invisible(NULL))
+}
+
+rvle.removePort <- function(rvleHandle, condition, port)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(condition))
+    stopifnot(is.character(port))
+
+    .Call("r_rvle_remove_port", rvleHandle, condition, port,
+            PACKAGE="rvle")
+
+    return (invisible(NULL))
+}
+
+rvle.attachCondition <- function(rvleHandle, path_to_atomic, condition)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(path_to_atomic))
+    stopifnot(is.character(condition))
+    
+    .Call("r_rvle_attach_condition", rvleHandle, path_to_atomic, condition,
+            PACKAGE="rvle")
+    
+    return (invisible(NULL))
+}
+
+rvle.detachCondition <- function(rvleHandle, path_to_atomic, condition)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(path_to_atomic))
+    stopifnot(is.character(condition))
+
+    .Call("r_rvle_detach_condition", rvleHandle, path_to_atomic, condition,
+            PACKAGE="rvle")
+
+    return (invisible(NULL))
+}
+
 ##DEPRECATED
 rvle.addRealCondition <- function(rvleHandle, condition, port, value)
 {

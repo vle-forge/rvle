@@ -77,6 +77,13 @@ static SEXP r_rvle_get_output_plugin(SEXP rvle, SEXP viewname);
 static void r_rvle_save(SEXP rvle, SEXP file);
 //NEW
 static void rvle_addValueCondition(SEXP rvle, SEXP cnd, SEXP prt, SEXP val);
+static void r_rvle_add_condition(SEXP rvle, SEXP cnd);
+static void r_rvle_remove_condition(SEXP rvle, SEXP cnd);
+static void r_rvle_add_port(SEXP rvle, SEXP cnd, SEXP prt);
+static void r_rvle_remove_port(SEXP rvle, SEXP cnd, SEXP prt);
+static void r_rvle_attach_condition(SEXP rvle, SEXP atom, SEXP cnd);
+static void r_rvle_detach_condition(SEXP rvle, SEXP atom, SEXP cnd);
+
 //DEPRECATED
 static void r_rvle_condition_add_real(SEXP rvle, SEXP cnd, SEXP prt, SEXP val);
 static void r_rvle_condition_add_integer(SEXP rvle, SEXP cnd, SEXP prt, SEXP
@@ -140,6 +147,12 @@ R_CallMethodDef callMethods[] = {
         { "save", (DL_FUNC) r_rvle_save, 2},
         //NEW
         {"rvle_addValueCondition", (DL_FUNC) rvle_addValueCondition, 4},
+        {"r_rvle_add_condition", (DL_FUNC) r_rvle_add_condition, 2},
+        {"r_rvle_remove_condition", (DL_FUNC) r_rvle_remove_condition, 2},
+        {"r_rvle_add_port", (DL_FUNC) r_rvle_add_port, 3},
+        {"r_rvle_remove_port", (DL_FUNC) r_rvle_remove_port, 3},
+        {"r_rvle_attach_condition", (DL_FUNC) r_rvle_attach_condition, 3},
+        {"r_rvle_detach_condition", (DL_FUNC) r_rvle_detach_condition, 3},
         //DEPRECATED
         { "condition_add_real", (DL_FUNC) r_rvle_condition_add_real, 4},
         { "condition_add_integer", (DL_FUNC) r_rvle_condition_add_integer, 4},
@@ -664,6 +677,70 @@ void rvle_addValueCondition(SEXP rvle, SEXP cnd, SEXP prt, SEXP val)
     }
 }
 
+void r_rvle_add_condition(SEXP rvle, SEXP cnd)
+{
+    int result = rvle_add_condition(R_ExternalPtrAddr(rvle),
+                CHAR(STRING_ELT(cnd, 0)));
+    if (!result) {
+        Rf_error("RVLE: error while adding the condition %s",
+                CHAR(STRING_ELT(cnd, 0)));
+    }
+}
+
+
+void r_rvle_remove_condition(SEXP rvle, SEXP cnd)
+{
+    int result = rvle_remove_condition(R_ExternalPtrAddr(rvle),
+                CHAR(STRING_ELT(cnd, 0)));
+    if (!result) {
+        Rf_error("RVLE: error while removing the condition %s",
+                CHAR(STRING_ELT(cnd, 0)));
+    }
+}
+
+void r_rvle_add_port(SEXP rvle, SEXP cnd, SEXP prt)
+{
+    int result = rvle_add_port(R_ExternalPtrAddr(rvle),
+                CHAR(STRING_ELT(cnd, 0)),
+                CHAR(STRING_ELT(prt, 0)));
+    if (!result) {
+        Rf_error("RVLE: error while adding the condition port %s.%s",
+                CHAR(STRING_ELT(cnd, 0)), CHAR(STRING_ELT(prt, 0)));
+    }
+}
+
+void r_rvle_remove_port(SEXP rvle, SEXP cnd, SEXP prt)
+{
+    int result = rvle_remove_port(R_ExternalPtrAddr(rvle),
+                CHAR(STRING_ELT(cnd, 0)),
+                CHAR(STRING_ELT(prt, 0)));
+    if (!result) {
+        Rf_error("RVLE: error while removing the condition port %s.%s",
+                CHAR(STRING_ELT(cnd, 0)), CHAR(STRING_ELT(prt, 0)));
+    }
+}
+
+void r_rvle_attach_condition(SEXP rvle, SEXP atom, SEXP cnd)
+{
+    int result = rvle_attach_condition(R_ExternalPtrAddr(rvle),
+                CHAR(STRING_ELT(atom, 0)),
+                CHAR(STRING_ELT(cnd, 0)));
+    if (!result) {
+        Rf_error("RVLE: error while attaching condition port %s",
+                CHAR(STRING_ELT(cnd, 0)));
+    }
+}
+
+void r_rvle_detach_condition(SEXP rvle, SEXP atom, SEXP cnd)
+{
+    int result = rvle_detach_condition(R_ExternalPtrAddr(rvle),
+                CHAR(STRING_ELT(atom, 0)),
+                CHAR(STRING_ELT(cnd, 0)));
+    if (!result) {
+        Rf_error("RVLE: error while detaching condition port %s",
+                CHAR(STRING_ELT(cnd, 0)));
+    }
+}
 
 //DEPRECATED
 void r_rvle_condition_add_real(SEXP rvle, SEXP cnd, SEXP prt, SEXP val)

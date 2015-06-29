@@ -19,6 +19,18 @@ To get information on methods of the basic API, type 'help(methodname)'.
 
 is.rvle : Check if an object is a rvle handle.
 
+rvle.addCondition : Add a condition to a vpz
+
+rvle.addPort : Add port to the condition of a vpz
+
+rvle.removeCondition : Remove a condition to a vpz
+
+rvle.removePort : Remove port to the condition of a vpz
+
+rvle.attachCondition : Attach a condition to an atomic model of a vpz
+
+rvle.detachCondition : Detach a condition to an atomic model of a vpz
+
 rvle.addBooleanCondition : Add an boolean to the specified condition port (deprecated)
 
 rvle.addIntegerCondition : Add an integer to the specified condition port (deprecated)
