@@ -718,6 +718,14 @@ int rvle_remove_condition(rvle_t handle, const char* conditionname)
         vpz::Conditions& cnds(file->project().experiment().
                             conditions());
         cnds.del(conditionname);
+        vpz::AtomicModelVector list;
+        file->project().model().getAtomicModelList(list);
+        vpz::AtomicModelVector::iterator it = list.begin();
+
+        while (it != list.end()) {
+            (*it)->delCondition(conditionname);
+            ++it;
+        }
         return -1;
     } catch(const std::exception& e) {
         return 0;
@@ -761,6 +769,8 @@ int rvle_attach_condition(rvle_t handle,
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
         vpz::BaseModel* mdl =
                 file->project().model().model()->findModelFromPath(atomicpath);
+        if (not mdl) return 0;
+        if (not mdl->isAtomic()) return 0;
         vpz::AtomicModel* atomg = mdl->toAtomic();
         atomg->addCondition(conditionname);
         return -1;
@@ -777,6 +787,8 @@ int rvle_detach_condition(rvle_t handle,
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
         vpz::BaseModel* mdl =
                 file->project().model().model()->findModelFromPath(atomicpath);
+        if (not mdl) return 0;
+        if (not mdl->isAtomic()) return 0;
         vpz::AtomicModel* atomg = mdl->toAtomic();
         atomg->delCondition(conditionname);
         return -1;
