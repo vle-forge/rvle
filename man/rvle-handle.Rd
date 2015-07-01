@@ -57,6 +57,10 @@ rvle.getDuration : Get the duration of the simulation.
 
 rvle.getOutputPlugin : Get the output plugin name of a view of a VPZ.
 
+rvle.getConfigView : Get the config of the view of a VPZ.
+
+rvle.setConfigView : Set the config of the view of a VPZ.
+
 rvle.getSeed : Get the seed used fo simulation
 
 rvle.getViewsSize : Get the number of views of a VPZ.

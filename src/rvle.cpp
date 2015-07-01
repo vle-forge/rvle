@@ -603,6 +603,7 @@ int rvle_set_output_plugin(rvle_t handle,
     return -1;
 }
 
+
 char* rvle_get_output_plugin(rvle_t handle,
                              const char* viewname)
 {
@@ -614,12 +615,69 @@ char* rvle_get_output_plugin(rvle_t handle,
             vle_views.get(viewname).output());
         std::string concatName =  out.package()+"/"+out.plugin();
         result = (char*)malloc(concatName.length() * sizeof(char));
-
         strcpy(result, concatName.c_str());
         return result;
     } catch(const std::exception& e) {
         return 0;
     }
+}
+
+char* rvle_get_config_view(rvle_t handle,
+                               const char* viewname)
+{
+    char* result;
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::Views& vle_views = file->project().experiment().views();
+        vpz::View& view = vle_views.get(viewname);
+        std::stringstream concatConfig;
+        switch(view.type()) {
+        case vle::vpz::View::TIMED:
+            concatConfig << "timed";
+            concatConfig << ",";
+            concatConfig << view.timestep();
+            break;
+        case vle::vpz::View::EVENT:
+            concatConfig << "event";
+            break;
+        case vle::vpz::View::FINISH:
+            concatConfig << "finish";
+            break;
+        }
+        std::string concatConfigStr =  concatConfig.str();
+        result = (char*)malloc(concatConfigStr.length() * sizeof(char));
+        strcpy(result, concatConfigStr.c_str());
+        return result;
+    } catch(const std::exception& e) {
+        return 0;
+    }
+}
+
+int rvle_set_config_view(rvle_t handle,
+                              const char* viewname,
+                              const char* config)
+{
+    int res;
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::Views& vle_views = file->project().experiment().views();
+        vpz::View& view = vle_views.get(viewname);
+        std::string configStr(config);
+        if (configStr.substr(0,5) == "timed") {
+            std::stringstream tss;
+            tss << configStr.substr(6,configStr.size());
+            double ts;
+            tss >> ts;
+            view.setType(vle::vpz::View::TIMED);
+            view.setTimestep(ts);
+        } else if (configStr == "finish" ){
+            view.setType(vle::vpz::View::FINISH);
+        }
+        return -1;
+    } catch(const std::exception& e) {
+        return 0;
+    }
+    return 0;
 }
 
 int rvle_save(rvle_t handle, const char* filename)

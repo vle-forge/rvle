@@ -310,6 +310,25 @@ rvle.getOutputPlugin <- function(rvleHandle, view)
 	.Call("get_output_plugin", rvleHandle, view, PACKAGE="rvle")
 }
 
+rvle.getConfigView <- function(rvleHandle, view)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(view))
+    
+    .Call("r_rvle_get_config_view", rvleHandle, view, PACKAGE="rvle")
+}
+
+rvle.setConfigView <- function(rvleHandle, view, config)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(view))
+    stopifnot(is.character(config))
+    
+    .Call("r_rvle_set_config_view", rvleHandle, view, config,  PACKAGE="rvle")
+    
+    return (invisible(NULL))
+}
+
 rvle.save <- function(rvleHandle, file)
 {
     stopifnot(is.rvle(rvleHandle))

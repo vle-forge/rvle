@@ -354,7 +354,8 @@ function(object) {
     cat("\n")
     cat("Output plugins settings:\n")
     lapply(rvle.listViews(object@sim),function(v){
-        cat(sprintf("* %s = %s\n", v, rvle.getOutputPlugin(object@sim,v)))
+        cat(sprintf("* %s = %s (%s)\n", v, rvle.getOutputPlugin(object@sim,v),
+                rvle.getConfigView(object@sim, v)))
     })
     cat("\n")
     cat("Experiment settings :\n");

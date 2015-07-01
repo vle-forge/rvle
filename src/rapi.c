@@ -83,6 +83,8 @@ static void r_rvle_add_port(SEXP rvle, SEXP cnd, SEXP prt);
 static void r_rvle_remove_port(SEXP rvle, SEXP cnd, SEXP prt);
 static void r_rvle_attach_condition(SEXP rvle, SEXP atom, SEXP cnd);
 static void r_rvle_detach_condition(SEXP rvle, SEXP atom, SEXP cnd);
+static SEXP r_rvle_get_config_view(SEXP rvle, SEXP viewname);
+static void r_rvle_set_config_view(SEXP rvle, SEXP viewname, SEXP config);
 
 //DEPRECATED
 static void r_rvle_condition_add_real(SEXP rvle, SEXP cnd, SEXP prt, SEXP val);
@@ -153,6 +155,10 @@ R_CallMethodDef callMethods[] = {
         {"r_rvle_remove_port", (DL_FUNC) r_rvle_remove_port, 3},
         {"r_rvle_attach_condition", (DL_FUNC) r_rvle_attach_condition, 3},
         {"r_rvle_detach_condition", (DL_FUNC) r_rvle_detach_condition, 3},
+        {"r_rvle_get_config_view", (DL_FUNC)
+                r_rvle_get_config_view, 2},
+        {"r_rvle_set_config_view", (DL_FUNC)
+                        r_rvle_set_config_view, 3},
         //DEPRECATED
         { "condition_add_real", (DL_FUNC) r_rvle_condition_add_real, 4},
         { "condition_add_integer", (DL_FUNC) r_rvle_condition_add_integer, 4},
@@ -739,6 +745,36 @@ void r_rvle_detach_condition(SEXP rvle, SEXP atom, SEXP cnd)
     if (!result) {
         Rf_error("RVLE: error while detaching condition port %s",
                 CHAR(STRING_ELT(cnd, 0)));
+    }
+}
+
+SEXP r_rvle_get_config_view(SEXP rvle, SEXP viewname)
+{
+    char* result = rvle_get_config_view(R_ExternalPtrAddr(rvle),
+        CHAR(STRING_ELT(viewname, 0)));
+    if (result == NULL) {
+        Rf_error("RVLE: cannot get config of plugin of view %s",
+            CHAR(STRING_ELT(viewname, 0)));
+    }
+
+    SEXP r;
+    PROTECT(r = allocVector(STRSXP, 1));
+    SET_STRING_ELT(r, 0, mkChar(result));
+    free(result);
+    UNPROTECT(1);
+
+    return r;
+}
+
+void r_rvle_set_config_view(SEXP rvle, SEXP viewname, SEXP config)
+{
+    int result = rvle_set_config_view(R_ExternalPtrAddr(rvle),
+                CHAR(STRING_ELT(viewname, 0)),
+                CHAR(STRING_ELT(config, 0)));
+    if (!result) {
+        printf( " DBG bof " );
+        Rf_error("RVLE: error while setting cinfiguration of view port %s",
+                CHAR(STRING_ELT(viewname, 0)));
     }
 }
 

@@ -428,6 +428,28 @@ int rvle_set_output_plugin(rvle_t handle,
 char* rvle_get_output_plugin(rvle_t handle,
                               const char* viewname);
 
+
+/**
+ * @brief Gets the configuration of view (timed with timestep
+ * or finished)
+ * @param handle The reference to the Vpz file.
+ * @param viewname The name of the view.
+ * @return the output plugin configuration of the view viewname
+ */
+char* rvle_get_config_view(rvle_t handle,
+                               const char* viewname);
+
+/**
+ * @brief Sets the config of of view
+ * @param handle The reference to the Vpz file.
+ * @param viewname The name of the view.
+ * @param config config type
+ * @return 0 if failed, -1 otherwise.
+ */
+int rvle_set_config_view(rvle_t handle,
+                              const char* viewname,
+                              const char* config);
+
 /**
  * @brief Save the current file under the specified filename.
  * @param handle The reference to the Vpz file.
