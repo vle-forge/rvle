@@ -176,6 +176,37 @@ rvle.listConditionPorts <- function(rvleHandle, condition)
     .Call("condition_port_list", rvleHandle, condition, PACKAGE="rvle")
 }
 
+rvle.listObservables <- function(rvleHandle)
+{
+    stopifnot(is.rvle(rvleHandle))
+    
+    .Call("listObservables", rvleHandle, PACKAGE="rvle")
+}
+
+rvle.listObservablePorts <- function(rvleHandle, obsName)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(obsName))
+    
+    .Call("listObservablePorts", rvleHandle, obsName,  PACKAGE="rvle")
+}
+
+rvle.getObservablesSize <- function(rvleHandle)
+{
+    stopifnot(is.rvle(rvleHandle))
+    
+    .Call("getObservablesSize", rvleHandle, PACKAGE="rvle")
+}
+
+rvle.getObservablePortsSize <- function(rvleHandle, obsName)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(obsName))
+    
+    .Call("getObservablePortsSize", rvleHandle, obsName, PACKAGE="rvle")
+}
+
+
 rvle.getConditionsSize <- function(rvleHandle)
 {
     stopifnot(is.rvle(rvleHandle))
@@ -269,6 +300,90 @@ rvle.setLinearCombination <- function(rvleHandle, seed, repliquas)
 
     return (invisible(NULL))
 }
+
+rvle.addView <- function(rvleHandle, view)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(view))
+
+    .Call("addView", rvleHandle, view, PACKAGE="rvle")
+    return (invisible(NULL))
+}
+
+rvle.removeView <- function(rvleHandle, view)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(view))
+    
+    .Call("removeView", rvleHandle, view, PACKAGE="rvle")
+    return (invisible(NULL))
+}
+
+rvle.addObservablePort <- function(rvleHandle, obsName, portName)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(obsName))
+    stopifnot(is.character(portName))
+
+    .Call("addObservablePort", rvleHandle, obsName, portName, PACKAGE="rvle")
+    return (invisible(NULL))
+}
+
+rvle.removeObservablePort <- function(rvleHandle, obsName, portName)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(obsName))
+    stopifnot(is.character(portName))
+
+    .Call("removeObservablePort", rvleHandle, obsName, portName, PACKAGE="rvle")
+    return (invisible(NULL))
+}
+
+rvle.attachView <- function(rvleHandle, view, obsName, portName)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(view))
+    stopifnot(is.character(obsName))
+    stopifnot(is.character(portName))
+    
+    .Call("attachView", rvleHandle, view, obsName, portName, 
+            PACKAGE="rvle")
+    return (invisible(NULL))
+}
+
+rvle.detachView <- function(rvleHandle, view, obsName, portName)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(view))
+    stopifnot(is.character(obsName))
+    stopifnot(is.character(portName))
+    
+    .Call("detachView", rvleHandle, view, obsName, portName, 
+            PACKAGE="rvle")
+    return (invisible(NULL))
+}
+
+rvle.listAttachedViews <- function(rvleHandle, obsName, 
+        portName)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(obsName))
+    stopifnot(is.character(portName))
+    
+    .Call("listAttachedViews", rvleHandle, obsName, 
+            portName, PACKAGE="rvle")
+}
+
+rvle.getAttachedViewsSize <- function(rvleHandle, obsName, portName)
+{
+    stopifnot(is.rvle(rvleHandle))
+    stopifnot(is.character(obsName))
+    stopifnot(is.character(portName))
+    
+    .Call("getAttachedViewsSize", rvleHandle, obsName, 
+            portName, PACKAGE="rvle")
+}
+
 
 rvle.listViews <- function(rvleHandle)
 {

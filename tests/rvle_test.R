@@ -350,6 +350,28 @@ rvle.save(f,"__test_rvle.vpz")
 f = rvle.open("__test_rvle.vpz") 
 checkEquals(rvle.getOutputPlugin(f,"view"), "mypackage/myplugin")
 
+#manage views
+obss = rvle.listObservables(f);
+checkEquals(obss[1], "obs")
+obsPorts = rvle.listObservablePorts(f, "obs")
+checkEquals(obsPorts[1], "obsPort")
+attachedViews = rvle.listAttachedViews(f, "obs", "obsPort")
+checkEquals(length(attachedViews), 2)
+checkEquals(attachedViews[2], "view2")
+
+rvle.addObservablePort(f, "obs","newPort")
+obsPorts = rvle.listObservablePorts(f, "obs")
+checkEquals(obsPorts[1], "newPort")
+checkEquals(obsPorts[2], "obsPort")
+rvle.removeObservablePort(f, "obs","obsPort")
+obsPorts = rvle.listObservablePorts(f, "obs")
+checkEquals(rvle.getObservablePortsSize(f, "obs"), 1)
+checkEquals(obsPorts[1], "newPort")
+checkEquals(length(rvle.listAttachedViews(f, "obs", "newPort")), 0)
+rvle.attachView(f, "view", "obs", "newPort")
+attachedViews = rvle.listAttachedViews(f, "obs", "newPort")
+checkEquals(attachedViews[1], "view")
+
 ##########
 # Test simulation
 ##########

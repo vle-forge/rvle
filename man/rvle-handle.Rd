@@ -69,7 +69,32 @@ rvle.listConditionPorts : List the ports of a condition of a VPZ.
 
 rvle.listConditions : List the conditions of a VPZ.
 
+rvle.listObservablePorts : List the ports of an observable of a VPZ.
+
+rvle.listObservables : List the observables of a VPZ.
+
+rvle.getObservablesSize : Get the number of observables of a VPZ.
+
+rvle.getObservablePortsSize : Get the number of ports of an observables of a VPZ.
+
 rvle.listPackages : List the installed VLE packages.
+
+rvle.addView : Add a view to a VPZ.
+
+rvle.removeView : Remove a view from a VPZ.
+
+rvle.addObservablePort : Add a port to an observable of a VPZ.
+
+rvle.removeObservablePort : Remove a port from an observable of a VPZ.
+
+rvle.attachView : Attach a view to an observable port of a VPZ.
+
+rvle.detachView : Detach a view from an observable port of a VPZ.
+
+rvle.listAttachedViews : list the attached views to an observable port.
+
+rvle.getAttachedViewsSize : get the number of attached views to an observable 
+port.
 
 rvle.listViews : List the view of a VPZ.
 

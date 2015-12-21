@@ -41,6 +41,7 @@
 #include <fstream>
 #include <cstring>
 
+
 using namespace vle;
 using namespace utils;
 
@@ -387,6 +388,85 @@ char** rvle_condition_list(rvle_t handle)
         }
     }
 
+    return result;
+}
+
+
+char** rvlecpp_listObservables(rvle_t handle)
+{
+    vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+
+    std::set < std::string > lst =
+            file->project().experiment().views().observables().getKeys();
+    char** result = 0;
+    if (lst.size()) {
+        result = (char**)malloc(lst.size() * sizeof(char*));
+        std::set < std::string >::iterator it = lst.begin();
+
+        for (size_t i = 0; i < lst.size(); ++i) {
+            result[i] = (char*)malloc((*it).size() + 1);
+            strcpy(result[i], (*it).c_str());
+            it++;
+        }
+
+    }
+    return result;
+}
+
+char** rvlecpp_listObservablePorts(rvle_t handle, const char* obsName)
+{
+    vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+    char** result = 0;
+    vpz::Observables& obss =
+            file->project().experiment().views().observables();
+    if (not obss.exist(obsName)) {
+        return result;
+    }
+    vpz::Observable& obs = obss.get(obsName);
+    vpz::ObservablePortList& portList =  obs.observableportlist();
+    if (portList.size()) {
+        result = (char**)malloc(portList.size() * sizeof(char*));
+        vpz::ObservablePortList::const_iterator it = portList.begin();
+
+        for (size_t i = 0; i < portList.size(); ++i) {
+            result[i] = (char*)malloc(it->first.size() + 1);
+            strcpy(result[i], it->first.c_str());
+            it++;
+        }
+
+    }
+    return result;
+}
+
+int rvlecpp_getObservablesSize(rvle_t handle)
+{
+    int result;
+
+    vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+    try {
+        vpz::Observables& obss(
+            file->project().experiment().views().observables());
+        result = obss.getKeys().size();
+    } catch(const std::exception& e) {
+        result = -1;
+    }
+    return result;
+}
+
+int rvlecpp_getObservablePortsSize(rvle_t handle, const char* obsName)
+{
+    int result;
+    vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+    try {
+        vpz::Observables& obss(
+            file->project().experiment().views().observables());
+        if (not obss.exist(obsName)) {
+            return -1;
+        }
+        result = obss.get(obsName).observableportlist().size();
+    } catch(const std::exception& e) {
+        result = -1;
+    }
     return result;
 }
 
@@ -754,6 +834,178 @@ int rvlecpp_addValueCondition(rvle_t handle,
     return 0;
 }
 
+int rvlecpp_addView(rvle_t handle,
+        const char* view)
+{
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        if (file->project().experiment().views().exist(view)) {
+            return 0;
+        }
+        file->project().experiment().views().add(vpz::View(view));
+        return -1;
+    } catch(const std::exception& e) {
+        return 0;
+    }
+    return 0;
+}
+
+int rvlecpp_removeView(rvle_t handle,
+        const char* view)
+{
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        if (not file->project().experiment().views().exist(view)) {
+            return 0;
+        }
+        file->project().experiment().views().del(view);
+        return -1;
+    } catch(const std::exception& e) {
+        return 0;
+    }
+    return 0;
+}
+
+int rvlecpp_addObservablePort(rvle_t handle,
+        const char* obsName, const char* portName)
+{
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::Observables& obss =
+                file->project().experiment().views().observables();
+        if (not obss.exist(obsName)) {
+            return 0;
+        }
+        if (obss.get(obsName).exist(portName)) {
+            return 0;
+        }
+        obss.get(obsName).add(portName);
+        return -1;
+    } catch(const std::exception& e) {
+        return 0;
+    }
+    return 0;
+}
+
+int rvlecpp_removeObservablePort(rvle_t handle,
+        const char* obsName, const char* portName)
+{
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::Observables& obss =
+                file->project().experiment().views().observables();
+        if (not obss.exist(obsName)) {
+            return 0;
+        }
+        if (not obss.get(obsName).exist(portName)) {
+            return 0;
+        }
+        obss.get(obsName).del(portName);
+        return -1;
+    } catch(const std::exception& e) {
+        return 0;
+    }
+    return 0;
+}
+
+int rvlecpp_attachView(rvle_t handle, const char* view,
+        const char* obsName, const char* portName)
+{
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::Views& views = file->project().experiment().views();
+        if (not views.exist(view)) {
+            return 0;
+        }
+        vpz::Observables& obss = views.observables();
+        if (not obss.exist(obsName)) {
+            return 0;
+        }
+        if (not obss.get(obsName).exist(portName)) {
+            return 0;
+        }
+        obss.get(obsName).get(portName).add(view);
+        return -1;
+    } catch(const std::exception& e) {
+        return 0;
+    }
+    return 0;
+}
+
+int rvlecpp_detachView(rvle_t handle, const char* view,
+        const char* obsName, const char* portName)
+{
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::Views& views = file->project().experiment().views();
+        if (not views.exist(view)) {
+            return 0;
+        }
+        vpz::Observables& obss = views.observables();
+        if (not obss.exist(obsName)) {
+            return 0;
+        }
+        if (not obss.get(obsName).exist(portName)) {
+            return 0;
+        }
+        obss.get(obsName).get(portName).del(view);
+        return -1;
+    } catch(const std::exception& e) {
+        return 0;
+    }
+    return 0;
+}
+
+char** rvlecpp_listAttachedViews(rvle_t handle, const char* obsName,
+        const char* portName)
+{
+    char** result = 0;
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::Views& views = file->project().experiment().views();
+        vpz::Observables& obss = views.observables();
+        if (not obss.exist(obsName)) {
+            return 0;
+        }
+        vpz::Observable& obs = obss.get(obsName);
+        if (not obs.exist(portName)) {
+            return 0;
+        }
+        vpz::ViewNameList& viewList = obs.get(portName).viewnamelist();
+        result = (char**)malloc(viewList.size() * sizeof(char*));
+        vpz::ViewNameList::const_iterator it = viewList.begin();
+        for (size_t i = 0; i < viewList.size(); ++i) {
+            result[i] = (char*)malloc((*it).size() + 1);
+            strcpy(result[i], (*it).c_str());
+            it++;
+        }
+    } catch(const std::exception& e) {
+        return 0;
+    }
+    return result;
+}
+
+int rvlecpp_getAttachedViewsSize(rvle_t handle, const char* obsName,
+        const char* portName)
+{
+    try {
+        vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
+        vpz::Views& views = file->project().experiment().views();
+        vpz::Observables& obss = views.observables();
+        if (not obss.exist(obsName)) {
+            return -1;
+        }
+        vpz::Observable& obs = obss.get(obsName);
+        if (not obs.exist(portName)) {
+            return -1;
+        }
+        vpz::ViewNameList& viewList = obs.get(portName).viewnamelist();
+        return viewList.size();
+    } catch(const std::exception& e) {
+        return -1;
+    }
+    return -1;
+}
 
 int rvle_add_condition(rvle_t handle, const char* conditionname)
 {

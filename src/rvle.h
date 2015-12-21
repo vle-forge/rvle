@@ -172,6 +172,21 @@ char** rvle_condition_port_list(rvle_t handle, const char* conditionname);
 int rvle_condition_size(rvle_t handle);
 
 /**
+ * @brief Get the number of observables.
+ * @param handle The reference to the Vpz file.
+ * @return The number of observables.
+ */
+int rvlecpp_getObservablesSize(rvle_t handle);
+
+/**
+ * @brief Get the number of ports of an observable.
+ * @param handle The reference to the Vpz file.
+ * @param obsName the observalbe name.
+ * @return The number of ports of observable obsName.
+ */
+int rvlecpp_getObservablePortsSize(rvle_t handle, const char* obsName);
+
+/**
  * @brief Get the number of portname for the specified condition.
  * @param handle The reference to the Vpz file.
  * @param conditionname The name of the condition to get port list.
@@ -206,6 +221,102 @@ int rvlecpp_addValueCondition(rvle_t handle,
         const char* conditionname,
         const char* portname,
         rvle_value_t value);
+
+/**
+ * @brief Add a view to the vpz object
+ * @param handle The reference to the Vpz file.
+ * @param view The name of the view.
+ * @return 0 if failed, -1 otherwise.
+ */
+int rvlecpp_addView(rvle_t handle, const char* view);
+
+/**
+ * @brief Removes a view from the vpz object
+ * @param handle The reference to the Vpz file.
+ * @param view The name of the view.
+ * @return 0 if failed, -1 otherwise.
+ */
+int rvlecpp_removeView(rvle_t handle, const char* view);
+
+/**
+ * @brief Add an observable port to a vpz object
+ * @param handle The reference to the Vpz file.
+ * @param obsName The name of the observable.
+ * @param portName The name of the port to add.
+ * @return 0 if failed, -1 otherwise.
+ */
+int rvlecpp_addObservablePort(rvle_t handle,
+        const char* obsName, const char* portName);
+
+/**
+ * @brief Removes an observable port to a vpz object
+ * @param handle The reference to the Vpz file.
+ * @param obsName The name of the observable.
+ * @param portName The name of the port to remove.
+ * @return 0 if failed, -1 otherwise.
+ */
+int rvlecpp_removeObservablePort(rvle_t handle,
+        const char* obsName, const char* portName);
+
+/**
+ * @brief Attach a port of an observable to a view
+ * @param handle The reference to the Vpz file.
+ * @param view The name of the view.
+ * @param obsName The name of the observable.
+ * @param portName The name of the port to attach to view.
+ * @return 0 if failed, -1 otherwise.
+ */
+int rvlecpp_attachView(rvle_t handle, const char* view,
+        const char* obsName, const char* portName);
+
+/**
+ * @brief Detach a port of an observable from a view
+ * @param handle The reference to the Vpz file.
+ * @param view The name of the view.
+ * @param obsName The name of the observable.
+ * @param portName The name of the port to detach from view.
+ * @return 0 if failed, -1 otherwise.
+ */
+int rvlecpp_detachView(rvle_t handle, const char* view,
+        const char* obsName, const char* portName);
+
+/**
+ * @briefGet the list of views attached to an observable port
+ * @param handle The reference to the Vpz file.
+ * @param obsName The name of the observable.
+ * @param portName The name of the port to attach to view.
+ * @return The reference to a char**. Memory use malloc, don't forget to use
+ * free function.
+ */
+char** rvlecpp_listAttachedViews(rvle_t handle, const char* obsName,
+        const char* portName);
+
+/**
+ * @brief Get the number of views attached to an observable port
+ * @param handle The reference to the Vpz file.
+ * @param obsName The name of the observable.
+ * @param portName The name of the port to attach to view.
+ * @return The number of attached views, -1 on error.
+ */
+int rvlecpp_getAttachedViewsSize(rvle_t handle, const char* obsName,
+        const char* portName);
+
+/**
+ * @brief Get the list of observables.
+ * @param handle The reference to the Vpz file.
+ * @return The reference to a char**. Memory use malloc, don't forget to use
+ * free function.
+ */
+char** rvlecpp_listObservables(rvle_t handle);
+
+/**
+ * @brief Get the list of ports of an observable.
+ * @param handle The reference to the Vpz file.
+ * @param obsName The name of the observable.
+ * @return The reference to a char**. Memory use malloc, don't forget to use
+ * free function.
+ */
+char** rvlecpp_listObservablePorts(rvle_t handle, const char* obsName);
 
 /**
  * @brief Add a condition to the vpz object

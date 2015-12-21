@@ -77,6 +77,18 @@ static SEXP r_rvle_get_output_plugin(SEXP rvle, SEXP viewname);
 static void r_rvle_save(SEXP rvle, SEXP file);
 //NEW
 static void rvle_addValueCondition(SEXP rvle, SEXP cnd, SEXP prt, SEXP val);
+static void rvle_addView(SEXP rvle, SEXP view);
+static void rvle_removeView(SEXP rvle, SEXP view);
+static void rvle_addObservablePort(SEXP rvle, SEXP obsName, SEXP portName);
+static void rvle_removeObservablePort(SEXP rvle, SEXP obsName, SEXP portName);
+static void rvle_attachView(SEXP rvle, SEXP view, SEXP obsName, SEXP portName);
+static void rvle_detachView(SEXP rvle, SEXP view, SEXP obsName, SEXP portName);
+SEXP rvle_listAttachedViews(SEXP rvle, SEXP obsName, SEXP portName);
+SEXP rvle_getAttachedViewsSize(SEXP rvle, SEXP obsName, SEXP portName);
+SEXP rvle_listObservables(SEXP rvle);
+SEXP rvle_listObservablePorts(SEXP rvle, SEXP obsName);
+SEXP rvle_getObservablesSize(SEXP rvle);
+SEXP rvle_getObservablePortsSize(SEXP rvle, SEXP obsName);
 static void r_rvle_add_condition(SEXP rvle, SEXP cnd);
 static void r_rvle_remove_condition(SEXP rvle, SEXP cnd);
 static void r_rvle_add_port(SEXP rvle, SEXP cnd, SEXP prt);
@@ -85,6 +97,7 @@ static void r_rvle_attach_condition(SEXP rvle, SEXP atom, SEXP cnd);
 static void r_rvle_detach_condition(SEXP rvle, SEXP atom, SEXP cnd);
 static SEXP r_rvle_get_config_view(SEXP rvle, SEXP viewname);
 static void r_rvle_set_config_view(SEXP rvle, SEXP viewname, SEXP config);
+
 
 //DEPRECATED
 static void r_rvle_condition_add_real(SEXP rvle, SEXP cnd, SEXP prt, SEXP val);
@@ -149,6 +162,18 @@ R_CallMethodDef callMethods[] = {
         { "save", (DL_FUNC) r_rvle_save, 2},
         //NEW
         {"rvle_addValueCondition", (DL_FUNC) rvle_addValueCondition, 4},
+        {"addView", (DL_FUNC) rvle_addView, 2},
+        {"removeView", (DL_FUNC) rvle_removeView, 2},
+        {"addObservablePort", (DL_FUNC) rvle_addObservablePort, 3},
+        {"removeObservablePort", (DL_FUNC) rvle_removeObservablePort, 3},
+        {"attachView", (DL_FUNC) rvle_attachView, 4},
+        {"detachView", (DL_FUNC) rvle_detachView, 4},
+        {"listAttachedViews", (DL_FUNC) rvle_listAttachedViews, 3},
+        {"getAttachedViewsSize", (DL_FUNC) rvle_getAttachedViewsSize, 3},
+        {"listObservables", (DL_FUNC) rvle_listObservables, 1},
+        {"listObservablePorts", (DL_FUNC) rvle_listObservablePorts, 2},
+        {"getObservablesSize", (DL_FUNC) rvle_getObservablesSize, 1},
+        {"getObservablePortsSize", (DL_FUNC) rvle_getObservablePortsSize, 2},
         {"r_rvle_add_condition", (DL_FUNC) r_rvle_add_condition, 2},
         {"r_rvle_remove_condition", (DL_FUNC) r_rvle_remove_condition, 2},
         {"r_rvle_add_port", (DL_FUNC) r_rvle_add_port, 3},
@@ -683,6 +708,208 @@ void rvle_addValueCondition(SEXP rvle, SEXP cnd, SEXP prt, SEXP val)
     }
 }
 
+void rvle_addView(SEXP rvle, SEXP view)
+{
+    int result = rvlecpp_addView(R_ExternalPtrAddr(rvle),
+            CHAR(STRING_ELT(view, 0)));
+
+    if (!result) {
+        Rf_error("RVLE: error while adding the view %s",
+                CHAR(STRING_ELT(view, 0)));
+    }
+}
+
+void rvle_removeView(SEXP rvle, SEXP view)
+{
+    int result = rvlecpp_removeView(R_ExternalPtrAddr(rvle),
+                    CHAR(STRING_ELT(view, 0)));
+    if (!result) {
+        Rf_error("RVLE: error while removing the view %s",
+                CHAR(STRING_ELT(view, 0)));
+    }
+}
+
+void rvle_addObservablePort(SEXP rvle, SEXP obsName, SEXP portName)
+{
+    int result = rvlecpp_addObservablePort(R_ExternalPtrAddr(rvle),
+                CHAR(STRING_ELT(obsName, 0)),
+                CHAR(STRING_ELT(portName, 0)));
+    if (!result) {
+        Rf_error("RVLE: error while adding the port %s to observable %s",
+                CHAR(STRING_ELT(portName, 0)),
+                CHAR(STRING_ELT(obsName, 0)));
+    }
+}
+
+void rvle_removeObservablePort(SEXP rvle, SEXP obsName, SEXP portName)
+{
+    int result = rvlecpp_removeObservablePort(R_ExternalPtrAddr(rvle),
+                CHAR(STRING_ELT(obsName, 0)),
+                CHAR(STRING_ELT(portName, 0)));
+    if (!result) {
+        Rf_error("RVLE: error while removing the port %s to observable %s",
+                CHAR(STRING_ELT(portName, 0)),
+                CHAR(STRING_ELT(obsName, 0)));
+    }
+}
+
+void rvle_attachView(SEXP rvle, SEXP view, SEXP obsName,
+        SEXP portName)
+{
+    int result = rvlecpp_attachView(R_ExternalPtrAddr(rvle),
+                    CHAR(STRING_ELT(view, 0)),
+                    CHAR(STRING_ELT(obsName, 0)),
+                    CHAR(STRING_ELT(portName, 0)));
+    if (!result) {
+        Rf_error("RVLE: error while attaching view  %s to port  %s of "
+                "observable %s",
+                CHAR(STRING_ELT(view, 0)),
+                CHAR(STRING_ELT(portName, 0)),
+                CHAR(STRING_ELT(obsName, 0)));
+    }
+}
+
+void rvle_detachView(SEXP rvle, SEXP view, SEXP obsName,
+        SEXP portName)
+{
+    int result = rvlecpp_detachView(R_ExternalPtrAddr(rvle),
+                    CHAR(STRING_ELT(view, 0)),
+                    CHAR(STRING_ELT(obsName, 0)),
+                    CHAR(STRING_ELT(portName, 0)));
+    if (!result) {
+        Rf_error("RVLE: error while detaching the view %s to port %s"
+                " of observable %s",
+                CHAR(STRING_ELT(view, 0)),
+                CHAR(STRING_ELT(portName, 0)),
+                CHAR(STRING_ELT(obsName, 0)));
+    }
+}
+
+SEXP rvle_getAttachedViewsSize(SEXP rvle, SEXP obsName,
+        SEXP portName)
+{
+    SEXP r;
+    int result;
+
+    PROTECT(r = allocVector(INTSXP, 1));
+    result = rvlecpp_getAttachedViewsSize(R_ExternalPtrAddr(rvle),
+            CHAR(STRING_ELT(obsName, 0)),
+            CHAR(STRING_ELT(portName, 0)));
+    INTEGER(r)[0] = result;
+    UNPROTECT(1);
+    return r;
+}
+
+SEXP rvle_listAttachedViews(SEXP rvle, SEXP obsName,
+        SEXP portName)
+{
+    SEXP r;         /* obs list result */
+    char** result;  /* string obs from the vle api */
+    int size;       /* size of the obs list from the vle api */
+    int i;
+
+    size = rvlecpp_getAttachedViewsSize(R_ExternalPtrAddr(rvle),
+            CHAR(STRING_ELT(obsName, 0)),
+            CHAR(STRING_ELT(portName, 0)));
+    PROTECT(r = allocVector(STRSXP, size));
+    if (size > 0) {
+        result = rvlecpp_listAttachedViews(R_ExternalPtrAddr(rvle),
+                CHAR(STRING_ELT(obsName, 0)),
+                CHAR(STRING_ELT(portName, 0)));
+        for (i = 0; i < size; ++i) {
+            SET_STRING_ELT(r, i, mkChar(result[i]));
+        }
+
+        for (i = 0; i < size; ++i) {
+            free(result[i]);
+        }
+        free(result);
+    }
+
+    UNPROTECT(1);
+    return r;
+
+}
+
+SEXP rvle_listObservables(SEXP rvle)
+{
+    SEXP r;         /* obs list result */
+    char** result;  /* string obs from the vle api */
+    int size;       /* size of the obs list from the vle api */
+    int i;
+
+    size = rvlecpp_getObservablesSize(R_ExternalPtrAddr(rvle));
+    PROTECT(r = allocVector(STRSXP, size));
+
+    if (size > 0) {
+            result = rvlecpp_listObservables(R_ExternalPtrAddr(rvle));
+            for (i = 0; i < size; ++i) {
+                    SET_STRING_ELT(r, i, mkChar(result[i]));
+            }
+
+            for (i = 0; i < size; ++i) {
+                    free(result[i]);
+            }
+            free(result);
+    }
+
+    UNPROTECT(1);
+    return r;
+}
+
+SEXP rvle_listObservablePorts(SEXP rvle, SEXP obsName)
+{
+    SEXP r;         /* obsport list result */
+    char** result;  /* string obsport from the vle api */
+    int size;       /* size of the obsport list from the vle api */
+    int i;
+
+    size = rvlecpp_getObservablePortsSize(R_ExternalPtrAddr(rvle),
+            CHAR(STRING_ELT(obsName, 0)));
+    PROTECT(r = allocVector(STRSXP, size));
+    if (size > 0) {
+            result = rvlecpp_listObservablePorts(R_ExternalPtrAddr(rvle),
+                    CHAR(STRING_ELT(obsName, 0)));
+            for (i = 0; i < size; ++i) {
+                    SET_STRING_ELT(r, i, mkChar(result[i]));
+            }
+            for (i = 0; i < size; ++i) {
+                    free(result[i]);
+            }
+            free(result);
+    }
+
+    UNPROTECT(1);
+    return r;
+}
+
+
+SEXP rvle_getObservablesSize(SEXP rvle)
+{
+    SEXP r;
+    int result;
+
+    PROTECT(r = allocVector(INTSXP, 1));
+    result = rvlecpp_getObservablesSize(R_ExternalPtrAddr(rvle));
+    INTEGER(r)[0] = result;
+    UNPROTECT(1);
+    return r;
+}
+
+
+SEXP rvle_getObservablePortsSize(SEXP rvle, SEXP obsName)
+{
+    SEXP r;
+    int result;
+
+    PROTECT(r = allocVector(INTSXP, 1));
+    result = rvlecpp_getObservablePortsSize(R_ExternalPtrAddr(rvle),
+            CHAR(STRING_ELT(obsName, 0)));
+    INTEGER(r)[0] = result;
+    UNPROTECT(1);
+    return r;
+}
+
 void r_rvle_add_condition(SEXP rvle, SEXP cnd)
 {
     int result = rvle_add_condition(R_ExternalPtrAddr(rvle),
@@ -772,7 +999,6 @@ void r_rvle_set_config_view(SEXP rvle, SEXP viewname, SEXP config)
                 CHAR(STRING_ELT(viewname, 0)),
                 CHAR(STRING_ELT(config, 0)));
     if (!result) {
-        printf( " DBG bof " );
         Rf_error("RVLE: error while setting cinfiguration of view port %s",
                 CHAR(STRING_ELT(viewname, 0)));
     }
