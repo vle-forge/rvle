@@ -1,27 +1,33 @@
-========
 RVLE 1.1
 ========
 
 Changes from rvle-1.1.0
-=======================
+-----------------------
+
+Gauthier Quesnel (1):
+      m4: update boost.m4 script (best detection of gcc5)
+
+
+Changes from rvle-1.1.0
+-----------------------
 
 Nothing
 
 Changes from rvle-1.1.0-beta4
-=============================
+-----------------------------
 
 - Add listPackages and packageContent functions
 - fix warning for package dependency 'methods'
 
 Changes from rvle-1.1.0-beta2
-=============================
+-----------------------------
 
 - README: add an rst file
 - Remove warning about Makefile.am
 - Add default autotools files
 
 Changes from rvle-1.1.0-beta1
-=============================
+-----------------------------
 
 - Update autotools scripts
 - rvle-1.1.0-beta2
@@ -29,6 +35,6 @@ Changes from rvle-1.1.0-beta1
 
 
 Release highlights
-==================
+------------------
 
 A R wrapper to VLE.
