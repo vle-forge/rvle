@@ -1,12 +1,15 @@
-#!/bin/sh
+#!/bin/sh -e
 
-rm -rf autom4te.cache
-rm -f aclocal.m4 ltmain.sh
+if [ -f .git/hooks/pre-commit.sample -a ! -f .git/hooks/pre-commit ] ; then
+        cp -p .git/hooks/pre-commit.sample .git/hooks/pre-commit && \
+        chmod +x .git/hooks/pre-commit && \
+        echo "Activated pre-commit hook."
+fi
 
-touch README
+autoreconf --install --symlink
 
-echo "Running aclocal..." ; aclocal -I m4 $ACLOCAL_FLAGS || exit 1
-echo "Running autoheader..." ; autoheader || exit 1
-echo "Running autoconf..." ; autoconf || exit 1
-echo "Running libtoolize..." ; (libtoolize --copy --automake || glibtoolize --automake) || exit 1
-echo "Running automake..." ; automake --add-missing --copy --gnu || exit 1
+echo
+echo "-------------------------"
+echo "Initialized build system."
+echo "-------------------------"
+echo

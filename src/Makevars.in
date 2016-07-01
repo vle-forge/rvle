@@ -1,2 +1,2 @@
-PKG_CPPFLAGS=@PKG_CPPFLAGS@
-PKG_LIBS=@PKG_LIBS@
+PKG_CPPFLAGS=`pkg-config --cflags vle-1.3`
+PKG_LIBS=`pkg-config --libs vle-1.3`
