@@ -35,7 +35,7 @@ setClass("Rvle", representation(sim = "rvle",
 setMethod("initialize", "Rvle",
 function(.Object, file = character(length = 0), pkg = character(length = 0),
   config = list(NULL), lastrun ="null", outlist = list(),
-  outmatrix = matrix(c(0)), backup = pailist(NULL)){
+  outmatrix = matrix(c(0)), backup = pairlist(NULL)){
     .Object@file <- file
     if(nargs() == 2) {
         .Object@sim <- rvle.open(.Object@file)

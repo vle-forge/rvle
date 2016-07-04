@@ -27,8 +27,7 @@
 #include <vle/value/Value.hpp>
 #include <vle/value/Map.hpp>
 #include <vle/utils/Exception.hpp>
-#include <vle/devs/DynamicsDbg.hpp>
-
+#include <boost/format.hpp>
 #include <iostream>
 
 namespace differentialEquation { namespace test { namespace dynamics  {
@@ -57,7 +56,7 @@ private:
     };
 
     STATE mstate;
-    vv::Value* message;
+    std::unique_ptr<vv::Value> message;
     vd::Time sendTime;
     unsigned int nbBags;
 
@@ -65,7 +64,7 @@ private:
 public:
     Perturb(const vd::DynamicsInit& init, const vd::InitEventList& events):
         vd::Dynamics(init, events), mstate(BEFORE_PERT),
-        message(0), sendTime(events.getDouble("sendTime")),
+        message(nullptr), sendTime(events.getDouble("sendTime")),
         nbBags(0), currentBag(0)
     {
         if(events.exist("nbBags")){
@@ -76,13 +75,12 @@ public:
 
     virtual ~Perturb()
     {
-        delete message;
     }
 
     /**
      * @brief Implementation of Dynamics::init
      */
-    vd::Time init(const vd::Time& /*time*/)
+    vd::Time init(vd::Time /*time*/) override
     {
         mstate = BEFORE_PERT;
         return sendTime;
@@ -90,7 +88,7 @@ public:
     /**
      * @brief Implementation of Dynamics::timeAdvance
      */
-    vd::Time timeAdvance() const
+    vd::Time timeAdvance() const override
     {
         switch(mstate){
         case BEFORE_PERT: {
@@ -108,7 +106,7 @@ public:
     /**
      * @brief Implementation of Dynamics::internalTransition
      */
-    void internalTransition(const vd::Time& /* time */)
+    void internalTransition(vd::Time /* time */) override
     {
         switch(mstate){
         case BEFORE_PERT: {
@@ -134,21 +132,22 @@ public:
     /**
      * @brief Implementation of Dynamics::output
      */
-    void output(const vd::Time& /* time */, vd::ExternalEventList& output) const
+    void output(vd::Time /* time */,
+            vd::ExternalEventList& output) const override
     {
         switch(mstate){
         case BEFORE_PERT: {
             if(nbBags == 0){
-                vd::ExternalEvent* ee = new vd::ExternalEvent("p");
-                ee->putAttribute("p",message->clone());
-                output.push_back(ee);
+                output.emplace_back("p");
+                vle::value::Map& m = output.back().addMap();
+                m.add("p", message->clone());
             }
             break;
         } case DURING_PERT: {
             if(currentBag == nbBags){
-                vd::ExternalEvent* ee = new vd::ExternalEvent("p");
-                ee->putAttribute("p", message->clone());
-                output.push_back(ee);
+                output.emplace_back("p");
+                vle::value::Map& m = output.back().addMap();
+                m.add("p", message->clone());
             }
             break;
         } case AFTER_PERT: {
@@ -160,23 +159,24 @@ public:
      * @brief Implementation of Dynamics::externalTransition
      */
     void externalTransition(const vd::ExternalEventList& /*event*/,
-        const vd::Time& /* time */)
+        vd::Time /* time */) override
     {
-        throw vu::ArgError(vle::fmt(_(
-                "[%1%] Model that does not handle external events "))
-        % getModelName());
+        throw vu::ArgError((boost::format(
+                "[%1%] Model that does not handle external events ")
+        % getModelName()).str());
     }
     /**
      * @brief Implementation of Dynamics::observation
      */
-    vv::Value* observation(const vd::ObservationEvent& /*event*/) const
+    std::unique_ptr<vv::Value> observation(
+            const vd::ObservationEvent& /*event*/) const override
     {
         switch(mstate){
         case BEFORE_PERT: {
-            return new vv::Double(0);
+            return vv::Double::create(0);
             break;
         } case DURING_PERT: {
-            return new vv::Double(0);
+            return vv::Double::create(0);
             break;
         } case AFTER_PERT: {
             return message->clone();
@@ -189,4 +189,3 @@ public:
 }}} // namespace differentialEquation test dynamics
 
 DECLARE_DYNAMICS(differentialEquation::test::dynamics::Perturb)
-//DECLARE_DYNAMICS_DBG(differentialEquation::test::dynamics::Perturb)

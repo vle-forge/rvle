@@ -9,13 +9,9 @@ Sys.setenv(VLE_HOME=vlehome)
 library(rvle)
 
 currentdir = getwd();
-unlink("./vle.output/buildvle", recursive=TRUE, force = TRUE)
 unlink("./test_port/buildvle", recursive=TRUE, force = TRUE)
-.rvle.compile_vle_output()
-setwd(currentdir)
 .rvle.compile_test_port()
 setwd(currentdir)
-unlink("./vle.output/buildvle", recursive=TRUE, force = TRUE)
 unlink("./test_port/buildvle", recursive=TRUE, force = TRUE)
 
 
@@ -24,8 +20,9 @@ unlink("./test_port/buildvle", recursive=TRUE, force = TRUE)
 ##########
 
 pkgs = rvle.listPackages(justprint=FALSE)
-checkEquals(length(pkgs),3)
-checkEquals(pkgs[3],"vle.output")
+checkEquals(length(pkgs),2)
+checkEquals(pkgs[1],"test_port")
+checkEquals(pkgs[2],"vle.output")#system package to update with packages
 pkgContent = rvle.packageContent("test_port", justprint=FALSE)
 checkEquals(length(pkgContent),12)
 
@@ -36,22 +33,24 @@ f <- rvle.open(file="test_conditions.vpz",pkg="test_port")
 
 cnd <- rvle.listConditions(f)
 
-checkEquals(cnd[1], "simulation_engine")
-checkEquals(cnd[2], "test")
+checkEquals(length(cnd), 2)
+checkTrue("test" %in% cnd)
+checkTrue("simulation_engine" %in% cnd)
 
 # show port list
-ports <- rvle.listConditionPorts(f, cnd[2])
-checkEquals(ports[1], "bool")
-checkEquals(ports[2], "double")
-checkEquals(ports[3], "int")
-checkEquals(ports[4], "multi_bool")
-checkEquals(ports[5], "multi_double")
-checkEquals(ports[6], "multi_int")
-checkEquals(ports[7], "multi_string")
-checkEquals(ports[8], "multi_tuple")
-checkEquals(ports[9], "notmanaged")
-checkEquals(ports[10], "string")
-checkEquals(ports[11], "tuple")
+ports <- rvle.listConditionPorts(f, cnd[which(cnd == "test")])
+
+checkTrue("bool" %in% ports)
+checkTrue("double" %in% ports)
+checkTrue("int" %in% ports)
+checkTrue("multi_bool" %in% ports)
+checkTrue("multi_double" %in% ports)
+checkTrue("multi_int" %in% ports)
+checkTrue("multi_string" %in% ports)
+checkTrue("multi_tuple" %in% ports)
+checkTrue("notmanaged" %in% ports)
+checkTrue("string" %in% ports)
+checkTrue("tuple" %in% ports)
 
 # check the type of the port values vector
 checkEquals(storage.mode(rvle.getConditionPortValues(f, "test", "string")),
@@ -237,8 +236,8 @@ checkEquals(class(c),"VleMAP")
 checkEquals(storage.mode(c),"list")
 checkEquals(length(c),2)
 checkEquals(class(c[[1]]),"numeric")
-checkEqualsNumeric(c[[1]],3)
-checkEqualsNumeric(c[[2]],1)
+checkEqualsNumeric(c[[1]],1)
+checkEqualsNumeric(c[[2]],3)
 
 c = list(id1=list("hello","hello2"),id2=c(1.2,5),id3=c(6), id4=9,
         id5=c("hello",1), id6=TRUE)
@@ -347,7 +346,7 @@ checkEquals(rvle.getOutputPlugin(f,"view"), "mypackage/myplugin")
 
 #check save
 rvle.save(f,"__test_rvle.vpz")
-f = rvle.open("__test_rvle.vpz") 
+f = rvle.open("__test_rvle.vpz")
 checkEquals(rvle.getOutputPlugin(f,"view"), "mypackage/myplugin")
 
 #manage views
@@ -382,12 +381,12 @@ result <- rvle.run(f)
 checkEquals(class(result$view), "data.frame")
 
 # check result of the view
-checkEqualsNumeric(dim(result[[1]])[1], 21, tolerance=1e-5)
-checkEqualsNumeric(dim(result[[1]])[2], 2, tolerance=1e-5)
-checkEqualsNumeric(dim(result[[2]])[1], 1, tolerance=1e-5)
-checkEqualsNumeric(dim(result[[2]])[2], 2, tolerance=1e-5)
+checkEqualsNumeric(dim(result$view)[1], 21, tolerance=1e-5)
+checkEqualsNumeric(dim(result$view)[2], 2, tolerance=1e-5)
+checkEqualsNumeric(dim(result$view2)[1], 1, tolerance=1e-5)
+checkEqualsNumeric(dim(result$view2)[2], 2, tolerance=1e-5)
 
-view1 <- result[[1]]
+view1 <- result$view
 checkEquals(names(view1)[1], "time")
 checkEquals(names(view1)[2], "Top model:Perturb.obsPort")
 
@@ -397,12 +396,12 @@ checkEquals(class(result$view), "matrix")
 checkEquals(class(result$view[1,1]),"numeric")
 
 # check result of the view
-checkEqualsNumeric(dim(result[[1]])[1], 21, tolerance=1e-5)
-checkEqualsNumeric(dim(result[[1]])[2], 2, tolerance=1e-5)
-checkEqualsNumeric(dim(result[[2]])[1], 1, tolerance=1e-5)
-checkEqualsNumeric(dim(result[[2]])[2], 2, tolerance=1e-5)
+checkEqualsNumeric(dim(result$view)[1], 21, tolerance=1e-5)
+checkEqualsNumeric(dim(result$view)[2], 2, tolerance=1e-5)
+checkEqualsNumeric(dim(result$view2)[1], 1, tolerance=1e-5)
+checkEqualsNumeric(dim(result$view2)[2], 2, tolerance=1e-5)
 
-view1 <- result[[1]]
+view1 <- result$view
 checkEqualsNumeric(view1[3,2], 0, tolerance=1e-5)
 checkEqualsNumeric(view1[4,2], 1.5, tolerance=1e-5)
 
@@ -412,12 +411,12 @@ checkEquals(class(result$view), "matrix")
 checkEquals(class(result$view[1,1]),"list")
 
 # check result of the view
-checkEqualsNumeric(dim(result[[1]])[1], 22)
-checkEqualsNumeric(dim(result[[1]])[2], 2)
-checkEqualsNumeric(dim(result[[2]])[1], 2)
-checkEqualsNumeric(dim(result[[2]])[2], 2)
+checkEqualsNumeric(dim(result$view)[1], 22)
+checkEqualsNumeric(dim(result$view)[2], 2)
+checkEqualsNumeric(dim(result$view2)[1], 2)
+checkEqualsNumeric(dim(result$view2)[2], 2)
 
-view1 <- result[[1]]
+view1 <- result$view
 checkEqualsNumeric(view1[[4,2]], 0, tolerance=1e-5)
 checkEqualsNumeric(view1[[5,2]], 1.5, tolerance=1e-5)
 
@@ -440,7 +439,7 @@ simres = result[[1,2]]
 
 checkEqualsNumeric(length(simres), 2, tolerance=1e-5)
 
-simview = simres[[2]]
+simview = simres$view2
 checkEqualsNumeric(dim(simview)[1], 1, tolerance=1e-5)
 checkEqualsNumeric(dim(simview)[2], 2, tolerance=1e-5)
 
@@ -452,9 +451,9 @@ result <- rvle.runManagerMatrix(f)
 #checkEqualsNumeric(valres, 0, tolerance=1e-5)
 #valres = result[[2,1]][[1]][4,2]
 #checkEqualsNumeric(valres, 2.5, tolerance=1e-5)
-valres = result[[1,2]][[1]][3,2]
+valres = result[[1,2]]$view[3,2]
 checkEqualsNumeric(valres, 0, tolerance=1e-5)
-valres = result[[1,2]][[1]][4,2]
+valres = result[[1,2]]$view[4,2]
 checkEqualsNumeric(valres, 2.5, tolerance=1e-5)
 ##End new behavior
 

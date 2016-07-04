@@ -26,6 +26,15 @@
 #include <vle/manager/Manager.hpp>
 #include <vle/value/Matrix.hpp>
 #include <vle/value/Boolean.hpp>
+#include <vle/value/String.hpp>
+#include <vle/value/Double.hpp>
+#include <vle/value/Table.hpp>
+#include <vle/value/Integer.hpp>
+#include <vle/value/Tuple.hpp>
+#include <vle/value/XML.hpp>
+#include <vle/value/Null.hpp>
+#include <memory>
+#include <string>
 
 #ifdef ENABLE_NLS
 #   undef ENABLE_NLS
@@ -37,12 +46,16 @@
 
 using namespace vle;
 
-value::Value::type rvle_get_vector_type(const value::ConstVectorView& vec)
+value::Value::type rvle_get_vector_type(const value::Matrix& mat,
+        unsigned int col, bool avoidFirstLine)
 {
-    for (value::ConstVectorView::const_iterator it = vec.begin();
-            it != vec.end(); ++it) {
-        if (*it) {
-            return (*it)->getType();
+    for (unsigned int r=0; r<mat.rows(); r++) {
+        if ((r > 0) or (not avoidFirstLine)){
+            const std::unique_ptr<value::Value>& v = mat.get(col, r);
+            if (v) {
+                return v->getType();
+            }
+
         }
     }
     return value::Value::DOUBLE;
@@ -63,11 +76,14 @@ value::Value* rvle_toVleValue_implicit(SEXP rval, const std::string& rvalClass)
                         10);
             }
             res->toMatrix().set(col, 0,
-                    new value::String(CHAR(STRING_ELT(names, col))));
+                    value::String::create(std::string(
+                            CHAR(STRING_ELT(names, col)))));
             for (unsigned int row = 0; row < length(colData); row++) {
                 PROTECT(elt = VECTOR_ELT(AS_LIST(colData),row));
                 res->toMatrix().set(col, row + 1,
-                        reinterpret_cast<value::Value*>(rvle_toVleValue(elt)));
+                        std::unique_ptr<value::Value>(
+                                reinterpret_cast<value::Value*>(
+                                        rvle_toVleValue(elt))));
                 UNPROTECT(1); //elt
             }
             UNPROTECT(1); //colData
@@ -111,7 +127,8 @@ value::Value* rvle_toVleValue_implicit(SEXP rval)
             res = new value::Boolean(((bool) LOGICAL(temp)[0]));
         } else {
             for (unsigned int i = 0; i < length(temp); i++) {
-                res->toSet().add(new value::Boolean(((bool) LOGICAL(temp)[i])));
+                res->toSet().add(value::Boolean::create(
+                        ((bool) LOGICAL(temp)[i])));
             }
         }
         UNPROTECT(1);
@@ -184,7 +201,8 @@ value::Value* rvle_toVleValue_implicit(SEXP rval)
         } else {
             res = new value::Set();
             for (unsigned int i = 0; i < length(temp); i++) {
-                res->toSet().add(new value::String(CHAR(STRING_ELT(temp, i))));
+                res->toSet().add(value::String::create(std::string(
+                        CHAR(STRING_ELT(temp, i)))));
             }
         }
         UNPROTECT(1);
@@ -205,15 +223,16 @@ value::Value* rvle_toVleValue_implicit(SEXP rval)
             for (unsigned int i = 0; i < length(temp); i++) {
                 res->toMap().add(
                         CHAR(STRING_ELT(names, i)),
-                        reinterpret_cast<value::Value*>(rvle_toVleValue(
-                                VECTOR_ELT(temp, i))));
+                        std::unique_ptr<value::Value>(
+                                reinterpret_cast<value::Value*>(
+                                        rvle_toVleValue(VECTOR_ELT(temp, i)))));
             }
         } else { //value::Set
             res = new value::Set();
             for (unsigned int i = 0; i < length(temp); i++) {
-                res->toSet().add(
-                        reinterpret_cast<value::Value*>(rvle_toVleValue(
-                                VECTOR_ELT(temp, i))));
+                res->toSet().add(std::unique_ptr<value::Value>(
+                        reinterpret_cast<value::Value*>(
+                                rvle_toVleValue(VECTOR_ELT(temp, i)))));
             }
         }
         UNPROTECT(1); //temp
@@ -331,7 +350,7 @@ SEXP rvle_toRvalue(rvle_value_t vlevalToCast, int without_class_names,
     } case value::Value::SET: {
         value::Set& setVal = vleval->toSet();
         if (multiple_values && unlist_multiple_values && setVal.size() == 1) {
-            res = rvle_toRvalue(setVal.get(0), without_class_names, 0, 0,
+            res = rvle_toRvalue(setVal.get(0).get(), without_class_names, 0, 0,
                     matrix_type, matrix_type_depth - 1);
         } else {
             PROTECT(res = allocVector(VECSXP,setVal.size()));
@@ -341,7 +360,7 @@ SEXP rvle_toRvalue(rvle_value_t vlevalToCast, int without_class_names,
                 SET_VECTOR_ELT(
                         res,
                         i,
-                        rvle_toRvalue(*itb, without_class_names, 0, 0,
+                        rvle_toRvalue(itb->get(), without_class_names, 0, 0,
                                 matrix_type, matrix_type_depth - 1));
             }
             if (without_class_names == 0) {
@@ -366,7 +385,7 @@ SEXP rvle_toRvalue(rvle_value_t vlevalToCast, int without_class_names,
             SET_VECTOR_ELT(
                     res,
                     i,
-                    rvle_toRvalue(itb->second, without_class_names, 0, 0,
+                    rvle_toRvalue(itb->second.get(), without_class_names, 0, 0,
                             matrix_type, matrix_type_depth - 1));
         }
         //build names
@@ -421,7 +440,7 @@ SEXP rvle_toRvalue(rvle_value_t vlevalToCast, int without_class_names,
                     SET_VECTOR_ELT(
                             res,
                             (j + i * matrixVal.rows()),
-                            rvle_toRvalue(matrixVal.get(i, j),
+                            rvle_toRvalue(matrixVal.get(i, j).get(),
                                     without_class_names, 0, 0, matrix_type,
                                     matrix_type_depth - 1));
                 }
@@ -441,91 +460,77 @@ SEXP rvle_toRvalue(rvle_value_t vlevalToCast, int without_class_names,
                 SET_STRING_ELT(names, col, mkChar(colName.c_str()));
                 value::Value::type colType;
                 if (matrixVal.rows() > 1) {
-                    const value::ConstVectorView& column = matrixVal.column(
-                            col);
-                    const value::ConstVectorView& dataVec =
-                            column[boost::indices[value::Matrix::Range(1,
-                                    column.size())]];
-                    colType = rvle_get_vector_type(dataVec);
+                    colType = rvle_get_vector_type(matrixVal, col, true);
                     switch (colType) {
                     case value::Value::BOOLEAN: {
-                        PROTECT(value = NEW_LOGICAL(column.size()-1));
-                        int i = 0;
-                        for (value::ConstVectorView::const_iterator it =
-                                dataVec.begin(); it != dataVec.end(); ++it) {
-                            if (*it == 0
-                                    || ((*it)->getType()
-                                            != value::Value::BOOLEAN)) {
-                                LOGICAL(value)[i] = NA_LOGICAL;
+                        PROTECT(value = NEW_LOGICAL(matrixVal.rows()-1));
+                        for (unsigned int r=1;r<matrixVal.rows();r++) {
+                            const std::unique_ptr<value::Value>& v =
+                                    matrixVal.get(col, r);
+                            if (v and (v->getType() == value::Value::BOOLEAN)){
+                                LOGICAL(value)[r-1] = v->toBoolean().value();
                             } else {
-                                LOGICAL(value)[i] = value::toBoolean(*it);
+                                LOGICAL(value)[r-1] = NA_LOGICAL;
                             }
-                            ++i;
                         }
                         UNPROTECT(1);
                         break;
                     } case value::Value::DOUBLE: {
-                        PROTECT(value = NEW_NUMERIC(column.size()-1));
-                        int i = 0;
-                        for (value::ConstVectorView::const_iterator it =
-                                dataVec.begin(); it != dataVec.end(); ++it) {
-                            if (*it == 0
-                                    || ((*it)->getType() != value::Value::DOUBLE)) {
-                                REAL(value)[i] = NA_REAL;
+
+                        PROTECT(value = NEW_NUMERIC(matrixVal.rows()-1));
+                        for (unsigned int r=1;r<matrixVal.rows();r++) {
+                            const std::unique_ptr<value::Value>& v =
+                                    matrixVal.get(col, r);
+                            if (v and (v->getType() == value::Value::DOUBLE)){
+                                REAL(value)[r-1] = v->toDouble().value();
                             } else {
-                                REAL(value)[i] = value::toDouble(*it);
+                                REAL(value)[r-1] = NA_REAL;
                             }
-                            ++i;
                         }
                         UNPROTECT(1);
                         break;
                     } case value::Value::INTEGER: {
-                        PROTECT(value = NEW_INTEGER(column.size()-1));
-                        int i = 0;
-                        for (value::ConstVectorView::const_iterator it =
-                                dataVec.begin(); it != dataVec.end(); ++it) {
-                            if (*it == 0
-                                    || (*it)->getType() != value::Value::INTEGER) {
-                                INTEGER(value)[i] = NA_INTEGER;
+                        PROTECT(value = NEW_INTEGER(matrixVal.rows()-1));
+                        for (unsigned int r=1;r<matrixVal.rows();r++) {
+                            const std::unique_ptr<value::Value>& v =
+                                    matrixVal.get(col, r);
+                            if (v and (v->getType() == value::Value::INTEGER)){
+                                INTEGER(value)[r-1] = v->toInteger().value();
                             } else {
-                                INTEGER(value)[i] = value::toInteger(*it);
+                                INTEGER(value)[r-1] = NA_INTEGER;
                             }
-                            ++i;
                         }
                         UNPROTECT(1);
                         break;
                     } case value::Value::STRING: {
-                        PROTECT(value = NEW_CHARACTER(column.size()-1));
-                        int i = 0;
-                        for (value::ConstVectorView::const_iterator it =
-                                dataVec.begin(); it != dataVec.end(); ++it) {
-                            if (*it == 0
-                                    || (*it)->getType() != value::Value::STRING) {
-                                SET_STRING_ELT(value, i, NA_STRING);
+                        PROTECT(value = NEW_CHARACTER(matrixVal.rows()-1));
+                        for (unsigned int r=1;r<matrixVal.rows();r++) {
+                            const std::unique_ptr<value::Value>& v =
+                                    matrixVal.get(col, r);
+                            if (v and (v->getType() == value::Value::STRING)){
+                                SET_STRING_ELT(value, r-1,
+                                        mkChar(v->toString().value().c_str()));
                             } else {
-                                SET_STRING_ELT(value, i,
-                                        mkChar(value::toString(*it).c_str()));
+                                SET_STRING_ELT(value, r-1, NA_STRING);
                             }
-                            ++i;
                         }
                         UNPROTECT(1);
                         break;
                     }
                     default: {
-                        PROTECT(value = NEW_LIST(column.size()-1));
-                        int i = 0;
-                        for (value::ConstVectorView::const_iterator it =
-                                dataVec.begin(); it != dataVec.end(); ++it) {
-                            SET_VECTOR_ELT(
-                                    value,
-                                    i,
-                                    rvle_toRvalue(*it,
-                                            1 /*without_class_names*/,
-                                            0 /*multiple_values*/,
-                                            0 /*unlist_multiple_values*/,
-                                            0 /*matrix_type*/,
-                                            0 /*matrix_type_depth*/));
-                            ++i;
+                        PROTECT(value = NEW_LIST(matrixVal.rows()-1));
+                        for (unsigned int r=1;r<matrixVal.rows();r++) {
+                            const std::unique_ptr<value::Value>& v =
+                                    matrixVal.get(col, r);
+                            if (v){
+                                SET_VECTOR_ELT(value, r-1,
+                                        rvle_toRvalue(v.get(),
+                                                1 /*without_class_names*/,
+                                                0 /*multiple_values*/,
+                                                0 /*unlist_multiple_values*/,
+                                                0 /*matrix_type*/,
+                                                0 /*matrix_type_depth*/));
+                            }
                         }
                         UNPROTECT(1);
                         break;
@@ -538,7 +543,7 @@ SEXP rvle_toRvalue(rvle_value_t vlevalToCast, int without_class_names,
             PROTECT(value = NEW_CHARACTER(matrixVal.rows()-1));
             for (int i = 0; i < matrixVal.rows() - 1; ++i) {
                 SET_STRING_ELT(value, i,
-                        mkChar(boost::str(boost::format("%1%") % i).c_str()));
+                        mkChar(std::to_string(i).c_str()));
             }
             setAttrib(res, R_RowNamesSymbol, value);
             UNPROTECT(1); //value with row names
@@ -548,32 +553,32 @@ SEXP rvle_toRvalue(rvle_value_t vlevalToCast, int without_class_names,
             UNPROTECT(1); //res
         } else if (matrix_type == 2) {
             //matrix with names into first rows
-            value::ConstMatrixView view(matrixVal.value());
-            value::ConstMatrixView::index i, j;
-            PROTECT(
-                    res = allocMatrix(REALSXP, matrixVal.value().shape()[1], matrixVal.value().shape()[0]));
-            for (i = 0; i < view.shape()[0]; ++i) {
-                for (j = 0; j < view.shape()[1]; ++j) {
-                    if (view[i][j]) {
-                        switch (view[i][j]->getType()) {
+            unsigned int nbcol = matrixVal.columns();
+            unsigned int nbrow = matrixVal.rows();
+
+            PROTECT(res = allocMatrix(REALSXP, nbrow, nbcol));
+            for (unsigned int i = 0; i < nbcol; ++i) {
+                for (unsigned int j = 0; j < nbrow; ++j) {
+                    const std::unique_ptr<value::Value>& v = matrixVal.get(i,j);
+                    if (v) {
+                        switch (v->getType()) {
                         case value::Value::BOOLEAN:
-                            REAL(res)[j + i * view.shape()[1]] =
-                                    (double) value::toBoolean(view[i][j]);
+                            REAL(res)[j + i * nbrow] =
+                                    (double) v->toBoolean().value();
                             break;
                         case value::Value::DOUBLE:
-                            REAL(res)[j + i * view.shape()[1]] =
-                                    value::toDouble(view[i][j]);
+                            REAL(res)[j + i * nbrow] = v->toDouble().value();
                             break;
                         case value::Value::INTEGER:
-                            REAL(res)[j + i * view.shape()[1]] =
-                                    (double) value::toInteger(view[i][j]);
+                            REAL(res)[j + i * nbrow] =
+                                    (double) v->toInteger().value();
                             break;
                         default:
-                            REAL(res)[j + i * view.shape()[1]] = NA_REAL;
+                            REAL(res)[j + i * nbrow] = NA_REAL;
                             break;
                         }
                     } else {
-                        REAL(res)[j + i * view.shape()[1]] = NA_REAL;
+                        REAL(res)[j + i * nbrow] = NA_REAL;
                     }
                 }
             }
@@ -632,7 +637,7 @@ rvle_value_t rvle_toVleValue(SEXP rval)
             for (unsigned int i = 0; i < length(temp); i++) {
                 valuei = reinterpret_cast<value::Value*>(rvle_toVleValue(
                         VECTOR_ELT(temp, i)));
-                res->toSet().add(valuei);
+                res->toSet().add(std::unique_ptr<value::Value>(valuei));
             }
             UNPROTECT(1);
         } else if (rvalClass == "VleMULTIPLE_VALUES") {
@@ -645,7 +650,7 @@ rvle_value_t rvle_toVleValue(SEXP rval)
             for (unsigned int i = 0; i < length(temp); i++) {
                 valuei = reinterpret_cast<value::Value*>(rvle_toVleValue(
                         VECTOR_ELT(temp, i)));
-                res->toSet().add(valuei);
+                res->toSet().add(std::unique_ptr<value::Value>(valuei));
             }
             UNPROTECT(1);
         } else if (rvalClass == "VleMAP") {
@@ -659,7 +664,7 @@ rvle_value_t rvle_toVleValue(SEXP rval)
                 namei.assign(CHAR(STRING_ELT(names, i)));
                 valuei = reinterpret_cast<value::Value*>(rvle_toVleValue(
                         VECTOR_ELT(temp, i)));
-                res->toMap().add(namei, valuei);
+                res->toMap().add(namei, std::unique_ptr<value::Value>(valuei));
             }
             UNPROTECT(1);
         } else if (rvalClass == "VleTABLE") {
@@ -699,11 +704,10 @@ rvle_value_t rvle_toVleValue(SEXP rval)
             res = new value::Matrix(ncol, nrow, 10, 10); //TODO, because of bug of resize
             for (unsigned int i = 0; i < ncol; i++) {
                 for (unsigned int j = 0; j < nrow; j++) {
-                    res->toMatrix().set(
-                            i,
-                            j,
-                            reinterpret_cast<value::Value*>(rvle_toVleValue(
-                                    VECTOR_ELT(temp, j + i * nrow))));
+                    res->toMatrix().set(i, j,
+                            std::unique_ptr<value::Value>(
+                              reinterpret_cast<value::Value*>(rvle_toVleValue(
+                                VECTOR_ELT(temp, j + i * nrow)))));
                 }
             }
             UNPROTECT(1);

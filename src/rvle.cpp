@@ -29,16 +29,20 @@
 #include <vle/vpz/Vpz.hpp>
 #include <vle/vpz/AtomicModel.hpp>
 #include <vle/value/Matrix.hpp>
+#include <vle/value/String.hpp>
+#include <vle/value/Double.hpp>
+#include <vle/value/Tuple.hpp>
+#include <vle/value/Boolean.hpp>
+#include <vle/value/Integer.hpp>
 #include <vle/utils/DateTime.hpp>
 #include <vle/utils/Package.hpp>
-#include <vle/utils/Path.hpp>
-#include <vle/utils/ModuleManager.hpp>
-#include <vle/utils/Trace.hpp>
+#include <vle/utils/Context.hpp>
 #include <vle/manager/Manager.hpp>
 #include <vle/manager/Simulation.hpp>
 #include <cassert>
 #include <cstring>
 #include <fstream>
+#include <sstream>
 #include <cstring>
 
 
@@ -51,13 +55,14 @@ using namespace utils;
 
 static vle::Init* vle_init = 0;
 
-static void rvle_build_matrix(const value::Matrix& view,
-                            value::Matrix& matrix)
-{
-    value::Matrix::Extents extent;
-    matrix.resize(1,1);
-    matrix.set(0, 0, view);
-}
+//TODO to remove
+//static void rvle_build_matrix(const value::Matrix& view,
+//                            value::Matrix& matrix)
+//{
+//    value::Matrix::Extents extent;
+//    matrix.resize(1,1);
+//    matrix.set(0, 0, view);
+//}
 
 static char** rvle_convertVectorToChar(const std::vector<std::string>& vec)
 {
@@ -90,9 +95,13 @@ void rvle_onunload()
 
 char** rvle_list_packages()
 {
+    auto ctx = utils::make_context();
     std::vector<std::string> pkglist;
     try {
-        vle::utils::Path::path().fillBinaryPackagesList(pkglist);
+        std::vector<Path> paths =  ctx->getBinaryPackages();
+        for (auto p : paths){
+            pkglist.emplace_back(p.filename());
+        }
     } catch(const std::exception& e) {
         pkglist.clear();
         pkglist.push_back("Error while listing the binary packages");
@@ -102,9 +111,13 @@ char** rvle_list_packages()
 
 int rvle_list_packages_size()
 {
+    auto ctx = utils::make_context();
     std::vector<std::string> pkglist;
     try {
-        vle::utils::Path::path().fillBinaryPackagesList(pkglist);
+        std::vector<Path> paths =  ctx->getBinaryPackagesDir();
+        for (auto p : paths){
+            pkglist.emplace_back(p.string());
+        }
     } catch(const std::exception& e) {
         return 1;
     }
@@ -113,7 +126,8 @@ int rvle_list_packages_size()
 
 char** rvle_list_content(const char* pkgname)
 {
-    vle::utils::Package pkg(pkgname);
+    auto ctx = utils::make_context();
+    vle::utils::Package pkg(ctx, pkgname);
     std::vector<std::string> pkgcontent;
     try {
         pkg.fillBinaryContent(pkgcontent);
@@ -126,7 +140,8 @@ char** rvle_list_content(const char* pkgname)
 
 int rvle_list_content_size(const char* pkgname)
 {
-    vle::utils::Package pkg(pkgname);
+    auto ctx = utils::make_context();
+    vle::utils::Package pkg(ctx, pkgname);
     std::vector<std::string> pkgcontent;
     try {
         pkg.fillBinaryContent(pkgcontent);
@@ -141,10 +156,11 @@ rvle_t rvle_pkg_open(const char* pkgname, const char* filename)
     assert(pkgname);
     assert(filename);
 
+    auto ctx = utils::make_context();
     vpz::Vpz*  file = 0;
 
     try {
-        vle::utils::Package pack(pkgname);
+        vle::utils::Package pack(ctx, pkgname);
         std::string filepath = pack.getExpFile(filename,
                 vle::utils::PKG_BINARY);
         file = new vpz::Vpz(filepath);
@@ -156,14 +172,15 @@ rvle_t rvle_pkg_open(const char* pkgname, const char* filename)
 
 int rvle_compile_vle_output()
 {
-    std::string filename = Trace::getLogFilename("rvle.log");
+    auto ctx = utils::make_context();
+    std::string filename = ctx->getLogFile("rvle").string();
     std::ofstream* logfile = new std::ofstream(filename.c_str());
 
     try {
         //homedir is set before calling this method
         //current dir contains vle.ouput pkg
 
-        vle::utils::Package pack("vle.output");
+        vle::utils::Package pack(ctx, "vle.output");
 
         pack.configure();
         pack.wait((*logfile), (*logfile));
@@ -176,7 +193,7 @@ int rvle_compile_vle_output()
             }
         }
     }  catch(const std::exception& e) {
-        (*logfile) << _("Error while compiling vle.output: ")
+        (*logfile) << ("Error while compiling vle.output: ")
                 << e.what() << "\n\n" << std::flush;
         return 0;
     }
@@ -186,14 +203,15 @@ int rvle_compile_vle_output()
 
 int rvle_compile_test_port()
 {
-    std::string filename = Trace::getLogFilename("rvle.log");
+    auto ctx = utils::make_context();
+    std::string filename = ctx->getLogFile("rvle").string();
     std::ofstream* logfile = new std::ofstream(filename.c_str());
 
     try {
         //homedir is set before calling this method
         //current dir contains tert_port pkg
 
-        vle::utils::Package pack("test_port");
+        vle::utils::Package pack(ctx, "test_port");
 
         pack.configure();
         pack.wait((*logfile), (*logfile));
@@ -206,7 +224,7 @@ int rvle_compile_test_port()
             }
         }
     }  catch(const std::exception& e) {
-        (*logfile) << _("Error while compiling test_port: ")
+        (*logfile) << "Error while compiling test_port: "
                 << e.what() << "\n\n" << std::flush;
         return 0;
     }
@@ -229,15 +247,14 @@ rvle_t rvle_open(const char* filename)
 rvle_output_t rvle_run(rvle_t handle,  int withColNames)
 {
     assert(handle);
-    value::Map* res = 0;
+    std::unique_ptr<value::Map> res(nullptr);
 
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
-        utils::ModuleManager man;
+        auto ctx = utils::make_context();
         manager::Error error;
-        manager::Simulation sim(manager::LOG_NONE,
-                manager::SIMULATION_NONE,
-                0);
+        manager::Simulation sim(ctx, manager::LOG_NONE,
+                manager::SIMULATION_NONE, 0);
         //configure output plugins for column names
         vpz::Outputs::iterator itb =
                 file->project().experiment().views().outputs().begin();
@@ -247,37 +264,37 @@ rvle_output_t rvle_run(rvle_t handle,  int withColNames)
             vpz::Output& output = itb->second;
             if((output.package() == "vle.output") &&
                     (output.plugin() == "storage")){
-                value::Map* configOutput = new value::Map();
+                std::unique_ptr<value::Map> configOutput(new value::Map());
                 if (withColNames == 1){
                     configOutput->addString("header","top");
                 }
-                output.setData(configOutput);
+                output.setData(std::move(configOutput));
             }
         }
-        res = sim.run(new vpz::Vpz(*file), man, &error);
+        res = sim.run(std::unique_ptr<vpz::Vpz>(new vpz::Vpz(*file)), &error);
         if (error.code != 0) {
-            std::string filename = Trace::getLogFilename("rvle.log");
+            std::string filename = ctx->getLogFile("rvle").string();
             std::ofstream* logfile = new std::ofstream(filename.c_str());
-            (*logfile) << _("Error in rvle_run: ")
+            (*logfile) << "Error in rvle_run: "
                     << error.message
                     << "\n\n" << std::flush;
             logfile->close();
         }
-        return res;
+        return res.release();
     } catch(const std::exception& e) {
         res = 0;
     }
-    return res;
+    return res.release();
 }
 
 rvle_output_t rvle_manager(rvle_t handle, int withColNames)
 {
-    value::Matrix* res = 0;
+    std::unique_ptr<value::Matrix> res(nullptr);
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
-        utils::ModuleManager man;
+        auto ctx = utils::make_context();
         manager::Error error;
-        manager::Manager sim(manager::LOG_NONE,
+        manager::Manager sim(ctx, manager::LOG_NONE,
                 manager::SIMULATION_NONE,
                 0);
 
@@ -290,41 +307,42 @@ rvle_output_t rvle_manager(rvle_t handle, int withColNames)
             vpz::Output& output = itb->second;
             if((output.package() == "vle.output") &&
                     (output.plugin() == "storage")){
-                value::Map* configOutput = new value::Map();
+                std::unique_ptr<value::Map> configOutput(new value::Map());
                 if (withColNames == 1){
                     configOutput->addString("header","top");
                 }
-                output.setData(configOutput);
+                output.setData(std::move(configOutput));
             }
         }
 
-        res = sim.run(new vpz::Vpz(*file), man, 1, 0, 1, &error);
+        res = sim.run(std::unique_ptr<vpz::Vpz>(new vpz::Vpz(*file)),
+                1, 0, 1, &error);
 
         if (error.code != 0) {
-            std::string filename = Trace::getLogFilename("rvle.log");
+            std::string filename = ctx->getLogFile("rvle").string();
             std::ofstream* logfile = new std::ofstream(filename.c_str());
-            (*logfile) << _("Error in rvle_manager: ")
+            (*logfile) << "Error in rvle_manager: "
                     << error.message
                     << "\n\n" << std::flush;
             logfile->close();
             res = 0;
         }
-        return res;
+        return res.release();
     } catch(const std::exception& e) {
         res = 0;
     }
-    return res;
+    return res.release();
 }
 
 rvle_output_t rvle_manager_thread(rvle_t handle, int th, int withColNames)
 {
-    value::Matrix* res = 0;
+    std::unique_ptr<value::Matrix> res(nullptr);
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
 
-        utils::ModuleManager man;
+        auto ctx = utils::make_context();
         manager::Error error;
-        manager::Manager sim(manager::LOG_NONE,
+        manager::Manager sim(ctx, manager::LOG_NONE,
                 manager::SIMULATION_NONE,
                 0);
 
@@ -337,30 +355,31 @@ rvle_output_t rvle_manager_thread(rvle_t handle, int th, int withColNames)
             vpz::Output& output = itb->second;
             if((output.package() == "vle.output") &&
                     (output.plugin() == "storage")){
-                value::Map* configOutput = new value::Map();
+                std::unique_ptr<value::Map> configOutput(new value::Map());
                 if (withColNames == 1){
                     configOutput->addString("header","top");
                 }
-                output.setData(configOutput);
+                output.setData(std::move(configOutput));
             }
         }
 
-        res = sim.run(new vpz::Vpz(*file), man, th, 0,1, &error);
+        res = sim.run(std::unique_ptr<vpz::Vpz>(new vpz::Vpz(*file)),
+                th, 0,1, &error);
 
         if (error.code != 0) {
-            std::string filename = Trace::getLogFilename("rvle.log");
+            std::string filename = ctx->getLogFile("rvle").string();
             std::ofstream* logfile = new std::ofstream(filename.c_str());
-            (*logfile) << _("Error in rvle_manager_thread: ")
+            (*logfile) << "Error in rvle_manager_thread: "
                     << error.message
                     << "\n\n" << std::flush;
             logfile->close();
         }
-        return res;
+        return res.release();
 
     } catch(const std::exception& e) {
         res = 0;
     }
-    return res;
+    return res.release();
 }
 
 void rvle_delete(rvle_t handle)
@@ -372,14 +391,13 @@ void rvle_delete(rvle_t handle)
 char** rvle_condition_list(rvle_t handle)
 {
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
-    std::list < std::string > lst;
-
-    file->project().experiment().conditions().conditionnames(lst);
+    std::vector < std::string > lst =
+            file->project().experiment().conditions().conditionnames();
     char** result = 0;
 
     if (lst.size()) {
         result = (char**)malloc(lst.size() * sizeof(char*));
-        std::list < std::string >::iterator it = lst.begin();
+        std::vector < std::string >::iterator it = lst.begin();
 
         for (size_t i = 0; i < lst.size(); ++i) {
             result[i] = (char*)malloc((*it).size() + 1);
@@ -473,17 +491,16 @@ int rvlecpp_getObservablePortsSize(rvle_t handle, const char* obsName)
 char** rvle_condition_port_list(rvle_t handle, const char* conditionname)
 {
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
-    std::list < std::string > lst;
+
     char** result = 0;
 
     try {
         const vpz::Condition& cnd(
             file->project().experiment().conditions().get(conditionname));
-
-        cnd.portnames(lst);
+        std::vector < std::string > lst = cnd.portnames();
 
         result = (char**)malloc(lst.size() * sizeof(char*));
-        std::list < std::string >::iterator it = lst.begin();
+        std::vector < std::string >::iterator it = lst.begin();
 
         for (size_t i = 0; i < lst.size(); ++i) {
             result[i] = (char*)malloc((*it).size() + 1);
@@ -712,13 +729,25 @@ char* rvle_get_config_view(rvle_t handle,
         vpz::View& view = vle_views.get(viewname);
         std::stringstream concatConfig;
         switch(view.type()) {
+        case vle::vpz::View::NOTHING:
+            concatConfig << "nothing";
+            break;
         case vle::vpz::View::TIMED:
             concatConfig << "timed";
             concatConfig << ",";
             concatConfig << view.timestep();
             break;
-        case vle::vpz::View::EVENT:
-            concatConfig << "event";
+        case vle::vpz::View::OUTPUT:
+            concatConfig << "output";
+            break;
+        case vle::vpz::View::INTERNAL:
+            concatConfig << "internal";
+            break;
+        case vle::vpz::View::EXTERNAL:
+            concatConfig << "external";
+            break;
+        case vle::vpz::View::CONFLUENT:
+            concatConfig << "confluent";
             break;
         case vle::vpz::View::FINISH:
             concatConfig << "finish";
@@ -817,7 +846,7 @@ int rvlecpp_addValueCondition(rvle_t handle,
             //is not called for them.
             valSet.value().erase(valSet.begin());
             for(unsigned int i=0; i < valSet.size();i++){
-                cnd.addValueToPort(portname, valSet.get(i));
+                cnd.addValueToPort(portname, valSet.give(i));
             }
             valSet.value().clear();
             delete val;
@@ -825,7 +854,7 @@ int rvlecpp_addValueCondition(rvle_t handle,
             /////
             //Handle the case of single value
             /////
-            cnd.addValueToPort(portname, val);
+            cnd.addValueToPort(portname, std::unique_ptr<value::Value>(val));
         }
         return -1;
     } catch(const std::exception& e) {
@@ -1050,7 +1079,7 @@ int rvle_add_port(rvle_t handle, const char* conditionname,
         vpz::Condition& cnd(file->project().experiment().
                             conditions().get(conditionname));
         cnd.add(portname);
-        cnd.addValueToPort(portname, new vle::value::Double(0));
+        cnd.addValueToPort(portname, vle::value::Double::create(0));
         return -1;
     } catch(const std::exception& e) {
         return 0;
@@ -1187,11 +1216,10 @@ int rvle_condition_add_tuple(rvle_t handle,
         vpz::Condition& cnd(file->project().experiment().
                             conditions().get(conditionname));
 
-        value::Tuple* tuple = new value::Tuple();
-        tuple->value().resize(size);
+        std::unique_ptr<value::Tuple> tuple(new value::Tuple(size));
         std::copy(values, values + size, tuple->value().begin());
 
-        cnd.addValueToPort(portname, tuple);
+        cnd.addValueToPort(portname, std::move(tuple));
         return -1;
     } catch (const std::exception& e) {
         return 0;

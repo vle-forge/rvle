@@ -54,45 +54,10 @@ public:
     {
     }
 
-    virtual vd::Time init(const vd::Time& /*time*/)
+    virtual vd::Time init(vd::Time /*time*/) override
     {
         throw vu::InternalError(" error at initialisation");
         return vd::infinity;
-    }
-
-    virtual void output(const vd::Time& /*time*/,
-                        vd::ExternalEventList& /*output*/) const
-    {
-    }
-
-    virtual vd::Time timeAdvance() const
-    {
-        return vd::infinity;
-    }
-
-    virtual void internalTransition(const vd::Time& /*time*/)
-    {
-    }
-
-    virtual void externalTransition(const vd::ExternalEventList& /*event*/,
-                                    const vd::Time& /*time*/)
-    {
-    }
-
-    virtual void confluentTransitions(const vd::Time& time,
-                                      const vd::ExternalEventList& events)
-    {
-        internalTransition(time);
-        externalTransition(events, time);
-    }
-
-    virtual vv::Value* observation(const vd::ObservationEvent& /*event*/) const
-    {
-        return 0;
-    }
-
-    virtual void finish()
-    {
     }
 };
 
