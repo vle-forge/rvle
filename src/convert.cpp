@@ -415,7 +415,7 @@ SEXP rvle_toRvalue(rvle_value_t vlevalToCast, int without_class_names,
         break;
     } case value::Value::XMLTYPE: {
         PROTECT(res = NEW_CHARACTER(1));
-        SET_STRING_ELT(res, 0, mkChar(vleval->toString().value().c_str()));
+        SET_STRING_ELT(res, 0, mkChar(vleval->toXml().writeToString().c_str()));
         if (without_class_names == 0) {
             SET_CLASS(res, mkString("VleXMLTYPE"));
         }
