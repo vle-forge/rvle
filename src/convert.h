@@ -26,12 +26,14 @@
 #ifndef VLE_RPACKAGE_CONVERT_H
 #define VLE_RPACKAGE_CONVERT_H
 
+#include <R.h>
+#include <Rinternals.h>
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <R.h>
-#include <Rinternals.h>
 
 
 /**
