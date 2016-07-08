@@ -22,8 +22,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <boost/multi_array.hpp>
-#include <vle/manager/Manager.hpp>
 #include <vle/value/Matrix.hpp>
 #include <vle/value/Boolean.hpp>
 #include <vle/value/String.hpp>
@@ -31,6 +29,8 @@
 #include <vle/value/Table.hpp>
 #include <vle/value/Integer.hpp>
 #include <vle/value/Tuple.hpp>
+#include <vle/value/Set.hpp>
+#include <vle/value/Map.hpp>
 #include <vle/value/XML.hpp>
 #include <vle/value/Null.hpp>
 #include <memory>
