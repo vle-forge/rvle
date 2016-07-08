@@ -32,6 +32,12 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+ * @@tagdynamic@@
+ * @@tagdepends:@@endtagdepends
+ */
+
+
 #include <vle/devs/Dynamics.hpp>
 #include <vle/utils/Exception.hpp>
 

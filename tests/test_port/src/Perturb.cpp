@@ -23,6 +23,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * @@tagdynamic@@
+ * @@tagdepends:@@endtagdepends
+ */
+
 #include <vle/devs/Dynamics.hpp>
 #include <vle/value/Value.hpp>
 #include <vle/value/Map.hpp>
