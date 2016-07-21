@@ -20,9 +20,10 @@ unlink("./test_port/buildvle", recursive=TRUE, force = TRUE)
 ##########
 
 pkgs = rvle.listPackages(justprint=FALSE)
-checkEquals(length(pkgs),2)
+checkEquals(length(pkgs),3)
 checkEquals(pkgs[1],"test_port")
-checkEquals(pkgs[2],"vle.output")#system package to update with packages
+checkEquals(pkgs[2],"vle.adaptative-qss")
+checkEquals(pkgs[3],"vle.output")
 pkgContent = rvle.packageContent("test_port", justprint=FALSE)
 checkEquals(length(pkgContent),12)
 

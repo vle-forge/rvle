@@ -114,7 +114,7 @@ int rvle_list_packages_size()
     auto ctx = utils::make_context();
     std::vector<std::string> pkglist;
     try {
-        std::vector<Path> paths =  ctx->getBinaryPackagesDir();
+        std::vector<Path> paths =  ctx->getBinaryPackages();
         for (auto p : paths){
             pkglist.emplace_back(p.string());
         }
