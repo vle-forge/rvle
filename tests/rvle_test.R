@@ -20,10 +20,11 @@ unlink("./test_port/buildvle", recursive=TRUE, force = TRUE)
 ##########
 
 pkgs = rvle.listPackages(justprint=FALSE)
-checkEquals(length(pkgs),3)
+checkEquals(length(pkgs),4)
 checkEquals(pkgs[1],"test_port")
 checkEquals(pkgs[2],"vle.adaptative-qss")
 checkEquals(pkgs[3],"vle.output")
+checkEquals(pkgs[4],"gvle.default")
 pkgContent = rvle.packageContent("test_port", justprint=FALSE)
 checkEquals(length(pkgContent),12)
 

@@ -40,6 +40,7 @@
 #include <vle/manager/Manager.hpp>
 #include <vle/manager/Simulation.hpp>
 #include <cassert>
+#include <chrono>
 #include <cstring>
 #include <fstream>
 #include <sstream>
@@ -254,7 +255,7 @@ rvle_output_t rvle_run(rvle_t handle,  int withColNames)
         auto ctx = utils::make_context();
         manager::Error error;
         manager::Simulation sim(ctx, manager::LOG_NONE,
-                manager::SIMULATION_NONE, 0);
+                manager::SIMULATION_NONE, std::chrono::milliseconds(0), 0);
         //configure output plugins for column names
         vpz::Outputs::iterator itb =
                 file->project().experiment().views().outputs().begin();
@@ -271,7 +272,8 @@ rvle_output_t rvle_run(rvle_t handle,  int withColNames)
                 output.setData(std::move(configOutput));
             }
         }
-        res = sim.run(std::unique_ptr<vpz::Vpz>(new vpz::Vpz(*file)), &error);
+        res = sim.run(std::unique_ptr<vpz::Vpz>(new vpz::Vpz(*file)),
+                "vle.output", &error);
         if (error.code != 0) {
             std::string filename = ctx->getLogFile("rvle").string();
             std::ofstream* logfile = new std::ofstream(filename.c_str());
@@ -316,7 +318,7 @@ rvle_output_t rvle_manager(rvle_t handle, int withColNames)
         }
 
         res = sim.run(std::unique_ptr<vpz::Vpz>(new vpz::Vpz(*file)),
-                1, 0, 1, &error);
+                "vle.output", 1, 0, 1, &error);
 
         if (error.code != 0) {
             std::string filename = ctx->getLogFile("rvle").string();
@@ -364,7 +366,7 @@ rvle_output_t rvle_manager_thread(rvle_t handle, int th, int withColNames)
         }
 
         res = sim.run(std::unique_ptr<vpz::Vpz>(new vpz::Vpz(*file)),
-                th, 0,1, &error);
+                "vle.output", th, 0,1, &error);
 
         if (error.code != 0) {
             std::string filename = ctx->getLogFile("rvle").string();
@@ -693,7 +695,7 @@ int rvle_set_output_plugin(rvle_t handle,
         vpz::Views& vle_views = file->project().experiment().views();
         vpz::Output& out = vle_views.outputs().get(
             vle_views.get(viewname).output());
-        out.setLocalStream("", pluginname,package);
+        out.setStream("", pluginname,package);
     } catch(const std::exception& e) {
         return 0;
     }
@@ -1107,7 +1109,7 @@ int rvle_attach_condition(rvle_t handle,
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
         vpz::BaseModel* mdl =
-                file->project().model().model()->findModelFromPath(atomicpath);
+                file->project().model().node()->findModelFromPath(atomicpath);
         if (not mdl) return 0;
         if (not mdl->isAtomic()) return 0;
         vpz::AtomicModel* atomg = mdl->toAtomic();
@@ -1125,7 +1127,7 @@ int rvle_detach_condition(rvle_t handle,
     try {
         vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
         vpz::BaseModel* mdl =
-                file->project().model().model()->findModelFromPath(atomicpath);
+                file->project().model().node()->findModelFromPath(atomicpath);
         if (not mdl) return 0;
         if (not mdl->isAtomic()) return 0;
         vpz::AtomicModel* atomg = mdl->toAtomic();
