@@ -272,8 +272,7 @@ rvle_output_t rvle_run(rvle_t handle,  int withColNames)
                 output.setData(std::move(configOutput));
             }
         }
-        res = sim.run(std::unique_ptr<vpz::Vpz>(new vpz::Vpz(*file)),
-                "vle.output", &error);
+        res = sim.run(std::unique_ptr<vpz::Vpz>(new vpz::Vpz(*file)), &error);
         if (error.code != 0) {
             std::string filename = ctx->getLogFile("rvle").string();
             std::ofstream* logfile = new std::ofstream(filename.c_str());
@@ -318,7 +317,7 @@ rvle_output_t rvle_manager(rvle_t handle, int withColNames)
         }
 
         res = sim.run(std::unique_ptr<vpz::Vpz>(new vpz::Vpz(*file)),
-                "vle.output", 1, 0, 1, &error);
+                1, 0, 1, &error);
 
         if (error.code != 0) {
             std::string filename = ctx->getLogFile("rvle").string();
@@ -366,7 +365,7 @@ rvle_output_t rvle_manager_thread(rvle_t handle, int th, int withColNames)
         }
 
         res = sim.run(std::unique_ptr<vpz::Vpz>(new vpz::Vpz(*file)),
-                "vle.output", th, 0,1, &error);
+                th, 0,1, &error);
 
         if (error.code != 0) {
             std::string filename = ctx->getLogFile("rvle").string();
