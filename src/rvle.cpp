@@ -29,6 +29,7 @@
 #include <vle/vpz/Vpz.hpp>
 #include <vle/vpz/AtomicModel.hpp>
 #include <vle/value/Matrix.hpp>
+#include <vle/value/Set.hpp>
 #include <vle/value/String.hpp>
 #include <vle/value/Double.hpp>
 #include <vle/value/Tuple.hpp>
@@ -561,8 +562,13 @@ rvle_output_t rvle_condition_show(rvle_t handle,
         vpz::Vpz* file(reinterpret_cast < vpz::Vpz* >(handle));
         vpz::Condition& cnd(file->project().experiment().
                             conditions().get(conditionname));
+        value::Set* ret = new value::Set();
+        for (const auto& v : cnd.getSetValues(portname)) {
+            ret->add(v->clone());
+        }
 
-        return new value::Set(cnd.getSetValues(portname));
+
+        return ret;
 
     } catch (const std::exception& e) {
         return 0;
