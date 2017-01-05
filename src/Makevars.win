@@ -1,0 +1,2 @@
+PKG_CPPFLAGS=`pkg-config --static --cflags vle-2.0`
+PKG_LIBS=-Wl,-Bstatic `pkg-config --static --libs vle-2.0` -Wl,-Bdynamic
