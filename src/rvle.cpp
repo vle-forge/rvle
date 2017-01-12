@@ -255,8 +255,8 @@ rvle_output_t rvle_run(rvle_t handle,  int withColNames)
     try {
         auto ctx = utils::make_context();
         manager::Error error;
-        manager::Simulation sim(ctx, manager::LOG_NONE,
-                manager::SIMULATION_NONE, std::chrono::milliseconds(0), 0);
+        manager::Simulation sim(ctx, manager::LOG_RUN,
+                manager::SIMULATION_SPAWN_PROCESS, std::chrono::milliseconds(0), 0);
         //configure output plugins for column names
         vpz::Outputs::iterator itb =
                 file->project().experiment().views().outputs().begin();
@@ -297,7 +297,7 @@ rvle_output_t rvle_manager(rvle_t handle, int withColNames)
         auto ctx = utils::make_context();
         manager::Error error;
         manager::Manager sim(ctx, manager::LOG_NONE,
-                manager::SIMULATION_NONE,
+                manager::SIMULATION_SPAWN_PROCESS,
                 0);
 
         //configure output plugins for column names
@@ -345,7 +345,7 @@ rvle_output_t rvle_manager_thread(rvle_t handle, int th, int withColNames)
         auto ctx = utils::make_context();
         manager::Error error;
         manager::Manager sim(ctx, manager::LOG_NONE,
-                manager::SIMULATION_NONE,
+                manager::SIMULATION_SPAWN_PROCESS,
                 0);
 
         //configure output plugins for column names
