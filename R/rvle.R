@@ -664,5 +664,43 @@ rvle.setIntegerCondition <- function(rvleHandle, condition, port, value)
     return (invisible(NULL))
 }
 
+rvle.show <- function(rvleHandle)
+{
+    stopifnot(is.rvle(rvleHandle))
+    cat("\n")
+    cat("VLE Model informations :\n")
+    cat("========================\n")
+    cat("\n")
+    cat("Experimental condition settings and default value :\n")
+    cat("\n")
+    conditionlist <- sort(rvle.listConditions(rvleHandle))
+    conditionportlist <- lapply(conditionlist, function(condition) {
+      list(condition, sort(rvle.listConditionPorts(rvleHandle,condition)))
+    })
+    lapply(conditionportlist, function(condition) {
+      conditionname <- condition[[1]];
+      lapply(condition[[2]], function(portname) {
+        thevalue = rvle.getConditionPortValues(rvleHandle,
+                conditionname, portname)
+        if (length(thevalue) == 0) {
+          thestoragemode = ""
+          thevalue = "Experimental Condition not managed"
+        } else {
+          thestoragemode = sprintf("<%s>",  class(thevalue));
+        }
+        cat(sprintf("* %s.%s = %s %s\n", conditionname,portname,
+                    toString(thevalue),thestoragemode))
+      })
+    })
+    cat("\n")
+    cat("Output plugins settings:\n")
+    lapply(rvle.listViews(rvleHandle),function(v){
+      cat(sprintf("* %s = %s (%s)\n", v, rvle.getOutputPlugin(rvleHandle,v),
+                  rvle.getConfigView(rvleHandle, v)))
+    })
+    cat("\n")
+    return(invisible())
+}
+
 
 # vim:tw=80:ts=8:sw=4:sts=4
