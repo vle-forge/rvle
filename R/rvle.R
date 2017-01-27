@@ -81,71 +81,72 @@ rvle.open <- function(file, pkg = "")
     return(x)
 }
 
-rvle.runPoly <- function(rvleHandle)
+rvle.runPoly <- function(rvleHandle, withSpawn=1)
 {
     stopifnot(is.rvle(rvleHandle))
     
-    .Call("run_poly", rvleHandle, PACKAGE="rvle")
+    .Call("run_poly", rvleHandle, as.integer(withSpawn), PACKAGE="rvle")
 }
 
-rvle.run <- function(rvleHandle)
+rvle.run <- function(rvleHandle, withSpawn=1)
 {
     stopifnot(is.rvle(rvleHandle))
 
-    .Call("run", rvleHandle, PACKAGE="rvle")
+    .Call("run", rvleHandle, as.integer(withSpawn), PACKAGE="rvle")
 }
 
-rvle.runMatrix <- function(rvleHandle)
+rvle.runMatrix <- function(rvleHandle, withSpawn=1)
 {
     stopifnot(is.rvle(rvleHandle))
 
-    .Call("run_matrix", rvleHandle, PACKAGE="rvle")
+    .Call("run_matrix", rvleHandle, as.integer(withSpawn), PACKAGE="rvle")
 }
 
-rvle.runManagerPoly <- function(rvleHandle)
+rvle.runManagerPoly <- function(rvleHandle, withSpawn=1)
 {
     stopifnot(is.rvle(rvleHandle))
     
-    .Call("run_manager_poly", rvleHandle, PACKAGE="rvle")
+    .Call("run_manager_poly", rvleHandle, as.integer(withSpawn), PACKAGE="rvle")
 }
 
 
-rvle.runManager <- function(rvleHandle)
+rvle.runManager <- function(rvleHandle, withSpawn=1)
 {
     stopifnot(is.rvle(rvleHandle))
 
-    .Call("run_manager", rvleHandle, PACKAGE="rvle")
+    .Call("run_manager", rvleHandle, as.integer(withSpawn), PACKAGE="rvle")
 }
 
-rvle.runManagerMatrix <- function(rvleHandle)
+rvle.runManagerMatrix <- function(rvleHandle, withSpawn=1)
 {
     stopifnot(is.rvle(rvleHandle))
 
-    .Call("run_manager_matrix", rvleHandle, PACKAGE="rvle")
+    .Call("run_manager_matrix", rvleHandle, as.integer(withSpawn),
+            PACKAGE="rvle")
 }
 
-rvle.runManagerThreadPoly <- function(rvleHandle, th)
+rvle.runManagerThreadPoly <- function(rvleHandle, th, withSpawn=1)
 {
     stopifnot(is.rvle(rvleHandle))
 
     .Call("run_manager_thread_poly", rvleHandle, as.integer(th),
-            PACKAGE="rvle")
+            as.integer(withSpawn), PACKAGE="rvle")
 }
 
-rvle.runManagerThread <- function(rvleHandle, th)
+rvle.runManagerThread <- function(rvleHandle, th, withSpawn=1)
 {
     stopifnot(is.rvle(rvleHandle))
 
     .Call("run_manager_thread", rvleHandle, as.integer(th),
-			PACKAGE="rvle")
+             as.integer(withSpawn), PACKAGE="rvle")
 }
 
-rvle.runManagerThreadMatrix <- function(rvleHandle, th)
+rvle.runManagerThreadMatrix <- function(rvleHandle, th, withSpawn=1)
 {
     stopifnot(is.rvle(rvleHandle))
 
     .Call("run_manager_thread_matrix", rvleHandle, as.integer(th), 
-            PACKAGE="rvle")
+            as.integer(withSpawn), PACKAGE="rvle")
 }
 
 is.rvle <- function(object)

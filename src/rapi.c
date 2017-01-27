@@ -45,15 +45,15 @@ static SEXP r_rvle_list_packages();
 static SEXP r_rvle_list_content(SEXP pkgname);
 static SEXP r_rvle_open(SEXP name);
 static SEXP r_rvle_pkg_open(SEXP name, SEXP pkg);
-static SEXP r_rvle_run_poly(SEXP rvle);
-static SEXP r_rvle_run(SEXP rvle);
-static SEXP r_rvle_run_matrix(SEXP rvle);
-static SEXP r_rvle_manager_poly(SEXP rvle);
-static SEXP r_rvle_manager(SEXP rvle);
-static SEXP r_rvle_manager_matrix(SEXP rvle);
-static SEXP r_rvle_manager_thread_poly(SEXP rvle, SEXP th);
-static SEXP r_rvle_manager_thread(SEXP rvle, SEXP th);
-static SEXP r_rvle_manager_thread_matrix(SEXP rvle, SEXP th);
+static SEXP r_rvle_run_poly(SEXP rvle, SEXP withSpawn);
+static SEXP r_rvle_run(SEXP rvle, SEXP withSpawn);
+static SEXP r_rvle_run_matrix(SEXP rvle, SEXP withSpawn);
+static SEXP r_rvle_manager_poly(SEXP rvle, SEXP withSpawn);
+static SEXP r_rvle_manager(SEXP rvle, SEXP withSpawn);
+static SEXP r_rvle_manager_matrix(SEXP rvle, SEXP withSpawn);
+static SEXP r_rvle_manager_thread_poly(SEXP rvle, SEXP th, SEXP withSpawn);
+static SEXP r_rvle_manager_thread(SEXP rvle, SEXP th, SEXP withSpawn);
+static SEXP r_rvle_manager_thread_matrix(SEXP rvle, SEXP th, SEXP withSpawn);
 static void r_rvle_delete(SEXP rvle);
 static SEXP r_rvle_condition_list(SEXP rvle);
 static SEXP r_rvle_condition_size(SEXP rvle);
@@ -126,16 +126,16 @@ R_CallMethodDef callMethods[] = {
         { "list_packages", (DL_FUNC) r_rvle_list_packages, 0},
         { "package_content", (DL_FUNC) r_rvle_list_content,1},
         { "open_pkg", (DL_FUNC) r_rvle_pkg_open, 2},
-        { "run_poly", (DL_FUNC) r_rvle_run_poly, 1},
-        { "run", (DL_FUNC) r_rvle_run, 1},
-        { "run_matrix", (DL_FUNC) r_rvle_run_matrix, 1},
-        { "run_manager_poly", (DL_FUNC) r_rvle_manager_poly, 1},
-        { "run_manager", (DL_FUNC) r_rvle_manager, 1},
-        { "run_manager_matrix", (DL_FUNC) r_rvle_manager_matrix, 1},
-        { "run_manager_thread_poly", (DL_FUNC) r_rvle_manager_thread_poly, 2},
-        { "run_manager_thread", (DL_FUNC) r_rvle_manager_thread, 2},
+        { "run_poly", (DL_FUNC) r_rvle_run_poly, 2},
+        { "run", (DL_FUNC) r_rvle_run, 2},
+        { "run_matrix", (DL_FUNC) r_rvle_run_matrix, 2},
+        { "run_manager_poly", (DL_FUNC) r_rvle_manager_poly, 2},
+        { "run_manager", (DL_FUNC) r_rvle_manager, 2},
+        { "run_manager_matrix", (DL_FUNC) r_rvle_manager_matrix, 2},
+        { "run_manager_thread_poly", (DL_FUNC) r_rvle_manager_thread_poly, 3},
+        { "run_manager_thread", (DL_FUNC) r_rvle_manager_thread, 3},
         { "run_manager_thread_matrix", (DL_FUNC) r_rvle_manager_thread_matrix,
-                2},
+                3},
         { "condition_size", (DL_FUNC) r_rvle_condition_size, 1},
         { "condition_list", (DL_FUNC) r_rvle_condition_list, 1},
         { "condition_port_list", (DL_FUNC) r_rvle_condition_port_list, 2},
@@ -290,7 +290,8 @@ SEXP r_rvle_pkg_open(SEXP name, SEXP pkg)
 SEXP r_rvle_run_generic(SEXP rvle,
         int manager,
         int matrix_type,
-        int nbthreads)
+        int nbthreads,
+        int withSpawn)
 {
     int withColNames = 0;
     if(matrix_type == 0){
@@ -305,12 +306,14 @@ SEXP r_rvle_run_generic(SEXP rvle,
     if(manager){
         if(nbthreads > 1){
             result = rvle_manager_thread(R_ExternalPtrAddr(rvle),
-                    nbthreads, withColNames);
+                    nbthreads, withColNames, withSpawn);
         } else {
-            result = rvle_manager(R_ExternalPtrAddr(rvle), withColNames);
+            result = rvle_manager(R_ExternalPtrAddr(rvle), withColNames,
+                    withSpawn);
         }
     } else {
-        result = rvle_run(R_ExternalPtrAddr(rvle), withColNames);
+        result = rvle_run(R_ExternalPtrAddr(rvle), withColNames,
+                withSpawn);
     }
     if (!result) {
         Rf_warning("RVLE: error during simulation or empty results "
@@ -337,78 +340,96 @@ SEXP r_rvle_run_generic(SEXP rvle,
     return r;
 }
 
-SEXP r_rvle_run_poly(SEXP rvle)
+SEXP r_rvle_run_poly(SEXP rvle, SEXP withSpawn)
 {
+    int spawn = INTEGER(withSpawn)[0];
     return r_rvle_run_generic(rvle,
             0 /*no manager*/,
             0 /*a view is a list with dimensions 2d*/,
-            1 /*un thread*/);
+            1 /*un thread*/,
+            spawn);
 }
 
-SEXP r_rvle_run(SEXP rvle)
+SEXP r_rvle_run(SEXP rvle, SEXP withSpawn)
 {
+    int spawn = INTEGER(withSpawn)[0];
     return r_rvle_run_generic(rvle,
             0 /*no manager*/,
             1 /*a view is a dataframe*/,
-            1 /*un thread*/);
+            1 /*un thread*/,
+            spawn);
 }
 
-SEXP r_rvle_run_matrix(SEXP rvle)
+SEXP r_rvle_run_matrix(SEXP rvle, SEXP withSpawn)
 {
+    int spawn = INTEGER(withSpawn)[0];
     return r_rvle_run_generic(rvle,
             0 /*no manager*/,
             2 /*a view is a matrix*/,
-            1 /*un thread*/);
+            1 /*un thread*/,
+            spawn);
 }
-SEXP r_rvle_manager_poly(SEXP rvle)
+SEXP r_rvle_manager_poly(SEXP rvle, SEXP withSpawn)
 {
+    int spawn = INTEGER(withSpawn)[0];
     return r_rvle_run_generic(rvle,
             1 /*into manager mode*/,
             0 /*a view is a list with dimensions 2d*/,
-            1 /*un thread*/);
+            1 /*un thread*/,
+            spawn);
 }
 
-SEXP r_rvle_manager(SEXP rvle)
+SEXP r_rvle_manager(SEXP rvle, SEXP withSpawn)
 {
+    int spawn = INTEGER(withSpawn)[0];
     return r_rvle_run_generic(rvle,
             1 /*into manager mode*/,
             1 /*a view is a dataframe*/,
-            1 /*un thread*/);
+            1 /*un thread*/,
+            spawn);
 }
 
-SEXP r_rvle_manager_matrix(SEXP rvle)
+SEXP r_rvle_manager_matrix(SEXP rvle, SEXP withSpawn)
 {
+    int spawn = INTEGER(withSpawn)[0];
     return r_rvle_run_generic(rvle,
             1 /*into manager mode*/,
             2 /*a view is a matrix*/,
-            1 /*un thread*/);
+            1 /*un thread*/,
+            spawn);
 }
 
-SEXP r_rvle_manager_thread_poly(SEXP rvle, SEXP th)
+SEXP r_rvle_manager_thread_poly(SEXP rvle, SEXP th, SEXP withSpawn)
 {
     int nbthreads = INTEGER(th)[0];
+    int spawn = INTEGER(withSpawn)[0];
     return r_rvle_run_generic(rvle,
             1 /*into manager mode*/,
             0 /*a view is a list with dimensions 2d*/,
-            nbthreads /*nb threads*/);
+            nbthreads /*nb threads*/,
+            spawn);
 }
 
-SEXP r_rvle_manager_thread(SEXP rvle, SEXP th)
+SEXP r_rvle_manager_thread(SEXP rvle, SEXP th, SEXP withSpawn)
 {
     int nbthreads = INTEGER(th)[0];
+    int spawn = INTEGER(withSpawn)[0];
     return r_rvle_run_generic(rvle,
             1 /*into manager mode*/,
             1 /*a view is a dataframe*/,
-            nbthreads /*nb threads*/);
+            nbthreads /*nb threads*/,
+            spawn);
 }
 
-SEXP r_rvle_manager_thread_matrix(SEXP rvle, SEXP th)
+SEXP r_rvle_manager_thread_matrix(SEXP rvle, SEXP th, SEXP withSpawn)
 {
     int nbthreads = INTEGER(th)[0];
+    int spawn = INTEGER(withSpawn)[0];
     return r_rvle_run_generic(rvle,
             1 /*into manager mode*/,
             2 /*a view is a matrix*/,
-            nbthreads /*nb threads*/);
+            nbthreads /*nb threads*/,
+            spawn);
 }
 
 void r_rvle_delete(SEXP rvle)

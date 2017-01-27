@@ -9,10 +9,11 @@
 	Part of the basic API of rvle.
 }
 \usage{
- rvle.runPoly(rvleHandle)
+ rvle.runPoly(rvleHandle, withSpawn = 1)
 }
 \arguments{
  \item{rvleHandle}{a rvle handle.}
+ \item{withSpawn}{advanced option for simulation.}
 }
 \value{
 Returns a list of 2D list.

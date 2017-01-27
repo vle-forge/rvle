@@ -246,17 +246,24 @@ rvle_t rvle_open(const char* filename)
     }
 }
 
-rvle_output_t rvle_run(rvle_t handle,  int withColNames)
+rvle_output_t rvle_run(rvle_t handle,  int withColNames, int withSpawn)
 {
     assert(handle);
     std::unique_ptr<value::Map> res(nullptr);
 
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
+
+
         auto ctx = utils::make_context();
         manager::Error error;
+        int spawn_option = manager::SIMULATION_NONE;
+        if (withSpawn == 1) {
+            spawn_option = manager::SIMULATION_SPAWN_PROCESS;
+        }
         manager::Simulation sim(ctx, manager::LOG_RUN,
-                manager::SIMULATION_SPAWN_PROCESS, std::chrono::milliseconds(0), 0);
+                (vle::manager::SimulationOptions) spawn_option,
+                std::chrono::milliseconds(0), 0);
         //configure output plugins for column names
         vpz::Outputs::iterator itb =
                 file->project().experiment().views().outputs().begin();
@@ -289,16 +296,21 @@ rvle_output_t rvle_run(rvle_t handle,  int withColNames)
     return res.release();
 }
 
-rvle_output_t rvle_manager(rvle_t handle, int withColNames)
+rvle_output_t rvle_manager(rvle_t handle, int withColNames, int withSpawn)
 {
     std::unique_ptr<value::Matrix> res(nullptr);
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
     try {
         auto ctx = utils::make_context();
         manager::Error error;
+        int spawn_option = manager::SIMULATION_NONE;
+        if (withSpawn == 1) {
+            spawn_option = manager::SIMULATION_SPAWN_PROCESS;
+        }
+
+
         manager::Manager sim(ctx, manager::LOG_NONE,
-                manager::SIMULATION_SPAWN_PROCESS,
-                0);
+                (vle::manager::SimulationOptions) spawn_option, 0);
 
         //configure output plugins for column names
         vpz::Outputs::iterator itb =
@@ -336,7 +348,8 @@ rvle_output_t rvle_manager(rvle_t handle, int withColNames)
     return res.release();
 }
 
-rvle_output_t rvle_manager_thread(rvle_t handle, int th, int withColNames)
+rvle_output_t rvle_manager_thread(rvle_t handle, int th, int withColNames,
+        int withSpawn)
 {
     std::unique_ptr<value::Matrix> res(nullptr);
     vpz::Vpz*  file(reinterpret_cast < vpz::Vpz* >(handle));
@@ -344,9 +357,12 @@ rvle_output_t rvle_manager_thread(rvle_t handle, int th, int withColNames)
 
         auto ctx = utils::make_context();
         manager::Error error;
+        int spawn_option = manager::SIMULATION_NONE;
+        if (withSpawn == 1) {
+            spawn_option = manager::SIMULATION_SPAWN_PROCESS;
+        }
         manager::Manager sim(ctx, manager::LOG_NONE,
-                manager::SIMULATION_SPAWN_PROCESS,
-                0);
+                (vle::manager::SimulationOptions) spawn_option, 0);
 
         //configure output plugins for column names
         vpz::Outputs::iterator itb =

@@ -7,10 +7,11 @@
 	Part of the basic API of rvle.
 }
 \usage{
- rvle.runMatrix(rvleHandle)
+ rvle.runMatrix(rvleHandle, withSpawn = 1)
 }
 \arguments{
  \item{rvleHandle}{a rvle handle.}
+ \item{withSpawn}{advanced option for simulation.}
 }
 \value{
 Returns a list of matrices of reals.

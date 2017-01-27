@@ -119,17 +119,19 @@ rvle_t rvle_open(const char* filename);
  * @brief Run a simulation using the rvle_t object.
  * @param handle The reference to the Vpz file.
  * @param withColNames If 1, first line of outputs contain the column names
+ * @param withSpawn If 1, use spawn to launch simulation
  * @return A rvle_output_t object or NULL if error.
  */
-rvle_output_t rvle_run(rvle_t handle, int withColNames);
+rvle_output_t rvle_run(rvle_t handle, int withColNames, int withSpawn);
 
 /**
  * @brief Run an experimental frames using the rvle_t object.
  * @param handle The reference to the Vpz file.
  * @param withColNames If 1, first line of outputs contain the column names
+ * @param withSpawn If 1, use spawn to launch simulation
  * @return A rvle_output_t object or NULL if error.
  */
-rvle_output_t rvle_manager(rvle_t handle, int withColNames);
+rvle_output_t rvle_manager(rvle_t handle, int withColNames, int withSpawn);
 
 /**
  * @brief Run an experimental frames int thread using the rvle_t object.
@@ -137,9 +139,11 @@ rvle_output_t rvle_manager(rvle_t handle, int withColNames);
  * @param th The number of thread.
  * @param withColNames If 1, first line of outputs contain the column names
  * of different combinations of one replica.
+ * @param withSpawn If 1, use spawn to launch simulation
  * @return A rvle_output_t object or NULL if error.
  */
-rvle_output_t rvle_manager_thread(rvle_t handle, int th, int withColNames);
+rvle_output_t rvle_manager_thread(rvle_t handle, int th, int withColNames,
+        int withSpawn);
 
 /**
  * @brief Destruction of the rvle_t object.
