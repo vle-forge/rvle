@@ -1,2 +1,24 @@
-PKG_CPPFLAGS=`pkg-config --static --cflags vle-2.0`
-PKG_LIBS=-Wl,-Bstatic `pkg-config --static --libs vle-2.0` -Wl,-Bdynamic
+PKG_CPPFLAGS = -std=c++11 -I$(VLE_PATH)/$(WIN)/include/vle-2.0 -I$(MINGW_PATH)/mingw$(WIN)/include
+PKG_LIBS = -Llibiconv -liconv -Lliblzma -llzma -Llibxml2 -lxml2 -Llibz -lz -Llibvle-2.0 -lvle-2.0  -lws2_32
+
+$(SHLIB): libiconv/libiconv.a liblzma/liblzma.a libxml2/libxml2.a libz/libz.a libvle-2.0/libvle-2.0.a
+
+libiconv/libiconv.a:
+	@(rm -fr libiconv && mkdir libiconv)
+	@(cp $(MINGW_PATH)/mingw$(WIN)/lib/libiconv.a libiconv/libiconv.a)
+
+liblzma/liblzma.a:
+	@(rm -fr liblzma && mkdir liblzma)
+	@(cp $(MINGW_PATH)/mingw$(WIN)/lib/liblzma.a liblzma/liblzma.a)
+
+libxml2/libxml2.a:
+	@(rm -fr libxml2 && mkdir libxml2)
+	@(cp $(MINGW_PATH)/mingw$(WIN)/lib/libxml2.a libxml2/libxml2.a)
+
+libz/libz.a:
+	@(rm -fr libz && mkdir libz)
+	@(cp $(MINGW_PATH)/mingw$(WIN)/lib/libz.a libz/libz.a)
+
+libvle-2.0/libvle-2.0.a:
+	@(rm -fr libvle-2.0 && mkdir libvle-2.0)
+	@(cp $(VLE_PATH)/$(WIN)/lib/libvle-2.0.a libvle-2.0/libvle-2.0.a)
