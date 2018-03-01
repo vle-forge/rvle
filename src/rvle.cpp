@@ -160,7 +160,7 @@ inline vle::utils::ContextPtr
 make_r_context()
 {
     auto ctx = vle::utils::make_context();
-
+    ctx->set_log_priority(4);
     ctx->set_log_function(
       std::unique_ptr<vle::utils::Context::LogFunctor>(new rvle_log()));
 
