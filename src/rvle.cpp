@@ -22,12 +22,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "rvle.h"
-#include <cassert>
-#include <chrono>
-#include <cstring>
-#include <fstream>
-#include <sstream>
 #include <vle/manager/Manager.hpp>
 #include <vle/manager/Simulation.hpp>
 #include <vle/utils/Context.hpp>
@@ -44,7 +38,18 @@
 #include <vle/vpz/AtomicModel.hpp>
 #include <vle/vpz/Vpz.hpp>
 
+#include <chrono>
+#include <fstream>
+#include <memory>
+#include <sstream>
+
+#define R_USE_C99_IN_CXX
 #include <R.h>
+
+#include "rvle.h"
+
+#include <cassert>
+#include <cstring>
 
 using namespace vle;
 using namespace utils;
@@ -52,6 +57,62 @@ using namespace utils;
 //
 // C++ utilities
 //
+
+struct rvle_log : vle::utils::Context::LogFunctor
+{
+public:
+    rvle_log() = default;
+
+    void write(const vle::utils::Context& /*ctx*/,
+               int priority,
+               const std::string& str) noexcept override
+    {
+        if (priority == 7)
+            REprintf("debug: %s", str.c_str());
+        else if (priority == 4)
+            REprintf("warning: %s", str.c_str());
+        else if (priority == 3)
+            REprintf("error: %s", str.c_str());
+        else if (priority == 2)
+            REprintf("critical: %s", str.c_str());
+        else if (priority == 1)
+            REprintf("alert: %s", str.c_str());
+        else if (priority == 0)
+            REprintf("emergency: %s", str.c_str());
+        else
+            Rprintf("%s", str.c_str());
+    }
+
+    void write(const vle::utils::Context& /*ctx*/,
+               int priority,
+               const char* format,
+               va_list args) noexcept override
+    {
+        if (priority == 5 or priority == 6) {
+            Rvprintf(format, args);
+        } else {
+            if (priority == 7) {
+                REprintf("debug: ");
+                REvprintf(format, args);
+            } else if (priority == 4) {
+                REprintf("warning: ");
+                REvprintf(format, args);
+            } else if (priority == 3) {
+                REprintf("error: ");
+                REvprintf(format, args);
+            } else if (priority == 2) {
+                REprintf("critical: ");
+                REvprintf(format, args);
+            } else if (priority == 1) {
+                REprintf("alert: ");
+                REvprintf(format, args);
+            } else if (priority == 0) {
+                REprintf("emergency: ");
+                REvprintf(format, args);
+            }
+        }
+    }
+};
 
 static vle::Init* vle_init = 0;
 
@@ -96,10 +157,22 @@ rvle_onunload()
     delete vle_init;
 }
 
+inline vle::utils::ContextPtr
+make_r_context()
+{
+    auto ctx = vle::utils::make_context();
+
+    ctx->set_log_function(
+      std::unique_ptr<vle::utils::Context::LogFunctor>(new rvle_log()));
+
+    return ctx;
+}
+
 char**
 rvle_list_packages()
 {
-    auto ctx = utils::make_context();
+    auto ctx = make_r_context();
+
     std::vector<std::string> pkglist;
     try {
         std::vector<Path> paths = ctx->getBinaryPackages();
@@ -116,7 +189,8 @@ rvle_list_packages()
 int
 rvle_list_packages_size()
 {
-    auto ctx = utils::make_context();
+    auto ctx = make_r_context();
+
     std::vector<std::string> pkglist;
     try {
         std::vector<Path> paths = ctx->getBinaryPackages();
@@ -135,7 +209,8 @@ rvle_list_packages_size()
 char**
 rvle_list_content(const char* pkgname)
 {
-    auto ctx = utils::make_context();
+    auto ctx = make_r_context();
+
     vle::utils::Package pkg(ctx, pkgname);
     std::vector<std::string> pkgcontent;
     try {
@@ -150,7 +225,8 @@ rvle_list_content(const char* pkgname)
 int
 rvle_list_content_size(const char* pkgname)
 {
-    auto ctx = utils::make_context();
+    auto ctx = make_r_context();
+
     vle::utils::Package pkg(ctx, pkgname);
     std::vector<std::string> pkgcontent;
     try {
@@ -171,7 +247,8 @@ rvle_pkg_open(const char* pkgname, const char* filename)
     assert(pkgname);
     assert(filename);
 
-    auto ctx = utils::make_context();
+    auto ctx = make_r_context();
+
     vpz::Vpz* file = 0;
 
     try {
@@ -188,7 +265,8 @@ rvle_pkg_open(const char* pkgname, const char* filename)
 int
 rvle_compile_vle_output()
 {
-    auto ctx = utils::make_context();
+    auto ctx = make_r_context();
+
     std::string filename = ctx->getLogFile("rvle").string();
     std::ofstream* logfile = new std::ofstream(filename.c_str());
 
@@ -221,7 +299,8 @@ rvle_compile_vle_output()
 int
 rvle_compile_test_port()
 {
-    auto ctx = utils::make_context();
+    auto ctx = make_r_context();
+
     std::string filename = ctx->getLogFile("rvle").string();
     std::ofstream* logfile = new std::ofstream(filename.c_str());
 
@@ -272,7 +351,8 @@ rvle_run(rvle_t handle, int withColNames, int withSpawn)
     vpz::Vpz* file(reinterpret_cast<vpz::Vpz*>(handle));
     try {
 
-        auto ctx = utils::make_context();
+        auto ctx = make_r_context();
+
         manager::Error error;
         int spawn_option = manager::SIMULATION_NONE;
         if (withSpawn == 1) {
@@ -320,7 +400,8 @@ rvle_manager(rvle_t handle, int withColNames, int withSpawn)
     std::unique_ptr<value::Matrix> res(nullptr);
     vpz::Vpz* file(reinterpret_cast<vpz::Vpz*>(handle));
     try {
-        auto ctx = utils::make_context();
+        auto ctx = make_r_context();
+
         manager::Error error;
         int spawn_option = manager::SIMULATION_NONE;
         if (withSpawn == 1) {
@@ -374,7 +455,8 @@ rvle_manager_thread(rvle_t handle, int th, int withColNames, int withSpawn)
     vpz::Vpz* file(reinterpret_cast<vpz::Vpz*>(handle));
     try {
 
-        auto ctx = utils::make_context();
+        auto ctx = make_r_context();
+
         manager::Error error;
         int spawn_option = manager::SIMULATION_NONE;
         if (withSpawn == 1) {
