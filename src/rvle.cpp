@@ -39,7 +39,6 @@
 #include <vle/vpz/Vpz.hpp>
 
 #include <chrono>
-#include <fstream>
 #include <memory>
 #include <sstream>
 
@@ -180,8 +179,7 @@ rvle_list_packages()
             pkglist.emplace_back(p.filename());
         }
     } catch (const std::exception& e) {
-        pkglist.clear();
-        pkglist.push_back("Error while listing the binary packages");
+        REprintf("Error while listing the binary packages: %s\n", e.what());
     }
     return rvle_convertVectorToChar(pkglist);
 }
@@ -216,8 +214,7 @@ rvle_list_content(const char* pkgname)
     try {
         pkg.fillBinaryContent(pkgcontent);
     } catch (const std::exception& e) {
-        pkgcontent.clear();
-        pkgcontent.push_back("Show package content error \n");
+        REprintf("Show package content error: %s\n", e.what());
     }
     return rvle_convertVectorToChar(pkgcontent);
 }
@@ -258,8 +255,35 @@ rvle_pkg_open(const char* pkgname, const char* filename)
         file = new vpz::Vpz(filepath);
         return file;
     } catch (const std::exception& e) {
+        REprintf("Fail to open file %s in package %s: %s\n", filename, pkgname, e.what());
         return 0;
     }
+}
+
+inline
+void write_sstream(std::ostringstream& log, std::ostringstream& err)
+{
+    auto str = log.str();
+    if (not str.empty())
+        Rprintf("%s", str.c_str());
+
+    log.str(std::string());
+
+    str = err.str();
+    if (not str.empty())
+        REprintf("%s", str.c_str());
+
+    err.str(std::string());
+}
+
+inline
+void write_sstream(std::ostringstream& oss)
+{
+    auto str = oss.str();
+    if (not str.empty())
+        Rprintf("%s", str.c_str());
+
+    oss.str(std::string());
 }
 
 int
@@ -267,8 +291,7 @@ rvle_compile_vle_output()
 {
     auto ctx = make_r_context();
 
-    std::string filename = ctx->getLogFile("rvle").string();
-    std::ofstream* logfile = new std::ofstream(filename.c_str());
+    std::ostringstream log, err;
 
     try {
         // homedir is set before calling this method
@@ -277,22 +300,23 @@ rvle_compile_vle_output()
         vle::utils::Package pack(ctx, "vle.output");
 
         pack.configure();
-        pack.wait((*logfile), (*logfile));
+        pack.wait(log, err);
         if (pack.isSuccess()) {
             pack.build();
-            pack.wait((*logfile), (*logfile));
+            pack.wait(log, err);
+            write_sstream(log, err);
+
             if (pack.isSuccess()) {
                 pack.install();
-                pack.wait((*logfile), (*logfile));
+                pack.wait(log, err);
+                write_sstream(log, err);
             }
         }
     } catch (const std::exception& e) {
-        (*logfile) << ("Error while compiling vle.output: ") << e.what()
-                   << "\n\n"
-                   << std::flush;
+        REprintf("Error while compiling vle.output: %s\n", e.what());
         return 0;
     }
-    logfile->close();
+
     return -1;
 }
 
@@ -301,8 +325,7 @@ rvle_compile_test_port()
 {
     auto ctx = make_r_context();
 
-    std::string filename = ctx->getLogFile("rvle").string();
-    std::ofstream* logfile = new std::ofstream(filename.c_str());
+    std::ostringstream log, err;
 
     try {
         // homedir is set before calling this method
@@ -311,21 +334,23 @@ rvle_compile_test_port()
         vle::utils::Package pack(ctx, "test_port");
 
         pack.configure();
-        pack.wait((*logfile), (*logfile));
+        pack.wait(log, err);
         if (pack.isSuccess()) {
             pack.build();
-            pack.wait((*logfile), (*logfile));
+            pack.wait(log, err);
+            write_sstream(log, err);
+
             if (pack.isSuccess()) {
                 pack.install();
-                pack.wait((*logfile), (*logfile));
+                pack.wait(log, err);
+                write_sstream(log, err);
             }
         }
     } catch (const std::exception& e) {
-        (*logfile) << "Error while compiling test_port: " << e.what() << "\n\n"
-                   << std::flush;
+        REprintf("Error while compiling test_port: %s\n", e.what());
         return 0;
     }
-    logfile->close();
+
     return -1;
 }
 
@@ -338,6 +363,7 @@ rvle_open(const char* filename)
         file = new vpz::Vpz(filename);
         return file;
     } catch (const std::exception& e) {
+        REprintf("Fail to open file %s: %s\n", filename, e.what());
         return 0;
     }
 }
@@ -350,7 +376,6 @@ rvle_run(rvle_t handle, int withColNames, int withSpawn)
 
     vpz::Vpz* file(reinterpret_cast<vpz::Vpz*>(handle));
     try {
-
         auto ctx = make_r_context();
 
         manager::Error error;
@@ -380,15 +405,12 @@ rvle_run(rvle_t handle, int withColNames, int withSpawn)
             }
         }
         res = sim.run(std::unique_ptr<vpz::Vpz>(new vpz::Vpz(*file)), &error);
-        if (error.code != 0) {
-            std::string filename = ctx->getLogFile("rvle").string();
-            std::ofstream* logfile = new std::ofstream(filename.c_str());
-            (*logfile) << "Error in rvle_run: " << error.message << "\n\n"
-                       << std::flush;
-            logfile->close();
-        }
+        if (error.code != 0)
+            REprintf("Error in rvle_run: %s.\n", error.message.c_str());
+
         return res.release();
     } catch (const std::exception& e) {
+        REprintf("Fail to run simulation: %s\n", e.what());
         res = 0;
     }
     return res.release();
@@ -434,15 +456,12 @@ rvle_manager(rvle_t handle, int withColNames, int withSpawn)
           std::unique_ptr<vpz::Vpz>(new vpz::Vpz(*file)), 1, 0, 1, &error);
 
         if (error.code != 0) {
-            std::string filename = ctx->getLogFile("rvle").string();
-            std::ofstream* logfile = new std::ofstream(filename.c_str());
-            (*logfile) << "Error in rvle_manager: " << error.message << "\n\n"
-                       << std::flush;
-            logfile->close();
+            REprintf("Error in rvle_manager: %s\n", error.message.c_str());
             res = 0;
         }
         return res.release();
     } catch (const std::exception& e) {
+        REprintf("Fail to run manager: %s.\n", e.what());
         res = 0;
     }
     return res.release();
@@ -454,7 +473,6 @@ rvle_manager_thread(rvle_t handle, int th, int withColNames, int withSpawn)
     std::unique_ptr<value::Matrix> res(nullptr);
     vpz::Vpz* file(reinterpret_cast<vpz::Vpz*>(handle));
     try {
-
         auto ctx = make_r_context();
 
         manager::Error error;
@@ -488,16 +506,12 @@ rvle_manager_thread(rvle_t handle, int th, int withColNames, int withSpawn)
           std::unique_ptr<vpz::Vpz>(new vpz::Vpz(*file)), th, 0, 1, &error);
 
         if (error.code != 0) {
-            std::string filename = ctx->getLogFile("rvle").string();
-            std::ofstream* logfile = new std::ofstream(filename.c_str());
-            (*logfile) << "Error in rvle_manager_thread: " << error.message
-                       << "\n\n"
-                       << std::flush;
-            logfile->close();
+            REprintf("Error in rvle_manager_thread: %s.\n", error.message.c_str());
         }
         return res.release();
 
     } catch (const std::exception& e) {
+        REprintf("Fail to run manager in thread mode: %s.\n", e.what());
         res = 0;
     }
     return res.release();
@@ -739,7 +753,7 @@ rvle_experiment_set_seed(rvle_t handle, int value)
     (void)handle;
     (void)value;
 
-    Rprintf("rvle_experiment_set_seed is unavailable.");
+    REprintf("rvle_experiment_set_seed is unavailable.");
 
     return -1;
 }
@@ -749,7 +763,7 @@ rvle_experiment_get_seed(rvle_t handle)
 {
     (void)handle;
 
-    Rprintf("rvle_experiment_get_seed is unavailable.");
+    REprintf("rvle_experiment_get_seed is unavailable.");
 
     return 0;
 }
