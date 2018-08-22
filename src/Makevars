@@ -1,2 +1,2 @@
-PKG_CPPFLAGS=`pkg-config --cflags vle-2.0` -std=c++11 -Wconversion -Wall -Wextra
-PKG_LIBS=`pkg-config --libs vle-2.0`
+PKG_CPPFLAGS=`pkg-config --cflags vle-2.1` -std=c++11 -Wconversion -Wall -Wextra
+PKG_LIBS=`pkg-config --libs vle-2.1`
