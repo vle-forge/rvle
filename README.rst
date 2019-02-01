@@ -26,6 +26,12 @@ repository online: https://github.com/vle-forge/rvle The URL to clone it:
 
  git clone git://github.com/vle-forge/rvle.git
 
+Then, install the requirements packages (automake, pkg-config, autotools):
+
+::
+
+  sudo apt install automake pkg-confg autotools build-essential
+
 Once you have met requirements, compiling and installing is simple:
 
 ::
