@@ -22,6 +22,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <vle/version.hpp>
 #include <vle/manager/Manager.hpp>
 #include <vle/manager/Simulation.hpp>
 #include <vle/utils/Context.hpp>
@@ -113,7 +114,9 @@ public:
     }
 };
 
+#if VLE_VERSION < 200100
 static vle::Init* vle_init = 0;
+#endif
 
 // TODO to remove
 // static void rvle_build_matrix(const value::Matrix& view,
@@ -147,13 +150,17 @@ rvle_convertVectorToChar(const std::vector<std::string>& vec)
 void
 rvle_onload()
 {
+#if VLE_VERSION < 200100
     vle_init = new vle::Init();
+#endif
 }
 
 void
 rvle_onunload()
 {
+#if VLE_VERSION < 200100
     delete vle_init;
+#endif
 }
 
 inline vle::utils::ContextPtr
