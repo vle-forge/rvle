@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<vle_project version="0.6.0" date="ven, 16 jan 2009" author="Patrick Chabrier">
+<structures>
+<model width="462" x="0" y="0" name="Top model" type="coupled">
+<submodels>
+<model observables="obs" conditions="cond,simulation_engine" dynamics="dyn" width="100" height="45" y="92" x="150" name="Perturb" type="atomic">
+<out>
+ <port name="p"/>
+</out>
+</model>
+   </submodels>
+<connections>
+</connections>
+</model>
+</structures>
+<dynamics>
+<dynamic library="Perturb" package="test_port" name="dyn"/>
+ </dynamics>
+<experiment name="dummy">
+<conditions>
+<condition name="simulation_engine">
+<port name="begin">
+<double>0.0</double>
+</port>
+<port name="duration">
+<double>10</double>
+</port>
+</condition>
+<condition name="test">
+ <port name="bool">
+<boolean>false</boolean>
+</port>
+ <port name="double">
+<double>0.100000000000000</double>
+</port>
+ <port name="int">
+<integer>2</integer>
+</port>
+<port name="map">
+<map>
+      <key name="a">
+       <double>0.100000000000000</double>
+      </key>
+      <key name="b">
+       <double>0.200000000000000</double>
+      </key>
+     </map>
+</port>
+ <port name="string">
+<string>dummy</string>
+</port>
+ <port name="tuple">
+<tuple>1.000000000000000 2.000000000000000 3.000000000000000 4.000000000000000 5.000000000000000</tuple>
+</port>
+</condition>
+<condition name="cond">
+ <port name="message">
+<double>2.500000000000000</double>
+</port>
+<port name="sendTime">
+<double>2.600000000000000</double>
+</port>
+</condition>
+</conditions>
+<views>
+<outputs>
+    <output format="local" plugin="storage" package="vle.output" name="view" location="">
+     <map>
+      <key name="columns">
+       <integer>15</integer>
+      </key>
+      <key name="inc_rows">
+       <integer>10</integer>
+      </key>
+      <key name="inc_columns">
+       <integer>10</integer>
+      </key>
+      <key name="rows">
+       <integer>15</integer>
+      </key>
+      <key name="header">
+       <string>top</string>
+      </key>
+     </map>
+    </output>
+    <output format="local" plugin="storage" package="vle.output" name="view2" location="">
+     <map>
+      <key name="columns">
+       <integer>15</integer>
+      </key>
+      <key name="inc_rows">
+       <integer>10</integer>
+      </key>
+      <key name="inc_columns">
+       <integer>10</integer>
+      </key>
+      <key name="rows">
+       <integer>15</integer>
+      </key>
+      <key name="header">
+       <string>top</string>
+      </key>
+     </map>
+    </output>
+   </outputs>
+   <view timestep="1" name="view" output="view" type="timed"/>
+   <view name="view2" output="view2" type="finish"/>
+   <observables>
+    <observable name="obs">
+     <port name="obsPort">
+      <attachedview name="view"/>
+      <attachedview name="view2"/>
+     </port>
+    </observable>
+   </observables>
+  </views>
+</experiment>
+</vle_project>

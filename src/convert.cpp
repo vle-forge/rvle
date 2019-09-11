@@ -47,7 +47,7 @@
 using namespace vle;
 
 value::Value::type
-rvle_get_vector_type(const value::Matrix& mat,
+rvleconv_get_vector_type(const value::Matrix& mat,
                      unsigned int col,
                      bool avoidFirstLine)
 {
@@ -63,7 +63,7 @@ rvle_get_vector_type(const value::Matrix& mat,
 }
 
 value::Value*
-rvle_toVleValue_implicit(SEXP rval, const std::string& rvalClass)
+rvleconv_toVleValue_implicit(SEXP rval, const std::string& rvalClass)
 {
     value::Value* res = 0;
     if (rvalClass == "data.frame") {
@@ -87,7 +87,7 @@ rvle_toVleValue_implicit(SEXP rval, const std::string& rvalClass)
                   col,
                   row + 1,
                   std::unique_ptr<value::Value>(
-                    reinterpret_cast<value::Value*>(rvle_toVleValue(elt))));
+                    reinterpret_cast<value::Value*>(rvleconv_toVleValue(elt))));
                 UNPROTECT(1); // elt
             }
             UNPROTECT(1); // colData
@@ -100,7 +100,7 @@ rvle_toVleValue_implicit(SEXP rval, const std::string& rvalClass)
 }
 
 value::Value*
-rvle_toVleValue_implicit(SEXP rval)
+rvleconv_toVleValue_implicit(SEXP rval)
 {
     value::Value* res = 0;
     switch (TYPEOF(rval)) {
@@ -231,14 +231,14 @@ rvle_toVleValue_implicit(SEXP rval)
                 res->toMap().add(CHAR(STRING_ELT(names, i)),
                                  std::unique_ptr<value::Value>(
                                    reinterpret_cast<value::Value*>(
-                                     rvle_toVleValue(VECTOR_ELT(temp, i)))));
+                                     rvleconv_toVleValue(VECTOR_ELT(temp, i)))));
             }
         } else { // value::Set
             res = new value::Set();
             for (R_len_t i = 0; i < length(temp); i++) {
                 res->toSet().add(std::unique_ptr<value::Value>(
                   reinterpret_cast<value::Value*>(
-                    rvle_toVleValue(VECTOR_ELT(temp, i)))));
+                    rvleconv_toVleValue(VECTOR_ELT(temp, i)))));
             }
         }
         UNPROTECT(1); // temp
@@ -266,7 +266,7 @@ rvle_toVleValue_implicit(SEXP rval)
 ///////////////////////////////////
 
 SEXP
-rvle_convertCharToSEXP(char** val, unsigned int size)
+rvleconv_CharToSEXP(char** val, unsigned int size)
 {
     SEXP r; /* condition list result */
     unsigned int i;
@@ -286,7 +286,40 @@ rvle_convertCharToSEXP(char** val, unsigned int size)
 }
 
 SEXP
-rvle_convertIntToSEXP(int val)
+rvleconv_string_to_SEXP(rvlecpp_string_t val)
+{
+    std::string* stringval =
+            reinterpret_cast<std::string*>(val);
+    SEXP r;
+    PROTECT(r = allocVector(STRSXP, 1));
+    SET_STRING_ELT(r, 0, mkChar(stringval->c_str()));
+    UNPROTECT(1);
+    delete stringval;
+    return r;
+}
+
+SEXP
+rvleconv_stringvect_to_SEXP(rvlecpp_stringvect_t val)
+{
+    std::vector<std::string>* stringvect =
+            reinterpret_cast<std::vector<std::string>*>(val);
+    long unsigned int size = stringvect->size();
+    SEXP r; /* string list */
+    unsigned int i;
+    PROTECT(r = allocVector(STRSXP, size));
+    if (size > 0) {
+        for (i = 0; i < size; ++i) {
+            SET_STRING_ELT(r, i, mkChar(((*stringvect)[i]).c_str()));
+        }
+    }
+    UNPROTECT(1);
+    delete stringvect;
+    return r;
+}
+
+
+SEXP
+rvleconv_IntToSEXP(int val)
 {
     SEXP r;
     PROTECT(r = allocVector(INTSXP, 1));
@@ -296,7 +329,7 @@ rvle_convertIntToSEXP(int val)
 }
 
 SEXP
-rvle_toRvalue(rvle_value_t vlevalToCast,
+rvleconv_toRvalue(rvlecpp_value_t vlevalToCast,
               int without_class_names,
               int multiple_values,
               int unlist_multiple_values,
@@ -366,7 +399,7 @@ rvle_toRvalue(rvle_value_t vlevalToCast,
     case value::Value::SET: {
         value::Set& setVal = vleval->toSet();
         if (multiple_values && unlist_multiple_values && setVal.size() == 1) {
-            res = rvle_toRvalue(setVal.get(0).get(),
+            res = rvleconv_toRvalue(setVal.get(0).get(),
                                 without_class_names,
                                 0,
                                 0,
@@ -379,7 +412,7 @@ rvle_toRvalue(rvle_value_t vlevalToCast,
             for (int i = 0; itb != ite; ++i, itb++) {
                 SET_VECTOR_ELT(res,
                                i,
-                               rvle_toRvalue(itb->get(),
+                               rvleconv_toRvalue(itb->get(),
                                              without_class_names,
                                              0,
                                              0,
@@ -408,7 +441,7 @@ rvle_toRvalue(rvle_value_t vlevalToCast,
         for (int i = 0; itb != ite; ++i, itb++) {
             SET_VECTOR_ELT(res,
                            i,
-                           rvle_toRvalue(itb->second.get(),
+                           rvleconv_toRvalue(itb->second.get(),
                                          without_class_names,
                                          0,
                                          0,
@@ -475,7 +508,7 @@ rvle_toRvalue(rvle_value_t vlevalToCast,
                 for (int j = 0; j < rows; ++j)
                     SET_VECTOR_ELT(res,
                                    (j + i * rows),
-                                   rvle_toRvalue(matrixVal.get(i, j).get(),
+                                   rvleconv_toRvalue(matrixVal.get(i, j).get(),
                                                  without_class_names,
                                                  0,
                                                  0,
@@ -497,7 +530,7 @@ rvle_toRvalue(rvle_value_t vlevalToCast,
                 SET_STRING_ELT(names, col, mkChar(colName.c_str()));
                 value::Value::type colType;
                 if (matrixVal.rows() > 1) {
-                    colType = rvle_get_vector_type(matrixVal, col, true);
+                    colType = rvleconv_get_vector_type(matrixVal, col, true);
                     switch (colType) {
                     case value::Value::BOOLEAN: {
                         PROTECT(value = NEW_LOGICAL(matrixVal.rows() - 1));
@@ -570,7 +603,7 @@ rvle_toRvalue(rvle_value_t vlevalToCast,
                                 SET_VECTOR_ELT(
                                   value,
                                   r - 1,
-                                  rvle_toRvalue(v.get(),
+                                  rvleconv_toRvalue(v.get(),
                                                 1 /*without_class_names*/,
                                                 0 /*multiple_values*/,
                                                 0 /*unlist_multiple_values*/,
@@ -641,15 +674,15 @@ rvle_toRvalue(rvle_value_t vlevalToCast,
     return res;
 }
 
-rvle_value_t
-rvle_toVleValue(SEXP rval)
+rvlecpp_value_t
+rvleconv_toVleValue(SEXP rval)
 {
 
     value::Value* res = 0;
     SEXP rvalClassSexp = GET_CLASS(rval);
 
     if (rvalClassSexp == R_NilValue) {
-        res = rvle_toVleValue_implicit(rval);
+        res = rvleconv_toVleValue_implicit(rval);
     } else {
         std::string rvalClass(CHAR(STRING_ELT(rvalClassSexp, 0)));
         if (rvalClass == "VleBOOLEAN") {
@@ -683,7 +716,7 @@ rvle_toVleValue(SEXP rval)
             PROTECT(temp = AS_LIST(rval));
             for (R_len_t i = 0; i < length(temp); i++) {
                 valuei = reinterpret_cast<value::Value*>(
-                  rvle_toVleValue(VECTOR_ELT(temp, i)));
+                  rvleconv_toVleValue(VECTOR_ELT(temp, i)));
                 res->toSet().add(std::unique_ptr<value::Value>(valuei));
             }
             UNPROTECT(1);
@@ -696,7 +729,7 @@ rvle_toVleValue(SEXP rval)
             PROTECT(temp = AS_LIST(rval));
             for (R_len_t i = 0; i < length(temp); i++) {
                 valuei = reinterpret_cast<value::Value*>(
-                  rvle_toVleValue(VECTOR_ELT(temp, i)));
+                  rvleconv_toVleValue(VECTOR_ELT(temp, i)));
                 res->toSet().add(std::unique_ptr<value::Value>(valuei));
             }
             UNPROTECT(1);
@@ -710,7 +743,7 @@ rvle_toVleValue(SEXP rval)
             for (R_len_t i = 0; i < length(names); i++) {
                 namei.assign(CHAR(STRING_ELT(names, i)));
                 valuei = reinterpret_cast<value::Value*>(
-                  rvle_toVleValue(VECTOR_ELT(temp, i)));
+                  rvleconv_toVleValue(VECTOR_ELT(temp, i)));
                 res->toMap().add(namei, std::unique_ptr<value::Value>(valuei));
             }
             UNPROTECT(1);
@@ -757,12 +790,12 @@ rvle_toVleValue(SEXP rval)
                       j,
                       std::unique_ptr<value::Value>(
                         reinterpret_cast<value::Value*>(
-                          rvle_toVleValue(VECTOR_ELT(temp, j + i * nrow)))));
+                          rvleconv_toVleValue(VECTOR_ELT(temp, j + i * nrow)))));
                 }
             }
             UNPROTECT(1);
         } else {
-            res = rvle_toVleValue_implicit(rval, rvalClass);
+            res = rvleconv_toVleValue_implicit(rval, rvalClass);
         }
     }
     if (res == 0) {

@@ -1,12 +1,7 @@
 #
-# @file rvle.R
-# @author The VLE Development Team
-#
-
-#
 # VLE Environment - the multimodeling and simulation environment
 # This file is a part of the VLE environment (http://vle.univ-littoral.fr)
-# Copyright (C) 2003 - 2012 The VLE Development Team
+# Copyright (C) 2003 - 2019 The VLE Development Team
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,655 +17,400 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-
 .onLoad <- function(lib, pkg)
 {
-    library.dynam("rvle", pkg, lib)
-    x = .Call("__rvle_onload", PACKAGE="rvle")
+  library.dynam("rvle", pkg, lib)
+  x = .Call("__rvleC_onload", PACKAGE="rvle")
 }
 
 .onUnload <- function(libpath)
 {
-    x = .Call("__rvle_onunload", PACKAGE="rvle")
-    library.dynam.unload("rvle", libpath)
+  x = .Call("__rvleC_onunload", PACKAGE="rvle")
+  library.dynam.unload("rvle", libpath)
 }
 
 .rvle.compile_test_port = function()
 {
-    x = .Call("__compile_test_port", PACKAGE="rvle")
+  .Call("__rvleC_compile_test_port", PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-rvle.listPackages <- function(justprint=TRUE)
-{
-    x <- .Call("list_packages", PACKAGE="rvle")
-    if (justprint) {
-        lapply(x,function(v){cat(v);cat("\n")});
-    } else {
-        return(x)
-    }
-}
+####rvlecpp_delete(rvlecpp_t vleObj);
 
-rvle.packageContent <- function(pkgname, justprint=TRUE)
-{
-    stopifnot(is.character(pkgname))
-    x <- .Call("package_content", pkgname, PACKAGE="rvle")
-    if (justprint) {
-        lapply(x,function(v){cat(v);cat("\n")});
-    } else {
-        return(x)
-    }
-}
+### building functions
 
 rvle.open <- function(file, pkg = "")
 {
-    stopifnot(is.character(file))
-    stopifnot(is.character(pkg))
-
-    if (pkg == "")
-      x <- .Call("open", file, PACKAGE="rvle")
-    else
-      x <- .Call("open_pkg", file, pkg, PACKAGE="rvle")
-
-    stopifnot(!is.null(x))
-    class(x) <- 'rvle'
-    return(x)
-}
-
-rvle.runPoly <- function(rvleHandle, withSpawn=1)
-{
-    stopifnot(is.rvle(rvleHandle))
-    
-    .Call("run_poly", rvleHandle, as.integer(withSpawn), PACKAGE="rvle")
-}
-
-rvle.run <- function(rvleHandle, withSpawn=1)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("run", rvleHandle, as.integer(withSpawn), PACKAGE="rvle")
-}
-
-rvle.runMatrix <- function(rvleHandle, withSpawn=1)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("run_matrix", rvleHandle, as.integer(withSpawn), PACKAGE="rvle")
-}
-
-rvle.runManagerPoly <- function(rvleHandle, withSpawn=1)
-{
-    stopifnot(is.rvle(rvleHandle))
-    
-    .Call("run_manager_poly", rvleHandle, as.integer(withSpawn), PACKAGE="rvle")
-}
-
-
-rvle.runManager <- function(rvleHandle, withSpawn=1)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("run_manager", rvleHandle, as.integer(withSpawn), PACKAGE="rvle")
-}
-
-rvle.runManagerMatrix <- function(rvleHandle, withSpawn=1)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("run_manager_matrix", rvleHandle, as.integer(withSpawn),
-            PACKAGE="rvle")
-}
-
-rvle.runManagerThreadPoly <- function(rvleHandle, th, withSpawn=1)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("run_manager_thread_poly", rvleHandle, as.integer(th),
-            as.integer(withSpawn), PACKAGE="rvle")
-}
-
-rvle.runManagerThread <- function(rvleHandle, th, withSpawn=1)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("run_manager_thread", rvleHandle, as.integer(th),
-             as.integer(withSpawn), PACKAGE="rvle")
-}
-
-rvle.runManagerThreadMatrix <- function(rvleHandle, th, withSpawn=1)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("run_manager_thread_matrix", rvleHandle, as.integer(th), 
-            as.integer(withSpawn), PACKAGE="rvle")
+  stopifnot(is.character(file))
+  stopifnot(is.character(pkg))
+  
+  if (pkg == "")
+    x <- .Call("rvleC_open", file, PACKAGE="rvle")
+  else
+    x <- .Call("rvleC_open_pkg", file, pkg, PACKAGE="rvle")
+  
+  stopifnot(!is.null(x))
+  class(x) <- 'rvle'
+  return(x)
 }
 
 is.rvle <- function(object)
 {
-    inherits(object, "rvle")
+  inherits(object, "rvle")
 }
 
-rvle.listConditions <- function(rvleHandle)
-{
-    stopifnot(is.rvle(rvleHandle))
+### static functions
 
-    .Call("condition_list", rvleHandle, PACKAGE="rvle")
+rvle.packages_list <- function()
+{
+  x <- .Call("rvleC_packages_list", PACKAGE="rvle")
+  return(x)
 }
 
-rvle.listConditionPorts <- function(rvleHandle, condition)
+rvle.package_content <- function(pkgname)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-
-    .Call("condition_port_list", rvleHandle, condition, PACKAGE="rvle")
+  stopifnot(is.character(pkgname))
+  x <- .Call("rvleC_package_content", pkgname, PACKAGE="rvle")
+  return(x)
 }
 
-rvle.listObservables <- function(rvleHandle)
+### basic functions
+
+rvle.save <- function(vleObj, filename)
 {
-    stopifnot(is.rvle(rvleHandle))
-    
-    .Call("listObservables", rvleHandle, PACKAGE="rvle")
+  stopifnot(is.rvle(vleObj))
+  stopifnot(is.character(filename))
+  .Call("rvleC_save", vleObj, filename, PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-rvle.listObservablePorts <- function(rvleHandle, obsName)
+rvle.set_log_level <- function(vleObj, level)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(obsName))
-    
-    .Call("listObservablePorts", rvleHandle, obsName,  PACKAGE="rvle")
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_set_log_level", vleObj, as.integer(level), PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-rvle.getObservablesSize <- function(rvleHandle)
+rvle.get_atomic_models = function(vleObj)
 {
-    stopifnot(is.rvle(rvleHandle))
-    
-    .Call("getObservablesSize", rvleHandle, PACKAGE="rvle")
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_get_atomic_models", vleObj, PACKAGE="rvle")
+  return(x)
 }
 
-rvle.getObservablePortsSize <- function(rvleHandle, obsName)
+rvle.get_conditions = function(vleObj) 
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(obsName))
-    
-    .Call("getObservablePortsSize", rvleHandle, obsName, PACKAGE="rvle")
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_get_conditions", vleObj, PACKAGE="rvle")
+  return(x)
 }
 
-
-rvle.getConditionsSize <- function(rvleHandle)
+rvle.add_condition = function(vleObj, condition)
 {
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("condition_size", rvleHandle, PACKAGE="rvle")
+  stopifnot(is.rvle(vleObj))
+  stopifnot(is.character(condition))
+  .Call("rvleC_add_condition", vleObj, condition, PACKAGE="rvle")
+  return (invisible(NULL))
+}
+  
+rvle.del_condition = function(vleObj, condition)
+{
+  stopifnot(is.rvle(vleObj))
+  stopifnot(is.character(condition))
+  .Call("rvleC_add_condition", vleObj, condition, PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-rvle.getConditionPortsSize <- function(rvleHandle, condition)
+rvle.get_attached_conditions = function(vleObj, atomicpath)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-
-    .Call("condition_port_list_size", rvleHandle, condition, PACKAGE="rvle")
-}
-
-rvle.clearConditionPort <- function(rvleHandle, condition, port)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-
-    .Call("condition_clear", rvleHandle, condition, port, PACKAGE="rvle")
-
-    return (invisible(NULL))
-}
-
-rvle.getConditionPortValues <- function(rvleHandle, condition, port)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-
-    .Call("condition_show", rvleHandle, condition, port, PACKAGE="rvle")
-}
-
-rvle.setDuration <- function(rvleHandle, value)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("experiment_set_duration", rvleHandle, as.numeric(value),
-                                     PACKAGE="rvle")
-
-    return (invisible(NULL))
-}
-
-rvle.getDuration <- function(rvleHandle)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("experiment_get_duration", rvleHandle, PACKAGE="rvle")
-}
-
-rvle.setBegin <- function(rvleHandle, value)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("experiment_set_begin", rvleHandle, as.numeric(value), PACKAGE="rvle")
-
-    return (invisible(NULL))
-}
-
-rvle.getBegin <- function(rvleHandle)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("experiment_get_begin", rvleHandle, PACKAGE="rvle")
-}
-
-rvle.addView <- function(rvleHandle, view)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(view))
-
-    .Call("addView", rvleHandle, view, PACKAGE="rvle")
-    return (invisible(NULL))
-}
-
-rvle.removeView <- function(rvleHandle, view)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(view))
-    
-    .Call("removeView", rvleHandle, view, PACKAGE="rvle")
-    return (invisible(NULL))
-}
-
-rvle.addObservablePort <- function(rvleHandle, obsName, portName)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(obsName))
-    stopifnot(is.character(portName))
-
-    .Call("addObservablePort", rvleHandle, obsName, portName, PACKAGE="rvle")
-    return (invisible(NULL))
-}
-
-rvle.removeObservablePort <- function(rvleHandle, obsName, portName)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(obsName))
-    stopifnot(is.character(portName))
-
-    .Call("removeObservablePort", rvleHandle, obsName, portName, PACKAGE="rvle")
-    return (invisible(NULL))
-}
-
-rvle.attachView <- function(rvleHandle, view, obsName, portName)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(view))
-    stopifnot(is.character(obsName))
-    stopifnot(is.character(portName))
-    
-    .Call("attachView", rvleHandle, view, obsName, portName, 
+  stopifnot(is.rvle(vleObj))
+  stopifnot(is.character(atomicpath))
+  x = .Call("rvleC_get_attached_conditions", vleObj, atomicpath, 
             PACKAGE="rvle")
-    return (invisible(NULL))
+  return(x)
 }
 
-rvle.detachView <- function(rvleHandle, view, obsName, portName)
+rvle.attach_condition = function(vleObj, atomicpath, condition)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(view))
-    stopifnot(is.character(obsName))
-    stopifnot(is.character(portName))
-    
-    .Call("detachView", rvleHandle, view, obsName, portName, 
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_attach_condition", vleObj, atomicpath, condition, 
+        PACKAGE="rvle")
+  return (invisible(NULL))
+}
+
+rvle.detach_condition = function(vleObj, atomicpath, condition)
+{
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_detach_condition", vleObj, atomicpath, condition, 
+        PACKAGE="rvle")
+  return (invisible(NULL))
+}
+
+rvle.get_condition_ports = function(vleObj, condition)
+{
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_get_condition_ports", vleObj, condition,
             PACKAGE="rvle")
-    return (invisible(NULL))
+  return(x)
 }
 
-rvle.listAttachedViews <- function(rvleHandle, obsName, 
-        portName)
+rvle.add_condition_port = function(vleObj, condition, port)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(obsName))
-    stopifnot(is.character(portName))
-    
-    .Call("listAttachedViews", rvleHandle, obsName, 
-            portName, PACKAGE="rvle")
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_add_condition_port", vleObj, condition, port, 
+        PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-rvle.getAttachedViewsSize <- function(rvleHandle, obsName, portName)
+rvle.del_condition_port = function(vleObj, condition, port)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(obsName))
-    stopifnot(is.character(portName))
-    
-    .Call("getAttachedViewsSize", rvleHandle, obsName, 
-            portName, PACKAGE="rvle")
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_del_condition_port", vleObj, condition, port, 
+        PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-
-rvle.listViews <- function(rvleHandle)
+rvle.get_condition_port_value = function(vleObj, condition, port)
 {
-	stopifnot(is.rvle(rvleHandle))
-
-	.Call("view_list", rvleHandle, PACKAGE="rvle")
-}
-
-rvle.getViewsSize <- function(rvleHandle)
-{
-	stopifnot(is.rvle(rvleHandle))
-
-	.Call("view_size", rvleHandle, PACKAGE="rvle")
-}
-
-rvle.setOutputPlugin <- function(rvleHandle, viewname, pluginname)
-{
-	stopifnot(is.rvle(rvleHandle))
-	stopifnot(is.character(viewname))
-	stopifnot(is.character(pluginname))
-    
-    resplit = strsplit(pluginname,"/")[[1]]
-    if (length(resplit) == 2){
-        .Call("set_output_plugin", rvleHandle, viewname,
-                resplit[2], resplit[1], PACKAGE="rvle")
-    } else {
-        
-        .Call("set_output_plugin", rvleHandle, viewname, 
-                pluginname, "vle.output" , PACKAGE="rvle")
-    }
-	return (invisible(NULL))
-}
-
-rvle.getOutputPlugin <- function(rvleHandle, view)
-{
-	stopifnot(is.rvle(rvleHandle))
-	stopifnot(is.character(view))
-
-	.Call("get_output_plugin", rvleHandle, view, PACKAGE="rvle")
-}
-
-rvle.getConfigView <- function(rvleHandle, view)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(view))
-    
-    .Call("r_rvle_get_config_view", rvleHandle, view, PACKAGE="rvle")
-}
-
-rvle.setConfigView <- function(rvleHandle, view, config)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(view))
-    stopifnot(is.character(config))
-    
-    .Call("r_rvle_set_config_view", rvleHandle, view, config,  PACKAGE="rvle")
-    
-    return (invisible(NULL))
-}
-
-rvle.save <- function(rvleHandle, file)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(file))
-
-    .Call("save", rvleHandle, file, PACKAGE="rvle")
-
-    return (invisible(NULL))
-}
-
-##NEW
-
-rvle.addValueCondition <- function(rvleHandle, condition, port, value)
-{
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-    
-    .Call("rvle_addValueCondition", rvleHandle, condition, port, value,
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_get_condition_port_value", vleObj, condition, port, 
             PACKAGE="rvle")
-    
-    return (invisible(NULL))
+  return(x)
 }
 
-rvle.setValueCondition <- function(rvleHandle, condition, port, value)
+rvle.set_condition_port_value = function(vleObj, condition, port, val)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-    
-    rvle.clearConditionPort(rvleHandle, condition, port)
-    rvle.addValueCondition(rvleHandle, condition, port, value)
-    
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_set_condition_port_value", vleObj, as.character(condition), 
+        as.character(port), val, PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-rvle.addCondition <- function(rvleHandle, condition)
+rvle.get_observables = function(vleObj)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_get_observables", vleObj, PACKAGE="rvle")
+  return(x)
+}
 
-    .Call("r_rvle_add_condition", rvleHandle, condition,
+rvle.get_observable_ports = function(vleObj, observable)
+{
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_get_observable_ports", vleObj, observable, PACKAGE="rvle")
+  return(x)
+}
+
+rvle.add_observable_port = function(vleObj, observable, port)
+{
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_add_observable_port", vleObj, observable, port, PACKAGE="rvle")
+  return (invisible(NULL))
+}
+
+rvle.del_observable_port = function(vleObj, observable, port)
+{
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_del_observable_port", vleObj, observable, port, PACKAGE="rvle")
+  return (invisible(NULL))
+}
+
+rvle.attach_view = function(vleObj, view, observable, port)
+{
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_attach_view", vleObj, view, observable, port, PACKAGE="rvle")
+  return (invisible(NULL))
+}
+
+rvle.detach_view = function(vleObj, view, observable, port)
+{
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_detach_view", vleObj, view, observable, port, PACKAGE="rvle")
+  return (invisible(NULL))
+}
+
+rvle.get_attached_views = function(vleObj, observable, port)
+{
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_get_attached_views", vleObj, observable, port, 
             PACKAGE="rvle")
-
-    return (invisible(NULL))
+  return(x)
 }
 
-rvle.removeCondition <- function(rvleHandle, condition)
+rvle.get_views = function(vleObj)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-
-    .Call("r_rvle_remove_condition", rvleHandle, condition,
-            PACKAGE="rvle")
-
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_get_views", vleObj, PACKAGE="rvle")
+  return(x)
 }
 
-rvle.addPort <- function(rvleHandle, condition, port)
+rvle.add_view = function(vleObj, view)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-
-    .Call("r_rvle_add_port", rvleHandle, condition, port,
-            PACKAGE="rvle")
-
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_add_view", vleObj, view, PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-rvle.removePort <- function(rvleHandle, condition, port)
+rvle.del_view = function(vleObj, view)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-
-    .Call("r_rvle_remove_port", rvleHandle, condition, port,
-            PACKAGE="rvle")
-
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_del_view", vleObj, view, PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-rvle.attachCondition <- function(rvleHandle, path_to_atomic, condition)
+rvle.get_view_config = function(vleObj, view)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(path_to_atomic))
-    stopifnot(is.character(condition))
-    
-    .Call("r_rvle_attach_condition", rvleHandle, path_to_atomic, condition,
-            PACKAGE="rvle")
-    
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_get_view_config", vleObj, view, PACKAGE="rvle")
+  return(x)
 }
 
-rvle.detachCondition <- function(rvleHandle, path_to_atomic, condition)
+rvle.set_view_config = function(vleObj, view, config)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(path_to_atomic))
-    stopifnot(is.character(condition))
-
-    .Call("r_rvle_detach_condition", rvleHandle, path_to_atomic, condition,
-            PACKAGE="rvle")
-
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_set_view_config", vleObj, view, config, PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-##DEPRECATED
-rvle.addRealCondition <- function(rvleHandle, condition, port, value)
+rvle.get_view_plugin = function(vleObj, view)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-    
-    .Call("condition_add_real", rvleHandle, condition, port, as.numeric(value),
-            PACKAGE="rvle")
-    
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_get_view_plugin", vleObj, view, PACKAGE="rvle")
+  return(x)
 }
 
-rvle.setRealCondition <- function(rvleHandle, condition, port, value)
+rvle.set_view_plugin = function(vleObj, view, pluginname, 
+                                package="vle.output")
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-    
-    rvle.clearConditionPort(rvleHandle, condition, port)
-    rvle.addRealCondition(rvleHandle, condition, port, value)
-    
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_set_view_plugin", vleObj, view, pluginname, package, 
+         PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-rvle.addTupleCondition <- function(rvleHandle, condition, port, value)
+rvle.available_outputs = function(vleObj)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-    
-    .Call("condition_add_tuple", rvleHandle, condition, port, as.list(value),
-            PACKAGE="rvle")
-    
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_available_outputs", vleObj, PACKAGE="rvle")
+  return(x)
 }
 
-rvle.setTupleCondition <- function(rvleHandle, condition, port, value)
+rvle.run = function(vleObj)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-    
-    rvle.clearConditionPort(rvleHandle, condition, port)
-    rvle.addTupleCondition(rvleHandle, condition, port, as.list(value))
-    
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_run", vleObj, PACKAGE="rvle")
+  return(x)
 }
 
-rvle.setStringCondition <- function(rvleHandle, condition, port, value)
+#####"plan functions
+
+rvle.plan_define = function(vleObj, cond, port, addORremove)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-    stopifnot(is.character(value))
-    
-    rvle.clearConditionPort(rvleHandle, condition, port)
-    rvle.addStringCondition(rvleHandle, condition, port, value)
-    
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_plan_define", vleObj, cond, port, as.integer(addORremove), 
+        PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-rvle.addStringCondition <- function(rvleHandle, condition, port, value)
+rvle.plan_input = function(vleObj, cond, port, val)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-    stopifnot(is.character(value))
-    
-    .Call("condition_add_string", rvleHandle, condition, port, value, PACKAGE="rvle")
-    
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_plan_input", vleObj, cond, port, val, 
+        PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-rvle.addBooleanCondition <- function(rvleHandle, condition, port, value)
+rvle.plan_propagate = function(vleObj, cond, port, val)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-    
-    .Call("condition_add_boolean", rvleHandle, condition, port, as.logical(value),
-            PACKAGE="rvle")
-    
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_plan_propagate", vleObj, cond, port, val, PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-rvle.setBooleanCondition <- function(rvleHandle, condition, port, value)
+rvle.plan_replicate = function(vleObj, cond, port, val)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-    
-    rvle.clearConditionPort(rvleHandle, condition, port)
-    rvle.addBooleanCondition(rvleHandle, condition, port, value)
-    
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_plan_replicate", vleObj, cond, port, val, PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-rvle.addIntegerCondition <- function(rvleHandle, condition, port, value)
+rvle.plan_output = function(vleObj, id, path,
+                         integration="all", aggregation_replicate="mean",
+                         aggregation_input="all", obs_times=NULL,
+                         obs_values=NULL, replicate_quantile=0.5)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-    
-    .Call("condition_add_integer", rvleHandle, condition, port, as.integer(value),
-            PACKAGE="rvle")
-    
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_plan_output", vleObj, as.character(id), as.character(path),
+        as.character(integration), as.character(aggregation_replicate),
+        as.character(aggregation_input), as.numeric(obs_times),
+        as.numeric(obs_values), as.numeric(replicate_quantile), PACKAGE="rvle")
+  return (invisible(NULL))
 }
 
-rvle.setIntegerCondition <- function(rvleHandle, condition, port, value)
+rvle.plan_run = function(vleObj)
 {
-    stopifnot(is.rvle(rvleHandle))
-    stopifnot(is.character(condition))
-    stopifnot(is.character(port))
-    
-    rvle.clearConditionPort(rvleHandle, condition, port)
-    rvle.addIntegerCondition(rvleHandle, condition, port, value)
-    
-    return (invisible(NULL))
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_plan_run", vleObj, PACKAGE="rvle")
+  attr(x, "rvle_obj") <- "rvle.plan_run"
+  return(x)
 }
 
-rvle.show <- function(rvleHandle)
+rvle.plan_config = function(vleObj, parallel_option="single",
+                            nb_slots=1, simulation_spawn=T,  
+                            rm_MPI_files=T, generate_MPI_host=F, 
+                            working_dir="/tmp/")
 {
-    stopifnot(is.rvle(rvleHandle))
-    cat("\n")
-    cat("VLE Model informations :\n")
-    cat("========================\n")
-    cat("\n")
-    cat("Experimental condition settings and default value :\n")
-    cat("\n")
-    conditionlist <- sort(rvle.listConditions(rvleHandle))
-    conditionportlist <- lapply(conditionlist, function(condition) {
-      list(condition, sort(rvle.listConditionPorts(rvleHandle,condition)))
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_plan_config", vleObj, as.character(parallel_option),
+        as.integer(nb_slots), as.logical(simulation_spawn),  
+        as.logical(rm_MPI_files), as.logical(generate_MPI_host), 
+        as.character(working_dir), PACKAGE="rvle")
+  return (invisible(NULL))
+}
+
+rvle.plan_embedded = function(vleObj, input=1, replicate=1)
+{
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_plan_embedded", vleObj, as.integer(input-1), 
+            as.integer(replicate-1), PACKAGE="rvle")
+  class(x) <- "rvle"
+  return(x)
+}
+
+rvle.show <- function(vleObj)
+{
+  stopifnot(is.rvle(vleObj))
+  cat("\n")
+  cat("VLE Model informations :\n")
+  cat("========================\n")
+  cat("\n")
+  cat("Experimental condition settings and default value :\n")
+  cat("\n")
+  conditionlist <- sort(unlist(rvle.get_conditions(vleObj)))
+  conditionportlist <- lapply(conditionlist, function(condition) {
+    list(condition, sort(unlist(rvle.get_condition_ports(vleObj,condition))))
+  })
+  lapply(conditionportlist, function(condition) {
+    conditionname <- condition[[1]];
+    lapply(condition[[2]], function(port) {
+      thevalue = rvle.get_condition_port_value(vleObj, conditionname, 
+                                               port)
+      # if (length(thevalue) == 0) {
+      #   thestoragemode = ""
+      #   thevalue = "Experimental Condition not managed"
+      # } else {
+      #   thestoragemode = sprintf("<%s>",  class(thevalue));
+      # }
+      thestoragemode = sprintf("<%s>",  class(thevalue));
+      cat(sprintf("* %s.%s = %s %s\n", conditionname,port,
+                  toString(thevalue),thestoragemode))
     })
-    lapply(conditionportlist, function(condition) {
-      conditionname <- condition[[1]];
-      lapply(condition[[2]], function(portname) {
-        thevalue = rvle.getConditionPortValues(rvleHandle,
-                conditionname, portname)
-        if (length(thevalue) == 0) {
-          thestoragemode = ""
-          thevalue = "Experimental Condition not managed"
-        } else {
-          thestoragemode = sprintf("<%s>",  class(thevalue));
-        }
-        cat(sprintf("* %s.%s = %s %s\n", conditionname,portname,
-                    toString(thevalue),thestoragemode))
-      })
-    })
-    cat("\n")
-    cat("Output plugins settings:\n")
-    lapply(rvle.listViews(rvleHandle),function(v){
-      cat(sprintf("* %s = %s (%s)\n", v, rvle.getOutputPlugin(rvleHandle,v),
-                  rvle.getConfigView(rvleHandle, v)))
-    })
-    cat("\n")
-    return(invisible())
+  })
+  cat("\n")
+  cat("Output plugins settings:\n")
+  lapply(rvle.get_views(vleObj),function(v){
+    cat(sprintf("* %s = %s (%s)\n", v, rvle.get_view_plugin(vleObj,v),
+                rvle.get_view_config(vleObj, v)))
+  })
+  cat("\n")
+  return (invisible(NULL))
 }
-
-
-# vim:tw=80:ts=8:sw=4:sts=4

@@ -41,14 +41,31 @@ extern "C" {
  * @param size, the size of the vector of string
  */
 SEXP
-rvle_convertCharToSEXP(char** val, unsigned int size);
+rvleconv_CharToSEXP(char** val, unsigned int size);
+
+
+/**
+ * @brief converts a char* to a SEXP, WARNING, the char* is deleted.
+ *
+ * @param val, the char* to convert
+ */
+SEXP
+rvleconv_string_to_SEXP(rvlecpp_string_t val);
+/**
+ * @brief converts a char** to a SEXP, WARNING, the char** is deleted.
+ *
+ * @param val, the char** to convert
+ */
+SEXP
+rvleconv_stringvect_to_SEXP(rvlecpp_stringvect_t val);
+
 
 /**
  * @brief converts an int to a SEXP, WARNING, the char** is deleted
  * @param val, the int to convert
  */
 SEXP
-rvle_convertIntToSEXP(int val);
+rvleconv_IntToSEXP(int val);
 
 /**
  * @brief Converts a vle value into a SEXP object
@@ -96,7 +113,7 @@ rvle_convertIntToSEXP(int val);
  * @return the SEXP value
  */
 SEXP
-rvle_toRvalue(rvle_value_t val,
+rvleconv_toRvalue(rvlecpp_value_t val,
               int without_class_names,
               int multiple_values,
               int unlist_multiple_values,
@@ -117,8 +134,8 @@ rvle_toRvalue(rvle_value_t val,
  *
  * @return the vle value pointer
  */
-rvle_value_t
-rvle_toVleValue(SEXP rval);
+rvlecpp_value_t
+rvleconv_toVleValue(SEXP rval);
 
 #ifdef __cplusplus
 }
