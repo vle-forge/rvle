@@ -294,40 +294,6 @@ void write_sstream(std::ostringstream& oss)
 }
 
 int
-rvle_compile_vle_output()
-{
-    auto ctx = make_r_context();
-
-    std::ostringstream log, err;
-
-    try {
-        // homedir is set before calling this method
-        // current dir contains vle.ouput pkg
-
-        vle::utils::Package pack(ctx, "vle.output");
-
-        pack.configure();
-        pack.wait(log, err);
-        if (pack.isSuccess()) {
-            pack.build();
-            pack.wait(log, err);
-            write_sstream(log, err);
-
-            if (pack.isSuccess()) {
-                pack.install();
-                pack.wait(log, err);
-                write_sstream(log, err);
-            }
-        }
-    } catch (const std::exception& e) {
-        REprintf("Error while compiling vle.output: %s\n", e.what());
-        return 0;
-    }
-
-    return -1;
-}
-
-int
 rvle_compile_test_port()
 {
     auto ctx = make_r_context();

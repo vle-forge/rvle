@@ -35,11 +35,6 @@
     library.dynam.unload("rvle", libpath)
 }
 
-.rvle.compile_vle_output = function()
-{
-    x = .Call("__compile_vle_output", PACKAGE="rvle")
-}
-
 .rvle.compile_test_port = function()
 {
     x = .Call("__compile_test_port", PACKAGE="rvle")

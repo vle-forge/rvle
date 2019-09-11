@@ -40,8 +40,6 @@ r_rvle_onload();
 static SEXP
 r_rvle_onunload();
 static SEXP
-r_rvle_compile_vle_output();
-static SEXP
 r_rvle_compile_test_port();
 static SEXP
 r_rvle_list_packages();
@@ -175,7 +173,6 @@ r_rvle_condition_add_tuple(SEXP rvle, SEXP cnd, SEXP prt, SEXP values);
 R_CallMethodDef callMethods[] = {
     { "__rvle_onload", (DL_FUNC)r_rvle_onload, 0 },
     { "__rvle_onunload", (DL_FUNC)r_rvle_onunload, 0 },
-    { "__compile_vle_output", (DL_FUNC)r_rvle_compile_vle_output, 0 },
     { "__compile_test_port", (DL_FUNC)r_rvle_compile_test_port, 0 },
     { "open", (DL_FUNC)r_rvle_open, 1 },
     { "list_packages", (DL_FUNC)r_rvle_list_packages, 0 },
@@ -258,13 +255,6 @@ R_unload_rvle(DllInfo* info)
 }
 
 #include "convert.h"
-
-SEXP
-r_rvle_compile_vle_output()
-{
-    rvle_compile_vle_output();
-    return R_NilValue;
-}
 
 SEXP
 r_rvle_compile_test_port()

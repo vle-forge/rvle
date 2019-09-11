@@ -46,16 +46,8 @@ typedef void* rvle_t;
 typedef void* rvle_output_t;
 
 /**
- * @brief Compile vle.output test package
- * @return -1 if no error is detected, 0 otherwise
- */
-
-int
-rvle_compile_vle_output();
-
-/**
  * @brief Compile test_port test package
- * @return -1 if no error is detected, 0 otherwise
+ * @return 0 if no error is detected
  */
 
 int
