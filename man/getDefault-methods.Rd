@@ -28,13 +28,13 @@
 
     2) duration : the returned value is the duration of the simulation
 
-    3) plan : the returned value is either 'single' or 'linear'.
+    3) plan : the returned value is either 'single' or 'multi'.
          In the first case, the simulation process performs only one
          simulation. In the second case, many simulations are performed,
          based on different combinations of inputs.
 
     4) proc : the returned value is either v is 'mono' or 'thread'.
-           In the first case, the simulations of a 'linear' experiment plan
+           In the first case, the simulations of a 'multi' experiment plan
            are performed on only one processor. In the second case,
            many threads are used (the number of threads is specified by
            the setting 'thread')

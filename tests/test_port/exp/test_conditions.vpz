@@ -8,7 +8,7 @@
 </connections>
 </model>
 </structures>
-<experiment name="dummy" combination="linear" seed="2147483648" >
+<experiment name="dummy" >
 <conditions>
 <condition name="simulation_engine" >
 <port name="begin" >

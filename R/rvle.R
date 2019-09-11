@@ -247,22 +247,6 @@ rvle.getDuration <- function(rvleHandle)
     .Call("experiment_get_duration", rvleHandle, PACKAGE="rvle")
 }
 
-rvle.setSeed <- function(rvleHandle, value)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("experiment_set_seed", rvleHandle, as.integer(value), PACKAGE="rvle")
-
-    return (invisible(NULL))
-}
-
-rvle.getSeed <- function(rvleHandle)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("experiment_get_seed", rvleHandle, PACKAGE="rvle")
-}
-
 rvle.setBegin <- function(rvleHandle, value)
 {
     stopifnot(is.rvle(rvleHandle))
@@ -277,16 +261,6 @@ rvle.getBegin <- function(rvleHandle)
     stopifnot(is.rvle(rvleHandle))
 
     .Call("experiment_get_begin", rvleHandle, PACKAGE="rvle")
-}
-
-rvle.setLinearCombination <- function(rvleHandle, seed, repliquas)
-{
-    stopifnot(is.rvle(rvleHandle))
-
-    .Call("experiment_linear_combination", rvleHandle, as.integer(seed),
-	    as.integer(repliquas), PACKAGE="rvle")
-
-    return (invisible(NULL))
 }
 
 rvle.addView <- function(rvleHandle, view)

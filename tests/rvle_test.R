@@ -326,13 +326,6 @@ f <- rvle.open(file="test_conditions.vpz",pkg="test_port")
 
 f <- rvle.open(file="test_simulation.vpz", pkg="test_port")
 
-# check the seed (TODO)
-seed = rvle.getSeed(f)
-#checkEquals(seed, 12379843)
-rvle.setSeed(f, 12345678)
-seed = rvle.getSeed(f)
-#checkEquals(seed, 12345678)
-
 # check the beginning time
 rvle.setBegin(f, 123.321)
 begin = rvle.getBegin(f)
@@ -559,7 +552,7 @@ setDefault(f,cond.message.as_single="my message")
 t = data.frame(matrix(c(1:20,20:1), ncol=2))
 names(t) = c("cond.message","cond.sendTime")
 t$cond.sendTime = as.double(t$cond.sendTime)#otherwise error
-res = results(run(f,inputs=t, plan = 'linear'))
+res = results(run(f,inputs=t, plan = 'multi'))
 checkEquals(class(res), "matrix")
 checkEquals(class(res[[1,20]]), "list")
 checkEquals(length(res[[1,20]]), 2)

@@ -61,8 +61,6 @@ rvle.getConfigView : Get the config of the view of a VPZ.
 
 rvle.setConfigView : Set the config of the view of a VPZ.
 
-rvle.getSeed : Get the seed used fo simulation
-
 rvle.getViewsSize : Get the number of views of a VPZ.
 
 rvle.listConditionPorts : List the ports of a condition of a VPZ.
@@ -134,13 +132,9 @@ rvle.setDuration : Set the duration of the simulation.
 
 rvle.setIntegerCondition : Set an integer value on a condition port (deprecated).
 
-rvle.setLinearCombination : Declare a linear experimental frame.
-
 rvle.setOutputPlugin : Set the output plugin of a view
 
 rvle.setRealCondition : Set a real value on a condition port (deprecated).
-
-rvle.setSeed : Set the seed value of the VPZ.
 
 rvle.setStringCondition : Set a string value on a condition port (deprecated).
 

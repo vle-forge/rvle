@@ -86,15 +86,9 @@ r_rvle_experiment_set_duration(SEXP rvle, SEXP val);
 static SEXP
 r_rvle_experiment_get_duration(SEXP rvle);
 static void
-r_rvle_experiment_set_seed(SEXP rvle, SEXP val);
-static SEXP
-r_rvle_experiment_get_seed(SEXP rvle);
-static void
 r_rvle_experiment_set_begin(SEXP rvle, SEXP val);
 static SEXP
 r_rvle_experiment_get_begin(SEXP rvle);
-static void
-r_rvle_experiment_linear_combination(SEXP rvle, SEXP seed, SEXP replicas);
 static SEXP
 r_rvle_view_list(SEXP rvle);
 static SEXP
@@ -197,13 +191,8 @@ R_CallMethodDef callMethods[] = {
     { "condition_clear", (DL_FUNC)r_rvle_condition_clear, 3 },
     { "experiment_set_duration", (DL_FUNC)r_rvle_experiment_set_duration, 2 },
     { "experiment_get_duration", (DL_FUNC)r_rvle_experiment_get_duration, 1 },
-    { "experiment_set_seed", (DL_FUNC)r_rvle_experiment_set_seed, 2 },
-    { "experiment_get_seed", (DL_FUNC)r_rvle_experiment_get_seed, 1 },
     { "experiment_set_begin", (DL_FUNC)r_rvle_experiment_set_begin, 2 },
     { "experiment_get_begin", (DL_FUNC)r_rvle_experiment_get_begin, 1 },
-    { "experiment_linear_combination",
-      (DL_FUNC)r_rvle_experiment_linear_combination,
-      3 },
     { "view_size", (DL_FUNC)r_rvle_view_size, 1 },
     { "view_list", (DL_FUNC)r_rvle_view_list, 1 },
     { "set_output_plugin", (DL_FUNC)r_rvle_set_output_plugin, 4 },
@@ -643,26 +632,6 @@ r_rvle_condition_clear(SEXP rvle, SEXP cnd, SEXP prt)
 }
 
 void
-r_rvle_experiment_set_seed(SEXP rvle, SEXP val)
-{
-    rvle_experiment_set_seed(R_ExternalPtrAddr(rvle), INTEGER(val)[0]);
-}
-
-SEXP
-r_rvle_experiment_get_seed(SEXP rvle)
-{
-    SEXP r;
-    int result;
-
-    PROTECT(r = allocVector(INTSXP, 1));
-    result = rvle_experiment_get_seed(R_ExternalPtrAddr(rvle));
-    INTEGER(r)[0] = result;
-    UNPROTECT(1);
-
-    return r;
-}
-
-void
 r_rvle_experiment_set_begin(SEXP rvle, SEXP val)
 {
     rvle_experiment_set_begin(R_ExternalPtrAddr(rvle), REAL(val)[0]);
@@ -700,13 +669,6 @@ r_rvle_experiment_get_duration(SEXP rvle)
     UNPROTECT(1);
 
     return r;
-}
-
-void
-r_rvle_experiment_linear_combination(SEXP rvle, SEXP seed, SEXP replicas)
-{
-    rvle_experiment_linear_combination(
-      R_ExternalPtrAddr(rvle), INTEGER(seed)[0], INTEGER(replicas)[0]);
 }
 
 SEXP

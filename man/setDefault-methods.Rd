@@ -40,9 +40,9 @@
 
     4) duration : then v specifies the duration of the simulation
 
-    5) plan : where v is 'single' or 'linear'. Then, the next run will
+    5) plan : where v is 'single' or 'multi'. Then, the next run will
            respectively be the simulation of a single simulation or the
-           simulation of an experiment plan of type 'linear'.
+           simulation of an experiment plan.
 
     6) proc : where v is 'mono' or 'thread'. Then, the next run of an experiment
            plan will respectively rely on one processor or many threads (the

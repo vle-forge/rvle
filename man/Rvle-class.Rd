@@ -57,11 +57,11 @@ methodname is one of the methods listed here.
 #   res = results(f)
 #   print(res$myview[2,"MyModel:MyDyn.myPort"])
 #
-#   # Ask for the simulation of an experiment plan 'linear'.
+#   # Ask for the simulation of an experiment plan 'multi'.
 #   # There will be two simulations, one with mycond.mycondPort=1 and
 #   # the other with mycond.mycondPort=2
 #
-#   f = setDefault(f, mycond.mycondPort = c(1,2), plan = "linear")
+#   f = setDefault(f, mycond.mycondPort = c(1,2), plan = "multi")
 #
 #   # Runs the simulation
 #
@@ -81,7 +81,7 @@ methodname is one of the methods listed here.
 #
 #   inValues = data.frame(matrix(c(6:8,3:5),ncol=2)
 #   names(inValues) = c("mycond.mycondPort","mycond2.mycondPort2")
-#   res = results(run(f, inputs = inValues, plan = "linear",
+#   res = results(run(f, inputs = inValues, plan = "multi",
 #                        outputplugin = c(myview = "vle.output/storage"))
 #   str(res)
 }

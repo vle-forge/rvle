@@ -16,7 +16,7 @@
  <dynamics>
 <dynamic package="test_port" library="Perturb" name="dynPerturb"/>
 </dynamics>
- <experiment name="test_simulation" combination="linear">
+ <experiment name="test_simulation" >
 <conditions>
 <condition name="simulation_engine">
 <port name="begin">

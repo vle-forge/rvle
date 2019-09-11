@@ -725,26 +725,6 @@ rvle_experiment_get_duration(rvle_t handle)
     }
 }
 
-int
-rvle_experiment_set_seed(rvle_t handle, int value)
-{
-    (void)handle;
-    (void)value;
-
-    REprintf("rvle_experiment_set_seed is unavailable.");
-
-    return -1;
-}
-
-int
-rvle_experiment_get_seed(rvle_t handle)
-{
-    (void)handle;
-
-    REprintf("rvle_experiment_get_seed is unavailable.");
-
-    return 0;
-}
 
 int
 rvle_experiment_set_begin(rvle_t handle, double value)
@@ -765,22 +745,6 @@ rvle_experiment_get_begin(rvle_t handle)
     } catch (const std::exception& e) {
         return 0;
     }
-}
-
-int
-rvle_experiment_linear_combination(rvle_t /*handle*/,
-                                   int /*seed*/,
-                                   int /*replicas*/)
-{
-    return 0;
-}
-
-int
-rvle_experiment_total_combination(rvle_t /*handle*/,
-                                  int /*seed*/,
-                                  int /*replicas*/)
-{
-    return 0;
 }
 
 char**

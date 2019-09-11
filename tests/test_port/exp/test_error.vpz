@@ -19,7 +19,7 @@
 <dynamics>
 <dynamic name="dyn" library="testError" package="test_port"  />
 </dynamics>
-<experiment name="test_conditions" combination="linear" >
+<experiment name="test_conditions" >
 <conditions>
 <condition name="simulation_engine" >
 <port name="begin" >

@@ -47,9 +47,7 @@ function(.Object, file = character(length = 0), pkg = character(length = 0),
         plan = "single", 
         proc = "mono",
         restype = "dataframe", 
-        thread = 1, 
-        replicas = 1,
-        seed = rvle.getSeed(.Object@sim))
+        thread = 1)
     .Object@lastrun <- "null"
     .Object@backup <- list()
     return(.Object)
@@ -226,9 +224,6 @@ function(RvleObj, setting, value, backup) {
     } else if(setting == "replicas"){
         backupVal = RvleObj@config[["replicas"]]
         RvleObj@config[["replicas"]] = value
-    } else if(setting == "seed"){
-        backupVal = RvleObj@config[["seed"]]
-        RvleObj@config[["seed"]] = value
     } else if(setting == "outputplugin"){
         backupVal = getDefault(RvleObj,"outputplugin")
         if(is.vector(value)){
@@ -363,10 +358,8 @@ function(object) {
     cat("* proc =",object@config$proc ,"\n")
     cat("* restype =",object@config$restype ,"\n")
     cat("* thread =",object@config$thread ,"\n")
-    cat("* replicas =",object@config$replicas ,"\n")
     cat("* begin : ", rvle.getBegin(object@sim), "\n")
     cat("* duration : ", rvle.getDuration(object@sim), "\n")
-    cat("* seed : ", object@config$seed, "\n")
     return(invisible())
 })
 
@@ -381,21 +374,6 @@ function(RvleObj, ...) {
             valArg = arglist[[i]]
             RvleObj = .handleConfig(RvleObj,nameArg,valArg,TRUE)
         }
-    }
-    #prepare simulation plan
-    if(RvleObj@config$plan == "single") {
-        if (RvleObj@config$replicas == 1) {
-            rvle.setSeed(RvleObj@sim, RvleObj@config$seed)
-        } else {
-            rvle.setLinearCombination(RvleObj@sim, RvleObj@config$seed,
-                    RvleObj@config$replicas)
-        }
-    } else if (RvleObj@config$plan == "linear"){
-        rvle.setLinearCombination(RvleObj@sim, RvleObj@config$seed,
-                RvleObj@config$replicas)
-    } else if (RvleObj@config$plan == "total"){
-        #rvle.setTotalCombination(RvleObj@sim, RvleObj@config$seed,
-        #        RvleObj@config$replicas)
     }
     #simulate
     if (RvleObj@config$plan == "single") {
@@ -475,10 +453,6 @@ function(RvleObj, setting) {
         defValue = RvleObj@config[["proc"]]
     } else if(setting == "thread"){
         defValue = RvleObj@config[["thread"]]
-    } else if(setting == "replicas"){
-        defValue = RvleObj@config[["replicas"]]
-    } else if(setting == "seed"){
-        defValue = RvleObj@config[["seed"]]
     } else if(setting == "outputplugin"){
         defValue = unlist(lapply(rvle.listViews(RvleObj@sim), function(x){
             mylist = list()

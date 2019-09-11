@@ -504,23 +504,6 @@ double
 rvle_experiment_get_duration(rvle_t handle);
 
 /**
- * @brief Set the seed of the experiment.
- * @param handle the reference to the Vpz file.
- * @param value the seed to set.
- * @return 0 if failed, -1 otherwise.
- */
-int
-rvle_experiment_set_seed(rvle_t handle, int value);
-
-/**
- * @brief Get the seed of the experiment.
- * @param handle The reference to the Vpz file.
- * @return the seed of the experiment.
- */
-int
-rvle_experiment_get_seed(rvle_t handle);
-
-/**
  * @brief Set the beginning time of the experiment.
  * @param handle the reference to the Vpz file.
  * @param value the beginning date to set.
@@ -536,17 +519,6 @@ rvle_experiment_set_begin(rvle_t handle, double value);
  */
 double
 rvle_experiment_get_begin(rvle_t handle);
-
-/**
- * @brief Assign a linear experimental frame with specific seed to build seeds
- * of simulations and the number of repliquas.
- * @param handle the reference to the Vpz file.
- * @param seed the seed to set to the experimental frame.
- * @param repliquas the number of repliquas.
- * @return 0 if failed, -1 otherwise.
- */
-int
-rvle_experiment_linear_combination(rvle_t handle, int seed, int repliquas);
 
 /**
  * @brief Get the list of views.
