@@ -269,8 +269,13 @@ r_rvle_compile_vle_output()
 SEXP
 r_rvle_compile_test_port()
 {
-    rvle_compile_test_port();
-    return R_NilValue;
+    SEXP r;        /* result of compilation*/
+    PROTECT(r = allocVector(INTSXP, 1));
+    int result = rvle_compile_test_port();
+    INTEGER(r)[0] = result;
+    UNPROTECT(1);
+
+    return r;
 }
 
 SEXP
@@ -1206,17 +1211,7 @@ r_rvle_condition_add_tuple(SEXP rvle, SEXP cnd, SEXP prt, SEXP vals)
         return;
     }
 
-    double* values = (double*)malloc(sizeof(double) * (size_t)len);
-
-    if (!values) {
-        Rf_error(
-          "RVLE: cannot add tuple to condition %s port %s: bad allocation",
-          CHAR(STRING_ELT(cnd, 0)),
-          CHAR(STRING_ELT(prt, 0)));
-
-        return;
-    }
-
+    double* values;
     PROTECT(vals = AS_NUMERIC(vals));
     values = NUMERIC_POINTER(vals);
     int result = rvle_condition_add_tuple(R_ExternalPtrAddr(rvle),
@@ -1225,8 +1220,6 @@ r_rvle_condition_add_tuple(SEXP rvle, SEXP cnd, SEXP prt, SEXP vals)
                                           values,
                                           (size_t)len);
     UNPROTECT(1);
-
-    free(values);
 
     if (!result) {
         Rf_error("RVLE: cannot add tuple to condition %s port %s",

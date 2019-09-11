@@ -331,15 +331,11 @@ int
 rvle_compile_test_port()
 {
     auto ctx = make_r_context();
-
     std::ostringstream log, err;
-
     try {
         // homedir is set before calling this method
         // current dir contains tert_port pkg
-
         vle::utils::Package pack(ctx, "test_port");
-
         pack.configure();
         pack.wait(log, err);
         if (pack.isSuccess()) {
@@ -351,14 +347,23 @@ rvle_compile_test_port()
                 pack.install();
                 pack.wait(log, err);
                 write_sstream(log, err);
-            }
+                if (not pack.isSuccess()) {
+		   REprintf("Error while installing test_port\n");
+		   return -1;
+                }
+            } else {
+         	REprintf("Error while building test_port\n");
+		return -2;
+	    }
+        } else {
+	    REprintf("Error while configuring test_port\n");
+	    return -3;	
         }
     } catch (const std::exception& e) {
         REprintf("Error while compiling test_port: %s\n", e.what());
-        return 0;
+        return -4;
     }
-
-    return -1;
+    return 0;
 }
 
 rvle_t
@@ -1408,7 +1413,6 @@ rvle_condition_add_tuple(rvle_t handle,
 
         std::unique_ptr<value::Tuple> tuple(new value::Tuple(size));
         std::copy(values, values + size, tuple->value().begin());
-
         cnd.addValueToPort(portname, std::move(tuple));
         return -1;
     } catch (const std::exception& e) {

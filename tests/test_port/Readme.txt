@@ -1,17 +1,13 @@
 Requirements
 ============
 
-vle      0.9.0 http://www.vle-project.org
-glibmm   2.4.0 http://www.gtkmm.org
-libxml++ 2.6.0 http://libxmlplusplus.sourceforge.net
-boost    1.34  http://www.boost.org
-cmake    2.6.0 http://www.cmake.org
+vle      2.0  https://www.vle-project.org
+boost    1.49 http://www.boost.org
+cmake    2.8  http://www.cmake.org
 
 
-VLE Installation
-================
-
-Just run the good command:
+Installation
+============
 
 $ vle --package=test_port configure
 $ vle --package=test_port build

@@ -1,37 +1,43 @@
 #!/usr/bin/Rscript
 
+library(rvle)
+
 #tmpdir = "/tmp"
 tmpdir = tempdir()
-file.copy("vlehome",tmpdir,recursive = TRUE)
+dir.create(paste(tmpdir,"/vlehome",sep=""))
 vlehome = normalizePath(paste(tmpdir,"/vlehome",sep=""))
 Sys.setenv(VLE_HOME=vlehome)
 
-library(rvle)
-
 currentdir = getwd();
 unlink("./test_port/buildvle", recursive=TRUE, force = TRUE)
-.rvle.compile_test_port()
+retcomp = .rvle.compile_test_port()
 setwd(currentdir)
 unlink("./test_port/buildvle", recursive=TRUE, force = TRUE)
 
 
+#print(currentdir)
+#print(vlehome)
+#print(retcomp)
+#dir(paste(tmpdir,"/vlehome/vle-2001/pkgs",sep=""))
+
 ##########
 # Test packages function
 ##########
-
 pkgs = rvle.listPackages(justprint=FALSE)
 checkEquals(length(pkgs),5)
-checkEquals(pkgs[1],"test_port")
-checkEquals(pkgs[2],"vle.adaptative-qss")
-checkEquals(pkgs[3],"vle.output")
-checkEquals(pkgs[4],"vle.generic.builder")
-checkEquals(pkgs[5],"gvle.default")
+checkTrue("test_port" %in% pkgs)
+checkTrue("vle.generic.builder" %in% pkgs)
+checkTrue("vle.adaptative-qss" %in% pkgs)
+checkTrue("vle.output" %in% pkgs)
+checkTrue("gvle.default" %in% pkgs)
 pkgContent = rvle.packageContent("test_port", justprint=FALSE)
-checkEquals(length(pkgContent),12)
+print(pkgContent)
+checkEquals(length(pkgContent),16)
 
 ##########
 # Test conditions
 ##########
+
 f <- rvle.open(file="test_conditions.vpz",pkg="test_port")
 
 cnd <- rvle.listConditions(f)
@@ -108,6 +114,8 @@ checkEquals(tuple[5], 5.0)
 
 newtuple <- seq(length=14, from=6, to=19)
 rvle.setTupleCondition(f, "test", "tuple", newtuple)
+
+
 tuple <- rvle.getConditionPortValues(f, "test", "tuple")
 
 ##Change of behavior : directly cast tuple into doubles
