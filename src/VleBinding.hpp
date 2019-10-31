@@ -318,7 +318,7 @@ struct VleBinding
             vz::Condition& cnd(mvpz->
                     project().experiment().conditions().get(conditionname));
             cnd.add(portname);
-            cnd.addValueToPort(portname, vv::Double::create(0));
+            cnd.setValueToPort(portname, vv::Double::create(0));
             return -1;
         } catch (const std::exception& e) {
             mCtx->log(3, "[VleBinding]: %s\n", e.what());
@@ -351,10 +351,10 @@ struct VleBinding
         try {
             vz::Condition& cnd(mvpz->project().experiment()
                     .conditions().get(conditionname));
-            const std::vector<std::shared_ptr<vv::Value>>& vals =
-                    cnd.getSetValues(portname);
-            if (vals.size() > 0) {
-                ret.reset(vals[0]->clone().release());
+            const std::shared_ptr<vv::Value>& vals =
+                    cnd.valueOfPort(portname);
+            if (vals.get()) {
+                ret.reset(vals->clone().release());
             }
         } catch (const std::exception& e) {
             mCtx->log(3, "[VleBinding]: %s\n", e.what());
@@ -373,7 +373,7 @@ struct VleBinding
             vz::Condition& cnd(mvpz->project().experiment()
                     .conditions().get(conditionname));
             cnd.clearValueOfPort(portname);
-            cnd.addValueToPort(portname, std::move(val));
+            cnd.setValueToPort(portname, std::move(val));
         } catch (const std::exception& e) {
             mCtx->log(3, "[VleBinding]: %s\n", e.what());
             return 0;
