@@ -306,7 +306,7 @@ rvle.run = function(vleObj)
 rvle.plan_define = function(vleObj, cond, port, addORremove)
 {
   stopifnot(is.rvle(vleObj))
-  .Call("rvleC_plan_define", vleObj, cond, port, as.integer(addORremove), 
+  .Call("rvleC_plan_define", vleObj, cond, port, as.logical(addORremove), 
         PACKAGE="rvle")
   return (invisible(NULL))
 }
