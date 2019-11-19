@@ -131,6 +131,8 @@ rvlecpp_value_t rvlecpp_run(rvlecpp_t vleObj);
 
 //plan functions
 
+void rvlecpp_plan_reset(rvlecpp_t vleObj);
+rvlecpp_value_t rvlecpp_plan_get(rvlecpp_t vleObj);
 void rvlecpp_plan_define(rvlecpp_t vleObj, const char* cond,
         const char* port, int addORremove);
 void rvlecpp_plan_input(rvlecpp_t vleObj, const char* cond, const char* port,
@@ -144,7 +146,8 @@ void rvlecpp_plan_output(rvlecpp_t vleObj, const char* id, const char* path,
         const char* aggregation_input, rvlecpp_value_t obs_times,
         rvlecpp_value_t obs_values, double replicate_quantile);
 rvlecpp_value_t rvlecpp_plan_run(rvlecpp_t vleObj);
-void rvlecpp_plan_config(rvlecpp_t vleObj, const char* parallel_option,
+rvlecpp_value_t rvlecpp_plan_get_config(rvlecpp_t vleObj);
+void rvlecpp_plan_set_config(rvlecpp_t vleObj, const char* parallel_option,
         int nb_slots, int simulation_spawn,  int rm_MPI_files,
         int generate_MPI_host, const char* working_dir);
 rvlecpp_t rvlecpp_plan_embedded(rvlecpp_t vleObj, int input, int replicate);

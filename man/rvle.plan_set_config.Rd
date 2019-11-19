@@ -1,19 +1,18 @@
-
-\name{rvle.plan_config}
+\name{rvle.plan_set_config}
 \docType{methods}
-\alias{rvle.plan_config}
+\alias{rvle.plan_set_config}
 
-\title{Configure the simulation of experiment plans.}
+\title{Set the configuration of the manager.}
 
 \description{
 The VLE software provides the simulation of experiment plans based on 
-parallelization techniques. This function configures the options 
-for simulation of experiment plans.
+parallelization techniques. This function allows the configuration 
+of the experiment plan simulation (parallel option, nb slots, etc..) 
 }
 
 \usage{
- rvle.plan_config(vleObj, parallel_option, nb_slots, simulation_spawn,
-                  rm_MPI_files, generate_MPI_host, working_dir)
+ rvle.plan_set_config(vleObj, parallel_option, nb_slots, simulation_spawn,
+                  rm_MPI_files, generate_MPI_host, working_dir) 
 }
 
 \arguments{
@@ -29,13 +28,11 @@ for simulation of experiment plans.
  \item{generate_MPI_host}{logical that specifies if the hostfile for cvle 
                       is generated previously to the call of mpirun.},
  \item{working_dir}{path of the temporary directory where the temporary files
-                    are generated}
+                    are generated} 
 }
 
 \seealso{
- rvle.plan_run
+ rvle.plan_get_config
 }
-
-
 
 

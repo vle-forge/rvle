@@ -124,8 +124,10 @@ rvleC_run(SEXP vleObj);
 
 //plan functions
 
-//static void rvleC_plan_reset(SEXP rvle); //TODO
-//static SEXP rvleC_plan_get(SEXP rvle); //TODO
+static void
+rvleC_plan_reset(SEXP vleObj);
+static SEXP
+rvleC_plan_get(SEXP vleObj);
 static void
 rvleC_plan_define(SEXP vleObj, SEXP cond, SEXP port, SEXP addORremove);
 static void
@@ -141,8 +143,10 @@ rvleC_plan_output(SEXP vleObj, SEXP id, SEXP path,
         SEXP obs_values, SEXP replicate_quantile);
 static SEXP
 rvleC_plan_run(SEXP vleObj);
+static SEXP
+rvleC_plan_get_config(SEXP vleObj);
 static void
-rvleC_plan_config(SEXP vleObj, SEXP parallel_option, SEXP nb_slots,
+rvleC_plan_set_config(SEXP vleObj, SEXP parallel_option, SEXP nb_slots,
         SEXP simulation_spawn,  SEXP rm_MPI_files,
         SEXP generate_MPI_host, SEXP working_dir);
 
@@ -202,13 +206,16 @@ R_CallMethodDef callMethods[] = {
         { "rvleC_available_outputs", (DL_FUNC)rvleC_available_outputs, 1 },
         { "rvleC_run", (DL_FUNC)rvleC_run, 1 },
         //plan function
+        { "rvleC_plan_reset", (DL_FUNC)rvleC_plan_reset, 1 },
+        { "rvleC_plan_get", (DL_FUNC)rvleC_plan_get, 1 },
         { "rvleC_plan_define", (DL_FUNC)rvleC_plan_define, 4 },
         { "rvleC_plan_input", (DL_FUNC)rvleC_plan_input, 4 },
         { "rvleC_plan_propagate", (DL_FUNC)rvleC_plan_propagate, 4 },
         { "rvleC_plan_replicate", (DL_FUNC)rvleC_plan_replicate, 4 },
         { "rvleC_plan_output", (DL_FUNC)rvleC_plan_output, 9 },
         { "rvleC_plan_run", (DL_FUNC)rvleC_plan_run, 1 },
-        { "rvleC_plan_config", (DL_FUNC)rvleC_plan_config, 7 },
+        { "rvleC_plan_get_config", (DL_FUNC)rvleC_plan_get_config, 1 },
+        { "rvleC_plan_set_config", (DL_FUNC)rvleC_plan_set_config, 7 },
         { "rvleC_plan_embedded", (DL_FUNC)rvleC_plan_embedded, 3 },
         { NULL, NULL, 0 }
 };
@@ -676,6 +683,27 @@ rvleC_run(SEXP vleObj)
 //plan functions
 
 void
+rvleC_plan_reset(SEXP vleObj)
+{
+    rvlecpp_plan_reset(R_ExternalPtrAddr(vleObj));
+}
+
+SEXP
+rvleC_plan_get(SEXP vleObj)
+{
+    rvlecpp_value_t res = rvlecpp_plan_get(R_ExternalPtrAddr(vleObj));
+    SEXP r = rvleconv_toRvalue(
+            res,
+            0 /*Provides names of the classes*/,
+            0 /*Consider set at first depth as one multiple values*/,
+            0 /*Give only the 1st element of a multiple value of size 1*/,
+            1 /*Matrices are converted to dataframes*/,
+            0 /*No meanings since matrix_type = 0*/);
+    rvlecpp_clear_value(res);
+    return r;
+}
+
+void
 rvleC_plan_define(SEXP vleObj, SEXP cond, SEXP port, SEXP addORremove)
 {
     rvlecpp_plan_define(R_ExternalPtrAddr(vleObj),
@@ -744,12 +772,27 @@ rvleC_plan_run(SEXP vleObj)
     return r;
 }
 
+SEXP
+rvleC_plan_get_config(SEXP vleObj)
+{
+    rvlecpp_value_t res = rvlecpp_plan_get_config(R_ExternalPtrAddr(vleObj));
+    SEXP r = rvleconv_toRvalue(
+            res,
+            0 /*Provides names of the classes*/,
+            0 /*Consider set at first depth as one multiple values*/,
+            0 /*Give only the 1st element of a multiple value of size 1*/,
+            0 /*Matrices are list with dim attributes*/,
+            0 /*No meanings since matrix_type = 0*/);
+    rvlecpp_clear_value(res);
+    return r;
+}
+
 void
-rvleC_plan_config(SEXP vleObj, SEXP parallel_option, SEXP nb_slots,
+rvleC_plan_set_config(SEXP vleObj, SEXP parallel_option, SEXP nb_slots,
         SEXP simulation_spawn,  SEXP rm_MPI_files,
         SEXP generate_MPI_host, SEXP working_dir)
 {
-    rvlecpp_plan_config(R_ExternalPtrAddr(vleObj),
+    rvlecpp_plan_set_config(R_ExternalPtrAddr(vleObj),
                 CHAR(STRING_ELT(parallel_option, 0)),
                 INTEGER(nb_slots)[0],
                 LOGICAL(simulation_spawn)[0],
@@ -757,8 +800,6 @@ rvleC_plan_config(SEXP vleObj, SEXP parallel_option, SEXP nb_slots,
                 LOGICAL(generate_MPI_host)[0],
                 CHAR(STRING_ELT(working_dir, 0)));
 }
-
-
 
 static SEXP
 rvleC_plan_embedded(SEXP vleObj, SEXP input, SEXP replicate)

@@ -524,6 +524,25 @@ rvlecpp_run(rvlecpp_t vleObj)
 //plan functions
 
 void
+rvlecpp_plan_reset(rvlecpp_t vleObj)
+{
+    VleBinding* vlebind(reinterpret_cast<VleBinding*>(vleObj));
+    vlebind->plan_reset();
+}
+
+rvlecpp_value_t
+rvlecpp_plan_get(rvlecpp_t vleObj)
+{
+    VleBinding* vlebind(reinterpret_cast<VleBinding*>(vleObj));
+    std::unique_ptr<vv::Value> ret = vlebind->plan_get();
+    if (ret) {
+        return ret.release();
+    } else {
+        return 0;
+    }
+}
+
+void
 rvlecpp_plan_define(rvlecpp_t vleObj, const char* cond,
         const char* port, int addORremove)
 {
@@ -588,13 +607,25 @@ rvlecpp_plan_run(rvlecpp_t vleObj)
     }
 }
 
+rvlecpp_value_t
+rvlecpp_plan_get_config(rvlecpp_t vleObj)
+{
+    VleBinding* vlebind(reinterpret_cast<VleBinding*>(vleObj));
+    std::unique_ptr<vv::Value> ret = vlebind->plan_get_config();
+    if (ret) {
+        return ret.release();
+    } else {
+        return 0;
+    }
+}
+
 void
-rvlecpp_plan_config(rvlecpp_t vleObj, const char* parallel_option,
+rvlecpp_plan_set_config(rvlecpp_t vleObj, const char* parallel_option,
         int nb_slots, int simulation_spawn,  int rm_MPI_files,
         int generate_MPI_host, const char* working_dir)
 {
     VleBinding* vlebind(reinterpret_cast<VleBinding*>(vleObj));
-    vlebind->plan_config(parallel_option, nb_slots, simulation_spawn,
+    vlebind->plan_set_config(parallel_option, nb_slots, simulation_spawn,
             rm_MPI_files, generate_MPI_host, working_dir);
 }
 

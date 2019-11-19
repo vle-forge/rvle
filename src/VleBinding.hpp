@@ -66,11 +66,15 @@ struct VleBinding
 {
     vle::utils::ContextPtr mCtx;
     std::unique_ptr<vz::Vpz> mvpz;
+    //inputs, replicates, propagates, defines
     std::unique_ptr<vv::Map> mplan;
+    //manager configuration (nb slots, parallel option, etc..)
+    std::unique_ptr<vv::Map> mManConfig;
+    //manager
     std::unique_ptr<vm::Manager> mMan;
 
     VleBinding(const std::string& filename, const std::string& pkgname):
-                mCtx(vle::utils::make_context()), mvpz(), mplan(),
+                mCtx(vle::utils::make_context()), mvpz(), mplan(), mManConfig(),
                 mMan()
     {
         vle::utils::Package pack(mCtx, pkgname);
@@ -80,13 +84,14 @@ struct VleBinding
     }
 
     VleBinding(const std::string& filename):
-        mCtx(vle::utils::make_context()), mvpz(), mplan()
+        mCtx(vle::utils::make_context()), mvpz(), mplan(), mManConfig()
     {
         mvpz.reset(new vz::Vpz(filename));
     }
 
     VleBinding(std::unique_ptr<vz::Vpz> vpz):
-        mCtx(vle::utils::make_context()), mvpz(std::move(vpz)),mplan()
+        mCtx(vle::utils::make_context()), mvpz(std::move(vpz)),mplan(),
+        mManConfig()
     {
     }
 
@@ -787,7 +792,19 @@ struct VleBinding
     plan_reset()
     {
         mplan.reset(new vv::Map());
+        mManConfig.reset(new vv::Map());
         mMan.reset(new vm::Manager(mCtx));
+    }
+
+    /*******************/
+    std::unique_ptr<vv::Value>
+    plan_get()
+    {
+        std::unique_ptr<vv::Value> ret;
+        if (mplan) {
+            ret = mplan->clone();
+        }
+        return ret;
     }
 
     /*******************/
@@ -797,7 +814,6 @@ struct VleBinding
     {
         if (! mplan) {
             mplan.reset(new vv::Map());
-            mMan.reset(new vm::Manager(mCtx));
         }
         std::string key = std::string("define_")+ std::string(cond) +
                 std::string(".")+std::string(port);
@@ -812,7 +828,6 @@ struct VleBinding
     {
         if (! mplan) {
             mplan.reset(new vv::Map());
-            mMan.reset(new vm::Manager(mCtx));
         }
 
         std::string forcing = cond + std::string(".")+port;
@@ -833,7 +848,6 @@ struct VleBinding
     {
         if (! mplan) {
             mplan.reset(new vv::Map());
-            mMan.reset(new vm::Manager(mCtx));
         }
         std::string forcing = cond + std::string(".")+port;
         std::string key ="";
@@ -853,7 +867,6 @@ struct VleBinding
     {
         if (! mplan) {
             mplan.reset(new vv::Map());
-            mMan.reset(new vm::Manager(mCtx));
         }
         std::string forcing = cond + std::string(".")+port;
         std::string key ="";
@@ -878,7 +891,6 @@ struct VleBinding
     {
         if (! mplan) {
             mplan.reset(new vv::Map());
-            mMan.reset(new vm::Manager(mCtx));
         }
         std::string key = std::string("output_")+ std::string(id);
         if (mplan->exist(key)) return -2;
@@ -902,6 +914,9 @@ struct VleBinding
             mplan.reset(new vv::Map());
             mMan.reset(new vm::Manager(mCtx));
         }
+        if (! mManConfig) {
+            mMan->configure(*mManConfig);
+        }
         vle::manager::Error err;
         std::unique_ptr<vz::Vpz> vpz(new vz::Vpz(*mvpz));
         std::unique_ptr<vv::Map> results = mMan->runPlan(
@@ -914,26 +929,36 @@ struct VleBinding
     }
 
     /*******************/
+    std::unique_ptr<vv::Value>
+    plan_get_config()
+    {
+        std::unique_ptr<vv::Value> ret;
+        if (mManConfig) {
+            ret = mManConfig->clone();
+        }
+        return ret;
+    }
+
+    /*******************/
     void
-    plan_config(const std::string& parallel_option,
+    plan_set_config(const std::string& parallel_option,
             int nb_slots,
             bool simulation_spawn,
             bool rm_MPI_files,
             bool generate_MPI_host,
             const std::string& working_dir)
     {
-        if (! mplan) {
-            mplan.reset(new vv::Map());
-            mMan.reset(new vm::Manager(mCtx));
+        if (! mManConfig) {
+            mManConfig.reset(new vv::Map());
         }
-
-        mplan->addString("parallel_option", parallel_option);
-        mplan->addInt("nb_slots", nb_slots);
-        mplan->addBoolean("simulation_spawn", simulation_spawn);
-        mplan->addBoolean("rm_MPI_files", rm_MPI_files);
-        mplan->addBoolean("generate_MPI_host", generate_MPI_host);
-        mplan->addString("working_dir", working_dir);
+        mManConfig->addString("parallel_option", parallel_option);
+        mManConfig->addInt("nb_slots", nb_slots);
+        mManConfig->addBoolean("simulation_spawn", simulation_spawn);
+        mManConfig->addBoolean("rm_MPI_files", rm_MPI_files);
+        mManConfig->addBoolean("generate_MPI_host", generate_MPI_host);
+        mManConfig->addString("working_dir", working_dir);
     }
+
 
     /*******************/
     std::unique_ptr<VleBinding>

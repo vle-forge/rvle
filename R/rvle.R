@@ -303,6 +303,21 @@ rvle.run = function(vleObj)
 
 #####"plan functions
 
+rvle.plan_reset = function(vleObj)
+{
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_plan_define", vleObj, PACKAGE="rvle")
+  return (invisible(NULL))
+}
+
+
+rvle.plan_get = function(vleObj)
+{
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_plan_get", vleObj, PACKAGE="rvle")
+  return(x)
+}
+
 rvle.plan_define = function(vleObj, cond, port, addORremove)
 {
   stopifnot(is.rvle(vleObj))
@@ -354,13 +369,20 @@ rvle.plan_run = function(vleObj)
   return(x)
 }
 
-rvle.plan_config = function(vleObj, parallel_option="single",
+rvle.plan_get_config = function(vleObj)
+{
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_plan_get_config", vleObj, PACKAGE="rvle")
+  return(x)
+}
+
+rvle.plan_set_config = function(vleObj, parallel_option="single",
                             nb_slots=1, simulation_spawn=T,  
                             rm_MPI_files=T, generate_MPI_host=F, 
                             working_dir="/tmp/")
 {
   stopifnot(is.rvle(vleObj))
-  .Call("rvleC_plan_config", vleObj, as.character(parallel_option),
+  .Call("rvleC_plan_set_config", vleObj, as.character(parallel_option),
         as.integer(nb_slots), as.logical(simulation_spawn),  
         as.logical(rm_MPI_files), as.logical(generate_MPI_host), 
         as.character(working_dir), PACKAGE="rvle")
