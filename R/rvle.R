@@ -301,12 +301,42 @@ rvle.run = function(vleObj)
   return(x)
 }
 
-#####"plan functions
+######## manager functions
 
-rvle.plan_reset = function(vleObj)
+
+rvle.manager_clear = function(vleObj)
 {
   stopifnot(is.rvle(vleObj))
-  .Call("rvleC_plan_define", vleObj, PACKAGE="rvle")
+  .Call("rvleC_manager_clear", vleObj, PACKAGE="rvle")
+  return (invisible(NULL))
+}
+
+rvle.manager_get_config = function(vleObj)
+{
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_manager_get_config", vleObj, PACKAGE="rvle")
+  return(x)
+}
+
+rvle.manager_set_config = function(vleObj, parallel_option="single",
+                                nb_slots=1, simulation_spawn=T,  
+                                rm_MPI_files=T, generate_MPI_host=F, 
+                                working_dir="/tmp/")
+{
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_manager_set_config", vleObj, as.character(parallel_option),
+        as.integer(nb_slots), as.logical(simulation_spawn),  
+        as.logical(rm_MPI_files), as.logical(generate_MPI_host), 
+        as.character(working_dir), PACKAGE="rvle")
+  return (invisible(NULL))
+}
+
+#####"plan functions
+
+rvle.plan_clear = function(vleObj)
+{
+  stopifnot(is.rvle(vleObj))
+  .Call("rvleC_plan_clear", vleObj, PACKAGE="rvle")
   return (invisible(NULL))
 }
 
@@ -369,26 +399,6 @@ rvle.plan_run = function(vleObj)
   return(x)
 }
 
-rvle.plan_get_config = function(vleObj)
-{
-  stopifnot(is.rvle(vleObj))
-  x = .Call("rvleC_plan_get_config", vleObj, PACKAGE="rvle")
-  return(x)
-}
-
-rvle.plan_set_config = function(vleObj, parallel_option="single",
-                            nb_slots=1, simulation_spawn=T,  
-                            rm_MPI_files=T, generate_MPI_host=F, 
-                            working_dir="/tmp/")
-{
-  stopifnot(is.rvle(vleObj))
-  .Call("rvleC_plan_set_config", vleObj, as.character(parallel_option),
-        as.integer(nb_slots), as.logical(simulation_spawn),  
-        as.logical(rm_MPI_files), as.logical(generate_MPI_host), 
-        as.character(working_dir), PACKAGE="rvle")
-  return (invisible(NULL))
-}
-
 rvle.plan_embedded = function(vleObj, input=1, replicate=1)
 {
   stopifnot(is.rvle(vleObj))
@@ -397,6 +407,18 @@ rvle.plan_embedded = function(vleObj, input=1, replicate=1)
   class(x) <- "rvle"
   return(x)
 }
+
+### experiment functions 
+
+rvle.experiment_run = function(vleObj, vleExpe)
+{
+  stopifnot(is.rvle(vleObj))
+  stopifnot(is.rvle(vleExpe))
+  x = .Call("rvleC_experiment_run", vleObj, vleExpe, PACKAGE="rvle")
+  return(x)
+}
+
+### others
 
 rvle.show <- function(vleObj)
 {

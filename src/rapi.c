@@ -122,10 +122,21 @@ rvleC_available_outputs(SEXP vleObj);
 static SEXP
 rvleC_run(SEXP vleObj);
 
+//manager functions
+
+static void
+rvleC_manager_clear(SEXP vleObj);
+static SEXP
+rvleC_manager_get_config(SEXP vleObj);
+static void
+rvleC_manager_set_config(SEXP vleObj, SEXP parallel_option, SEXP nb_slots,
+        SEXP simulation_spawn,  SEXP rm_MPI_files,
+        SEXP generate_MPI_host, SEXP working_dir);
+
 //plan functions
 
 static void
-rvleC_plan_reset(SEXP vleObj);
+rvleC_plan_clear(SEXP vleObj);
 static SEXP
 rvleC_plan_get(SEXP vleObj);
 static void
@@ -144,14 +155,11 @@ rvleC_plan_output(SEXP vleObj, SEXP id, SEXP path,
 static SEXP
 rvleC_plan_run(SEXP vleObj);
 static SEXP
-rvleC_plan_get_config(SEXP vleObj);
-static void
-rvleC_plan_set_config(SEXP vleObj, SEXP parallel_option, SEXP nb_slots,
-        SEXP simulation_spawn,  SEXP rm_MPI_files,
-        SEXP generate_MPI_host, SEXP working_dir);
-
-static SEXP
 rvleC_plan_embedded(SEXP vleObj, SEXP input, SEXP replicate);
+
+// experiment function
+static SEXP
+rvleC_experiment_run(SEXP vleObjExpe, SEXP vleObjMod);
 
 /*
  *
@@ -205,8 +213,12 @@ R_CallMethodDef callMethods[] = {
         { "rvleC_set_view_plugin", (DL_FUNC)rvleC_set_view_plugin, 4 },
         { "rvleC_available_outputs", (DL_FUNC)rvleC_available_outputs, 1 },
         { "rvleC_run", (DL_FUNC)rvleC_run, 1 },
-        //plan function
-        { "rvleC_plan_reset", (DL_FUNC)rvleC_plan_reset, 1 },
+        //manager functions
+        { "rvleC_manager_clear", (DL_FUNC)rvleC_manager_clear, 1 },
+        { "rvleC_manager_get_config", (DL_FUNC)rvleC_manager_get_config, 1 },
+        { "rvleC_manager_set_config", (DL_FUNC)rvleC_manager_set_config, 7 },
+        //plan functions
+        { "rvleC_plan_clear", (DL_FUNC)rvleC_plan_clear, 1 },
         { "rvleC_plan_get", (DL_FUNC)rvleC_plan_get, 1 },
         { "rvleC_plan_define", (DL_FUNC)rvleC_plan_define, 4 },
         { "rvleC_plan_input", (DL_FUNC)rvleC_plan_input, 4 },
@@ -214,9 +226,9 @@ R_CallMethodDef callMethods[] = {
         { "rvleC_plan_replicate", (DL_FUNC)rvleC_plan_replicate, 4 },
         { "rvleC_plan_output", (DL_FUNC)rvleC_plan_output, 9 },
         { "rvleC_plan_run", (DL_FUNC)rvleC_plan_run, 1 },
-        { "rvleC_plan_get_config", (DL_FUNC)rvleC_plan_get_config, 1 },
-        { "rvleC_plan_set_config", (DL_FUNC)rvleC_plan_set_config, 7 },
         { "rvleC_plan_embedded", (DL_FUNC)rvleC_plan_embedded, 3 },
+        //experiment functions
+        { "rvleC_experiment_run", (DL_FUNC)rvleC_experiment_run, 2 },
         { NULL, NULL, 0 }
 };
 
@@ -680,12 +692,50 @@ rvleC_run(SEXP vleObj)
     return r;
 }
 
+//manager functions
+
+void
+rvleC_manager_clear(SEXP vleObj)
+{
+    rvlecpp_manager_clear(R_ExternalPtrAddr(vleObj));
+}
+
+SEXP
+rvleC_manager_get_config(SEXP vleObj)
+{
+    rvlecpp_value_t res = rvlecpp_manager_get_config(R_ExternalPtrAddr(vleObj));
+    SEXP r = rvleconv_toRvalue(
+            res,
+            0 /*Provides names of the classes*/,
+            0 /*Consider set at first depth as one multiple values*/,
+            0 /*Give only the 1st element of a multiple value of size 1*/,
+            0 /*Matrices are list with dim attributes*/,
+            0 /*No meanings since matrix_type = 0*/);
+    rvlecpp_clear_value(res);
+    return r;
+}
+
+void
+rvleC_manager_set_config(SEXP vleObj, SEXP parallel_option, SEXP nb_slots,
+        SEXP simulation_spawn,  SEXP rm_MPI_files,
+        SEXP generate_MPI_host, SEXP working_dir)
+{
+    rvlecpp_manager_set_config(R_ExternalPtrAddr(vleObj),
+                CHAR(STRING_ELT(parallel_option, 0)),
+                INTEGER(nb_slots)[0],
+                LOGICAL(simulation_spawn)[0],
+                LOGICAL(rm_MPI_files)[0],
+                LOGICAL(generate_MPI_host)[0],
+                CHAR(STRING_ELT(working_dir, 0)));
+}
+
+
 //plan functions
 
 void
-rvleC_plan_reset(SEXP vleObj)
+rvleC_plan_clear(SEXP vleObj)
 {
-    rvlecpp_plan_reset(R_ExternalPtrAddr(vleObj));
+    rvlecpp_plan_clear(R_ExternalPtrAddr(vleObj));
 }
 
 SEXP
@@ -773,35 +823,6 @@ rvleC_plan_run(SEXP vleObj)
 }
 
 SEXP
-rvleC_plan_get_config(SEXP vleObj)
-{
-    rvlecpp_value_t res = rvlecpp_plan_get_config(R_ExternalPtrAddr(vleObj));
-    SEXP r = rvleconv_toRvalue(
-            res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
-    rvlecpp_clear_value(res);
-    return r;
-}
-
-void
-rvleC_plan_set_config(SEXP vleObj, SEXP parallel_option, SEXP nb_slots,
-        SEXP simulation_spawn,  SEXP rm_MPI_files,
-        SEXP generate_MPI_host, SEXP working_dir)
-{
-    rvlecpp_plan_set_config(R_ExternalPtrAddr(vleObj),
-                CHAR(STRING_ELT(parallel_option, 0)),
-                INTEGER(nb_slots)[0],
-                LOGICAL(simulation_spawn)[0],
-                LOGICAL(rm_MPI_files)[0],
-                LOGICAL(generate_MPI_host)[0],
-                CHAR(STRING_ELT(working_dir, 0)));
-}
-
-static SEXP
 rvleC_plan_embedded(SEXP vleObj, SEXP input, SEXP replicate)
 {
     SEXP r = R_NilValue;
@@ -816,6 +837,23 @@ rvleC_plan_embedded(SEXP vleObj, SEXP input, SEXP replicate)
     return r;
 }
 
+//experiment functions
+
+SEXP
+rvleC_experiment_run(SEXP vleObjExpe, SEXP vleObjMod)
+{
+    rvlecpp_value_t res = rvlecpp_experiment_run(R_ExternalPtrAddr(vleObjExpe),
+                                                 R_ExternalPtrAddr(vleObjMod));
+    SEXP r = rvleconv_toRvalue(
+            res,
+            0 /*Provides names of the classes*/,
+            0 /*Consider set at first depth as one multiple values*/,
+            0 /*Give only the 1st element of a multiple value of size 1*/,
+            0 /*Matrices are list with dim attributes*/,
+            0 /*No meanings since matrix_type = 0*/);
+    rvlecpp_clear_value(res);
+    return r;
+}
 
 
 

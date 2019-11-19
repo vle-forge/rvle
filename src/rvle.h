@@ -129,9 +129,17 @@ void rvlecpp_set_view_plugin(rvlecpp_t vleObj, const char* viewname,
 rvlecpp_value_t rvlecpp_available_outputs(rvlecpp_t vleObj);
 rvlecpp_value_t rvlecpp_run(rvlecpp_t vleObj);
 
+//manager functions
+
+void rvlecpp_manager_clear(rvlecpp_t vleObj);
+rvlecpp_value_t rvlecpp_manager_get_config(rvlecpp_t vleObj);
+void rvlecpp_manager_set_config(rvlecpp_t vleObj, const char* parallel_option,
+        int nb_slots, int simulation_spawn,  int rm_MPI_files,
+        int generate_MPI_host, const char* working_dir);
+
 //plan functions
 
-void rvlecpp_plan_reset(rvlecpp_t vleObj);
+void rvlecpp_plan_clear(rvlecpp_t vleObj);
 rvlecpp_value_t rvlecpp_plan_get(rvlecpp_t vleObj);
 void rvlecpp_plan_define(rvlecpp_t vleObj, const char* cond,
         const char* port, int addORremove);
@@ -146,11 +154,12 @@ void rvlecpp_plan_output(rvlecpp_t vleObj, const char* id, const char* path,
         const char* aggregation_input, rvlecpp_value_t obs_times,
         rvlecpp_value_t obs_values, double replicate_quantile);
 rvlecpp_value_t rvlecpp_plan_run(rvlecpp_t vleObj);
-rvlecpp_value_t rvlecpp_plan_get_config(rvlecpp_t vleObj);
-void rvlecpp_plan_set_config(rvlecpp_t vleObj, const char* parallel_option,
-        int nb_slots, int simulation_spawn,  int rm_MPI_files,
-        int generate_MPI_host, const char* working_dir);
 rvlecpp_t rvlecpp_plan_embedded(rvlecpp_t vleObj, int input, int replicate);
+
+//experiment functions
+
+rvlecpp_value_t rvlecpp_experiment_run(rvlecpp_t vleObjExpe,
+        rvlecpp_t vleObjMod);
 
 // specific rvle
 void rvlecpp_clear_value(rvlecpp_value_t val);

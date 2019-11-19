@@ -1,7 +1,7 @@
 
-\name{rvle.plan_get_config}
+\name{rvle.manager_get_config}
 \docType{methods}
-\alias{rvle.plan_get_config}
+\alias{rvle.manager_get_config}
 
 \title{Get the configuration of the manager.}
 
@@ -12,7 +12,7 @@ simulation manager (parallel option, nb slots, etc..)
 }
 
 \usage{
- rvle.plan_get_config(vleObj)
+ rvle.manager_get_config(vleObj)
 }
 
 \arguments{
@@ -20,7 +20,7 @@ simulation manager (parallel option, nb slots, etc..)
 }
 
 \seealso{
- rvle.plan_set_config
+ rvle.manager_set_config
 }
 
 

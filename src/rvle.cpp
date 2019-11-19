@@ -521,13 +521,44 @@ rvlecpp_run(rvlecpp_t vleObj)
     }
 }
 
+//manager functions
+
+void
+rvlecpp_manager_clear(rvlecpp_t vleObj)
+{
+    VleBinding* vlebind(reinterpret_cast<VleBinding*>(vleObj));
+    vlebind->manager_clear();
+}
+
+rvlecpp_value_t
+rvlecpp_manager_get_config(rvlecpp_t vleObj)
+{
+    VleBinding* vlebind(reinterpret_cast<VleBinding*>(vleObj));
+    std::unique_ptr<vv::Value> ret = vlebind->manager_get_config();
+    if (ret) {
+        return ret.release();
+    } else {
+        return 0;
+    }
+}
+
+void
+rvlecpp_manager_set_config(rvlecpp_t vleObj, const char* parallel_option,
+        int nb_slots, int simulation_spawn,  int rm_MPI_files,
+        int generate_MPI_host, const char* working_dir)
+{
+    VleBinding* vlebind(reinterpret_cast<VleBinding*>(vleObj));
+    vlebind->manager_set_config(parallel_option, nb_slots, simulation_spawn,
+            rm_MPI_files, generate_MPI_host, working_dir);
+}
+
 //plan functions
 
 void
-rvlecpp_plan_reset(rvlecpp_t vleObj)
+rvlecpp_plan_clear(rvlecpp_t vleObj)
 {
     VleBinding* vlebind(reinterpret_cast<VleBinding*>(vleObj));
-    vlebind->plan_reset();
+    vlebind->plan_clear();
 }
 
 rvlecpp_value_t
@@ -607,29 +638,6 @@ rvlecpp_plan_run(rvlecpp_t vleObj)
     }
 }
 
-rvlecpp_value_t
-rvlecpp_plan_get_config(rvlecpp_t vleObj)
-{
-    VleBinding* vlebind(reinterpret_cast<VleBinding*>(vleObj));
-    std::unique_ptr<vv::Value> ret = vlebind->plan_get_config();
-    if (ret) {
-        return ret.release();
-    } else {
-        return 0;
-    }
-}
-
-void
-rvlecpp_plan_set_config(rvlecpp_t vleObj, const char* parallel_option,
-        int nb_slots, int simulation_spawn,  int rm_MPI_files,
-        int generate_MPI_host, const char* working_dir)
-{
-    VleBinding* vlebind(reinterpret_cast<VleBinding*>(vleObj));
-    vlebind->plan_set_config(parallel_option, nb_slots, simulation_spawn,
-            rm_MPI_files, generate_MPI_host, working_dir);
-}
-
-
 rvlecpp_t
 rvlecpp_plan_embedded(rvlecpp_t vleObj, int input, int replicate)
 {
@@ -642,6 +650,22 @@ rvlecpp_plan_embedded(rvlecpp_t vleObj, int input, int replicate)
     }
 }
 
+//experiment functions
+
+rvlecpp_value_t
+rvlecpp_experiment_run(rvlecpp_t vleObjExpe, rvlecpp_t vleObjMod)
+{
+    VleBinding* vlebindexpe(reinterpret_cast<VleBinding*>(vleObjExpe));
+    VleBinding* vlebindmod(reinterpret_cast<VleBinding*>(vleObjMod));
+    std::unique_ptr<vv::Value> ret = vlebindexpe->experiment_run(*vlebindmod);
+    if (ret) {
+        return ret.release();
+    } else {
+        return 0;
+    }
+}
+
+//specific R functions
 
 void
 rvlecpp_clear_value(rvlecpp_value_t val)

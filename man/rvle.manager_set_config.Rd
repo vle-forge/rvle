@@ -1,6 +1,6 @@
-\name{rvle.plan_set_config}
+\name{rvle.manager_set_config}
 \docType{methods}
-\alias{rvle.plan_set_config}
+\alias{rvle.manager_set_config}
 
 \title{Set the configuration of the manager.}
 
@@ -11,7 +11,7 @@ of the experiment plan simulation (parallel option, nb slots, etc..)
 }
 
 \usage{
- rvle.plan_set_config(vleObj, parallel_option, nb_slots, simulation_spawn,
+ rvle.manager_set_config(vleObj, parallel_option, nb_slots, simulation_spawn,
                   rm_MPI_files, generate_MPI_host, working_dir) 
 }
 
@@ -32,7 +32,7 @@ of the experiment plan simulation (parallel option, nb slots, etc..)
 }
 
 \seealso{
- rvle.plan_get_config
+ rvle.manager_get_config
 }
 
 
