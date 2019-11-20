@@ -410,11 +410,11 @@ rvle.plan_embedded = function(vleObj, input=1, replicate=1)
 
 ### experiment functions 
 
-rvle.experiment_run = function(vleObj, vleExpe)
+rvle.experiment_run = function(vleObjExpe, vleObjMod)
 {
-  stopifnot(is.rvle(vleObj))
-  stopifnot(is.rvle(vleExpe))
-  x = .Call("rvleC_experiment_run", vleObj, vleExpe, PACKAGE="rvle")
+  stopifnot(is.rvle(vleObjExpe))
+  stopifnot(is.rvle(vleObjMod))
+  x = .Call("rvleC_experiment_run", vleObjExpe, vleObjMod, PACKAGE="rvle")
   return(x)
 }
 

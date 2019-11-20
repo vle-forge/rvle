@@ -311,11 +311,7 @@ rvleC_packages_list()
     rvlecpp_value_t res = rvlecpp_packages_list();
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 
@@ -327,11 +323,7 @@ rvleC_package_content(SEXP pkgname)
             CHAR(STRING_ELT(pkgname, 0)));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -357,11 +349,7 @@ rvleC_get_atomic_models(SEXP vleObj)
     rvlecpp_value_t res = rvlecpp_get_atomic_models(R_ExternalPtrAddr(vleObj));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -372,11 +360,7 @@ rvleC_get_conditions(SEXP vleObj)
     rvlecpp_value_t res = rvlecpp_get_conditions(R_ExternalPtrAddr(vleObj));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -405,11 +389,7 @@ rvleC_get_attached_conditions(SEXP vleObj, SEXP atomicpath)
             CHAR(STRING_ELT(atomicpath, 0)));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -440,11 +420,7 @@ rvleC_get_condition_ports(SEXP vleObj, SEXP conditionname)
                 CHAR(STRING_ELT(conditionname, 0)));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -477,11 +453,7 @@ rvleC_get_condition_port_value(SEXP vleObj, SEXP conditionname,
                     CHAR(STRING_ELT(portname, 0)));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -502,11 +474,7 @@ rvleC_get_observables(SEXP vleObj)
     rvlecpp_value_t res = rvlecpp_get_observables(R_ExternalPtrAddr(vleObj));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -519,11 +487,7 @@ rvleC_get_observable_ports(SEXP vleObj, SEXP obsName)
             CHAR(STRING_ELT(obsName, 0)));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -571,11 +535,7 @@ rvleC_get_attached_views(SEXP vleObj, SEXP obsName, SEXP portName)
                 CHAR(STRING_ELT(portName, 0)));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -587,11 +547,7 @@ rvleC_get_views(SEXP vleObj)
             R_ExternalPtrAddr(vleObj));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -618,11 +574,7 @@ rvleC_get_view_config(SEXP vleObj, SEXP viewname)
             CHAR(STRING_ELT(viewname, 0)));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -643,11 +595,7 @@ rvleC_get_view_plugin(SEXP vleObj, SEXP viewname)
             CHAR(STRING_ELT(viewname, 0)));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -668,11 +616,7 @@ rvleC_available_outputs(SEXP vleObj)
     rvlecpp_value_t res = rvlecpp_available_outputs(R_ExternalPtrAddr(vleObj));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -683,11 +627,7 @@ rvleC_run(SEXP vleObj)
     rvlecpp_value_t res = rvlecpp_run(R_ExternalPtrAddr(vleObj));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            1 /*Matrices are converted to dataframes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -706,11 +646,7 @@ rvleC_manager_get_config(SEXP vleObj)
     rvlecpp_value_t res = rvlecpp_manager_get_config(R_ExternalPtrAddr(vleObj));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -744,11 +680,7 @@ rvleC_plan_get(SEXP vleObj)
     rvlecpp_value_t res = rvlecpp_plan_get(R_ExternalPtrAddr(vleObj));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            1 /*Matrices are converted to dataframes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -813,11 +745,7 @@ rvleC_plan_run(SEXP vleObj)
     rvlecpp_value_t res = rvlecpp_plan_run(R_ExternalPtrAddr(vleObj));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
@@ -846,11 +774,7 @@ rvleC_experiment_run(SEXP vleObjExpe, SEXP vleObjMod)
                                                  R_ExternalPtrAddr(vleObjMod));
     SEXP r = rvleconv_toRvalue(
             res,
-            0 /*Provides names of the classes*/,
-            0 /*Consider set at first depth as one multiple values*/,
-            0 /*Give only the 1st element of a multiple value of size 1*/,
-            0 /*Matrices are list with dim attributes*/,
-            0 /*No meanings since matrix_type = 0*/);
+            0 /*Provides names of the classes*/);
     rvlecpp_clear_value(res);
     return r;
 }
