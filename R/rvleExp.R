@@ -402,7 +402,7 @@ rvleExp.parseExpe = function(file_expe=NULL, vleObj=NULL,
 #' usage:
 #'  
 #'
-rvleExp.sensitivity = function(vleObj=vleObj, file_expe=NULL,
+rvleExp.sensitivity = function(vleObj=NULL, file_expe=NULL,
                                method='morris', r=100, levels=5, n=100, 
                                output_vars=NULL, handleY=NULL, typeReturn=NULL)
 {

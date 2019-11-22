@@ -15,13 +15,13 @@ experiment. It relies on functions from the BayesianTools R package.
 }
 
 \arguments{
- \item{vleObj}{a VLE object, initialized with the function rvle_open},
+ \item{vleObj}{a VLE object, initialized with the function rvle_open}
  \item{file_expe}{experiment configuration as furnished by the function 
-      rvleExp.parseExpe, or the file name of the experiment configuration.},
+      rvleExp.parseExpe, or the file name of the experiment configuration.}
  \item{intern_like}{function that provides the computation of the 
-                    likelihood},
+                    likelihood}
  \item{n}{length of a MCMC.}
- \item{startValue}{number of parallel MCMC}.
+ \item{startValue}{number of parallel MCMC}
 }
 
 \value{
