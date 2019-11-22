@@ -46,6 +46,32 @@
 
 using namespace vle;
 
+//a rvle value type to handle NULL pointer
+typedef int RvleValueType;
+
+RvleValueType
+rvle_val_type(const std::unique_ptr<value::Value>& val)
+{
+    if (val) {
+        return val->getType();
+    }
+    return -1;
+}
+
+bool
+rvle_is_complex(RvleValueType t)
+{
+
+    return (t != -1)
+            and (t != value::Value::BOOLEAN)
+            and (t != value::Value::INTEGER)
+            and (t != value::Value::DOUBLE)
+            and (t != value::Value::STRING)
+            and (t != value::Value::XMLTYPE)
+            and (t != value::Value::NIL);
+}
+
+
 
 
 value::Value::type
@@ -73,20 +99,19 @@ convert_matrix_to_dataframe(const value::Matrix& mat)
         return false;
     }
     for (int col = 0; col < columns; col++) {
-        if (mat.get(col, 0)->getType() != value::Value::STRING) {
+        RvleValueType type0 = rvle_val_type( mat.get(col, 0));
+        if (type0 != value::Value::STRING) {
             return false;
         }
-        value::Value::type coltype  = mat.get(col, 1)->getType();
-        if ((coltype != value::Value::BOOLEAN)
-                and (coltype != value::Value::INTEGER)
-                and (coltype != value::Value::DOUBLE)
-                and (coltype != value::Value::STRING)
-                and (coltype != value::Value::XMLTYPE)
-                and (coltype != value::Value::NIL)) {
-            return false;
-        }
-        for (int row = 2; row < rows; row++) {
-            if (mat.get(col, row)->getType() != coltype) {
+        //find col type and check simple type and check homogeneity
+        int coltype = -1;
+        for (int row = 1; row < rows; row++) {
+            int typecolrow = rvle_val_type(mat.get(col, row));
+            if (rvle_is_complex(typecolrow)) {
+                return false;
+            } else if (coltype == -1){
+                coltype = typecolrow;
+            } else if (coltype != typecolrow){
                 return false;
             }
         }
