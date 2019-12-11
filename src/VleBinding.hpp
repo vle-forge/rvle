@@ -727,10 +727,8 @@ struct VleBinding
         }
 
         vle::manager::Simulation simulator(mCtx,
-                vle::manager::LOG_NONE,
                 vle::manager::SIMULATION_SPAWN_PROCESS,
-                std::chrono::milliseconds(0),
-                nullptr);
+                std::chrono::milliseconds(0));
         vle::manager::Error err;
         std::unique_ptr<vv::Map> res = simulator.run(std::move(vpz), &err);
         if (err.code) {
@@ -768,10 +766,8 @@ struct VleBinding
     {
         std::unique_ptr<vz::Vpz> vpz(new vz::Vpz(*mvpz));
         vle::manager::Simulation simulator(mCtx,
-                vle::manager::LOG_NONE,
                 vle::manager::SIMULATION_SPAWN_PROCESS,
-                std::chrono::milliseconds(0),
-                nullptr);
+                std::chrono::milliseconds(0));
         vle::manager::Error err;
 
         std::unique_ptr<vv::Map> res = simulator.run(std::move(vpz), &err);
