@@ -84,6 +84,13 @@ rvle.save <- function(vleObj, filename)
   return (invisible(NULL))
 }
 
+rvle.get_log_level <- function(vleObj)
+{
+  stopifnot(is.rvle(vleObj))
+  x = .Call("rvleC_get_log_level", vleObj, PACKAGE="rvle")
+  return (x)
+}
+
 rvle.set_log_level <- function(vleObj, level)
 {
   stopifnot(is.rvle(vleObj))

@@ -56,6 +56,8 @@ rvleC_package_content(SEXP pkgname);
 //basic functions
 static void
 rvleC_save(SEXP vleObj, SEXP filename);
+static SEXP
+rvleC_get_log_level(SEXP vleObj);
 static void
 rvleC_set_log_level(SEXP vleObj, SEXP level);
 static SEXP
@@ -180,6 +182,7 @@ R_CallMethodDef callMethods[] = {
         { "rvleC_package_content", (DL_FUNC)rvleC_package_content, 1 },
         //basic functions
         { "rvleC_save", (DL_FUNC)rvleC_save, 2 },
+        { "rvleC_get_log_level", (DL_FUNC)rvleC_get_log_level, 1 },
         { "rvleC_set_log_level", (DL_FUNC)rvleC_set_log_level, 2 },
         { "rvleC_get_atomic_models", (DL_FUNC)rvleC_get_atomic_models, 1 },
         { "rvleC_get_conditions", (DL_FUNC)rvleC_get_conditions, 1 },
@@ -335,6 +338,17 @@ void
 rvleC_save(SEXP vleObj, SEXP filename)
 {
     rvlecpp_save(R_ExternalPtrAddr(vleObj), CHAR(STRING_ELT(filename, 0)));
+}
+
+SEXP
+rvleC_get_log_level(SEXP vleObj)
+{
+    rvlecpp_value_t res = rvlecpp_get_log_level(R_ExternalPtrAddr(vleObj));
+    SEXP r = rvleconv_toRvalue(
+            res,
+            0 /*Provides names of the classes*/);
+    rvlecpp_clear_value(res);
+    return r;
 }
 
 void

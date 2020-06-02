@@ -5,7 +5,7 @@
 \title{Set the level of logging during the simulation of the model}
 
 \description{
-Sets the level logging level between 0 and  7. If the level is >  4, then debug
+Sets the logging level between 0 and  7. If the level is >  4, then debug
 messages are given.
 }
 
@@ -19,7 +19,7 @@ messages are given.
 }
 
 \seealso{
- rvle.set_log_level
+ rvle.get_log_level
 }
 
 

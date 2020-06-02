@@ -158,6 +158,13 @@ struct VleBinding
     }
 
     /*******************/
+    std::unique_ptr<vv::Value>
+    get_log_level()
+    {
+        return vv::Integer::create(mCtx->get_log_priority());
+    }
+
+    /*******************/
     void
     set_log_level(int level)
     {

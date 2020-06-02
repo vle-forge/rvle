@@ -226,6 +226,18 @@ rvlecpp_save(rvlecpp_t vleObj, const char* filename)
     vlebind->save(filename);
 }
 
+rvlecpp_value_t
+rvlecpp_get_log_level(rvlecpp_t vleObj)
+{
+    VleBinding* vlebind(reinterpret_cast<VleBinding*>(vleObj));
+    std::unique_ptr<vv::Value> ret = vlebind->get_log_level();
+    if (ret) {
+        return ret.release();
+    } else {
+        return 0;
+    }
+}
+
 void
 rvlecpp_set_log_level(rvlecpp_t vleObj, int level)
 {

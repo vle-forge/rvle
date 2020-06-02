@@ -81,6 +81,7 @@ rvlecpp_value_t rvlecpp_package_content(const char* pkgname);
 //basic functions
 
 void rvlecpp_save(rvlecpp_t vleObj, const char* filename);
+rvlecpp_value_t rvlecpp_get_log_level(rvlecpp_t vleObj);
 void rvlecpp_set_log_level(rvlecpp_t vleObj, int level);
 rvlecpp_value_t rvlecpp_get_atomic_models(rvlecpp_t vleObj);
 rvlecpp_value_t rvlecpp_get_conditions(rvlecpp_t vleObj);
