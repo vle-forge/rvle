@@ -160,7 +160,7 @@ rvlecpp_t rvlecpp_plan_embedded(rvlecpp_t vleObj, int input, int replicate);
 //experiment functions
 
 rvlecpp_value_t rvlecpp_experiment_run(rvlecpp_t vleObjExpe,
-        rvlecpp_t vleObjMod);
+        rvlecpp_t vleObjMod, rvlecpp_value_t experiment_settings);
 
 // specific rvle
 void rvlecpp_clear_value(rvlecpp_value_t val);

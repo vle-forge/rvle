@@ -161,7 +161,7 @@ rvleC_plan_embedded(SEXP vleObj, SEXP input, SEXP replicate);
 
 // experiment function
 static SEXP
-rvleC_experiment_run(SEXP vleObjExpe, SEXP vleObjMod);
+rvleC_experiment_run(SEXP vleObjExpe, SEXP vleObjMod, SEXP experiment_settings);
 
 /*
  *
@@ -231,7 +231,7 @@ R_CallMethodDef callMethods[] = {
         { "rvleC_plan_run", (DL_FUNC)rvleC_plan_run, 1 },
         { "rvleC_plan_embedded", (DL_FUNC)rvleC_plan_embedded, 3 },
         //experiment functions
-        { "rvleC_experiment_run", (DL_FUNC)rvleC_experiment_run, 2 },
+        { "rvleC_experiment_run", (DL_FUNC)rvleC_experiment_run, 3 },
         { NULL, NULL, 0 }
 };
 
@@ -782,10 +782,12 @@ rvleC_plan_embedded(SEXP vleObj, SEXP input, SEXP replicate)
 //experiment functions
 
 SEXP
-rvleC_experiment_run(SEXP vleObjExpe, SEXP vleObjMod)
+rvleC_experiment_run(SEXP vleObjExpe, SEXP vleObjMod, SEXP experiment_settings)
 {
-    rvlecpp_value_t res = rvlecpp_experiment_run(R_ExternalPtrAddr(vleObjExpe),
-                                                 R_ExternalPtrAddr(vleObjMod));
+    rvlecpp_value_t res = rvlecpp_experiment_run(
+            R_ExternalPtrAddr(vleObjExpe),
+            R_ExternalPtrAddr(vleObjMod),
+            rvleconv_toVleValue(experiment_settings));
     SEXP r = rvleconv_toRvalue(
             res,
             0 /*Provides names of the classes*/);

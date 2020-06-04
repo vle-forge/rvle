@@ -101,7 +101,7 @@ inline vle::utils::ContextPtr
 make_r_context()
 {
     auto ctx = vle::utils::make_context();
-    ctx->set_log_priority(7);
+    ctx->set_log_priority(5);
     ctx->set_log_function(
       std::unique_ptr<vle::utils::Context::LogFunctor>(new rvlecpp_log()));
     return ctx;
@@ -665,11 +665,15 @@ rvlecpp_plan_embedded(rvlecpp_t vleObj, int input, int replicate)
 //experiment functions
 
 rvlecpp_value_t
-rvlecpp_experiment_run(rvlecpp_t vleObjExpe, rvlecpp_t vleObjMod)
+rvlecpp_experiment_run(rvlecpp_t vleObjExpe, rvlecpp_t vleObjMod,
+        rvlecpp_value_t experiment_settings)
 {
     VleBinding* vlebindexpe(reinterpret_cast<VleBinding*>(vleObjExpe));
     VleBinding* vlebindmod(reinterpret_cast<VleBinding*>(vleObjMod));
-    std::unique_ptr<vv::Value> ret = vlebindexpe->experiment_run(*vlebindmod);
+    std::unique_ptr<value::Value> experiment_settings_ptr(
+            reinterpret_cast<value::Value*>(experiment_settings));
+    std::unique_ptr<vv::Value> ret = vlebindexpe->experiment_run(*vlebindmod,
+            std::move(experiment_settings_ptr));
     if (ret) {
         return ret.release();
     } else {

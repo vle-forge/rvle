@@ -732,15 +732,8 @@ struct VleBinding
 
             }
         }
-
-        vle::manager::SimulationOptions simOpt =
-                vle::manager::SIMULATION_SPAWN_PROCESS;
-        if (mManConfig and mManConfig->exist("simulation_spawn")) {
-          if (not mManConfig->getBoolean("simulation_spawn")) {
-              simOpt = vle::manager::SIMULATION_NONE;
-          }
-        }
-        vle::manager::Simulation simulator(mCtx, simOpt,
+        vle::manager::Simulation simulator(mCtx,
+                vle::manager::SIMULATION_SPAWN_PROCESS,
                 std::chrono::milliseconds(0));
         vle::manager::Error err;
         std::unique_ptr<vv::Map> res = simulator.run(std::move(vpz), &err);
@@ -778,15 +771,9 @@ struct VleBinding
     run()
     {
         std::unique_ptr<vz::Vpz> vpz(new vz::Vpz(*mvpz));
-        vle::manager::SimulationOptions simOpt =
-                vle::manager::SIMULATION_SPAWN_PROCESS;
-        if (mManConfig and mManConfig->exist("simulation_spawn")) {
-          if (not mManConfig->getBoolean("simulation_spawn")) {
-              simOpt = vle::manager::SIMULATION_NONE;
-          }
-        }
         vle::manager::Simulation simulator(mCtx,
-                simOpt, std::chrono::milliseconds(0));
+                vle::manager::SIMULATION_SPAWN_PROCESS,
+                std::chrono::milliseconds(0));
         vle::manager::Error err;
 
         std::unique_ptr<vv::Map> res = simulator.run(std::move(vpz), &err);
@@ -1006,47 +993,56 @@ struct VleBinding
      *********************************************/
 
     std::unique_ptr<vv::Value>
-    experiment_run(VleBinding& mod)
+    experiment_run(VleBinding& mod,
+            std::unique_ptr<vv::Value> experiment_settings)
     {
+      
         if (mplan) {
-            mCtx->log(3, "experiment cannot have a plan.\n");
-            return nullptr;
-        }
-        //get embedded model and save to temp file
-        vle::utils::Path temp_vpz = vle::utils::Path::temp_directory_path();
-        temp_vpz /= vle::utils::Path::unique_path(
-                "vle-bind-%%%%-%%%%-%%%%-%%%%.vpz");
-        mod.mvpz->write(temp_vpz.string());
-
-        //setup experiment model
-        int ret = -1;
-        if (mManConfig) {
-            ret = set_condition_port_value("experiment", "manager_config",
-                        std::move(mManConfig));
-            if (! ret){
-                mCtx->log(3, "cannot setup 'manager_config'.\n");
-                return nullptr;
-            }
+            mCtx->log(4, "experiment should not have a plan.\n");
         }
         if (mod.mplan) {
-            ret = set_condition_port_value("experiment", "model_plan",
-                    std::move(mod.mplan));
-            if (! ret){
-                mCtx->log(3, "cannot setup 'model_plan'.\n");
-                return nullptr;
-            }
+            mCtx->log(4, "embedded model should not have a plan.\n");
         }
+        if (mod.mManConfig) {
+            mCtx->log(4, "embedded model should not have a "
+                    "manager configuration.\n");
+        }
+        //save the embedded model to a temp file
+        vle::utils::Path temp_vpz = vle::utils::Path::temp_directory_path();
+        temp_vpz /= vle::utils::Path::unique_path(
+                "vle-embedded-%%%%-%%%%-%%%%-%%%%.vpz");
+        mod.mvpz->write(temp_vpz.string());
+        //setup the embedded model
+        int ret = -1;
         ret = set_condition_port_value("experiment", "vpz",
                 vv::String::create(temp_vpz.string()));
         if (! ret){
             mCtx->log(3, "cannot setup 'vpz' \n.");
             return nullptr;
         }
-        ret = set_condition_port_value("experiment", "log_priority",
-                        vv::Integer::create(mCtx->get_log_priority()));
-        if (! ret){
-            mCtx->log(3, "cannot setup 'log_priority' \n.");
-            return nullptr;
+
+        //setup the manager configuration of the experiment
+        if (mManConfig) {
+            ret = set_condition_port_value("experiment", "manager_config",
+                        mManConfig->clone());
+            if (! ret){
+                mCtx->log(3, "cannot setup 'manager_config'.\n");
+                return nullptr;
+            }
+        }
+        //setup the manager configuration of the experiment
+        if (experiment_settings) {
+            vv::Map::iterator itb = experiment_settings->toMap().begin();
+            vv::Map::iterator ite = experiment_settings->toMap().end();
+            for (; itb != ite; itb++) {
+                ret = set_condition_port_value("experiment", itb->first,
+                        itb->second->clone());
+                if (! ret){
+                    mCtx->log(3, "cannot setup experiment setting %s%.\n",
+                            itb->first.c_str());
+                    return nullptr;
+                }
+            }
         }
         //run experiment
         return run();
