@@ -1,6 +1,6 @@
 Package: rvle
-Version: 2.0.2-7
-Date: 2017-20-04
+Version: 2.1.0-0
+Date: 2022-04-01
 Title: VLE R package
 Author: Gauthier Quesnel <gauthier.quesnel@inra.fr>.
 Maintainer: Ronan Tr\'epos <ronan.trepos@inra.fr>
