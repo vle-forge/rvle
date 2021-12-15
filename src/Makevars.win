@@ -1,7 +1,7 @@
-PKG_CPPFLAGS = -std=c++11 -I$(VLE_PATH)/$(WIN)/include/vle-2.0 -I$(MINGW_PATH)/mingw$(WIN)/include
-PKG_LIBS = -Llibiconv -liconv -Lliblzma -llzma -Llibxml2 -lxml2 -Llibz -lz -Llibvle-2.0 -lvle-2.0  -lws2_32
+PKG_CPPFLAGS = -std=c++11 -I$(VLE_PATH)/$(WIN)/include/vle-2.1 -I$(MINGW_PATH)/mingw$(WIN)/include -I$(EXPAT_PATH)/$(WIN)/include
+PKG_LIBS = -Llibiconv -liconv -Lliblzma -llzma -Llibz -lz -Llibexpat -lexpat -Llibvle-2.1 -lvle-2.1  -lws2_32
 
-$(SHLIB): libiconv/libiconv.a liblzma/liblzma.a libxml2/libxml2.a libz/libz.a libvle-2.0/libvle-2.0.a
+$(SHLIB): libiconv/libiconv.a liblzma/liblzma.a libz/libz.a libexpat/libexpat.a libvle-2.1/libvle-2.1.a
 
 libiconv/libiconv.a:
 	@(rm -fr libiconv && mkdir libiconv)
@@ -11,14 +11,14 @@ liblzma/liblzma.a:
 	@(rm -fr liblzma && mkdir liblzma)
 	@(cp $(MINGW_PATH)/mingw$(WIN)/lib/liblzma.a liblzma/liblzma.a)
 
-libxml2/libxml2.a:
-	@(rm -fr libxml2 && mkdir libxml2)
-	@(cp $(MINGW_PATH)/mingw$(WIN)/lib/libxml2.a libxml2/libxml2.a)
-
 libz/libz.a:
 	@(rm -fr libz && mkdir libz)
 	@(cp $(MINGW_PATH)/mingw$(WIN)/lib/libz.a libz/libz.a)
 
-libvle-2.0/libvle-2.0.a:
-	@(rm -fr libvle-2.0 && mkdir libvle-2.0)
-	@(cp $(VLE_PATH)/$(WIN)/lib/libvle-2.0.a libvle-2.0/libvle-2.0.a)
+libexpat/libexpat.a:
+	@(rm -fr libexpat && mkdir libexpat)
+	@(cp $(MINGW_PATH)/mingw$(WIN)/lib/libexpat.a libexpat/libexpat.a)
+
+libvle-2.1/libvle-2.1.a:
+	@(rm -fr libvle-2.1 && mkdir libvle-2.1)
+	@(cp $(VLE_PATH)/$(WIN)/lib/libvle-2.1.a libvle-2.1/libvle-2.1.a)
