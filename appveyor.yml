@@ -9,7 +9,6 @@ branches:
 
 init:
   - cmd: dir
-#  - cmd: dir c:\Qt\5.15.2\mingw81_32\bin\
   - set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
   - set APPVEYOR_PATH=%PATH%
   - echo %APPVEYOR_FOLDER%
@@ -24,8 +23,8 @@ install:
   - cmd: C:\rtools40\usr\bin\pacman --noconfirm -S  mingw-w64-{i686,x86_64}-openssl
   - cmd: C:\rtools40\usr\bin\pacman --noconfirm -S  mingw-w64-{i686,x86_64}-curl
   - cmd: C:\rtools40\usr\bin\pacman --noconfirm -S  mingw-w64-{i686,x86_64}-boost
-  - cmd: appveyor DownloadFile https://cran.r-project.org/bin/windows/base/R-4.1.2-win.exe -FileName R-4.1.2-win.exe
-  - cmd: R-4.1.2-win.exe /SILENT /DIR="c:\R" 
+  - cmd: appveyor DownloadFile https://cran.r-project.org/bin/windows/base/R-4.1.3-win.exe -FileName R-4.1.3-win.exe
+  - cmd: R-4.1.3-win.exe /SILENT /DIR="c:\R"
   - cmd: cd c:\projects
   - cmd: git clone https://github.com/vle-forge/vle.git
 
