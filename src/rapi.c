@@ -39,7 +39,7 @@ static SEXP
 rvleC_onload();
 static SEXP
 rvleC_onunload();
-static void
+static SEXP
 rvleC_compile_test_port();
 static void
 rvleC_delete(SEXP vleObj);
@@ -54,69 +54,69 @@ rvleC_packages_list();
 static SEXP
 rvleC_package_content(SEXP pkgname);
 //basic functions
-static void
+static SEXP
 rvleC_save(SEXP vleObj, SEXP filename);
 static SEXP
 rvleC_get_log_level(SEXP vleObj);
-static void
+static SEXP
 rvleC_set_log_level(SEXP vleObj, SEXP level);
 static SEXP
 rvleC_get_atomic_models(SEXP vleObj);
 static SEXP
 rvleC_get_conditions(SEXP vleObj);
-static void
+static SEXP
 rvleC_add_condition(SEXP vleObj, SEXP conditioname);
-static void
+static SEXP
 rvleC_del_condition(SEXP vleObj, SEXP conditioname);
 static SEXP
 rvleC_get_attached_conditions(SEXP vleObj, SEXP atomicpath);
-static void
+static SEXP
 rvleC_attach_condition(SEXP vleObj, SEXP atomicpath,
                        SEXP conditionname);
-static void
+static SEXP
 rvleC_detach_condition(SEXP vleObj, SEXP atomicpath,
                        SEXP conditionname);
 static SEXP
 rvleC_get_condition_ports(SEXP vleObj, SEXP conditionname);
-static void
+static SEXP
 rvleC_add_condition_port(SEXP vleObj, SEXP conditionname,
                          SEXP portname);
-static void
+static SEXP
 rvleC_del_condition_port(SEXP vleObj, SEXP conditionname,
                          SEXP portname);
 static SEXP
 rvleC_get_condition_port_value(SEXP vleObj, SEXP conditionname,
                                SEXP portname);
-static void
+static SEXP
 rvleC_set_condition_port_value(SEXP vleObj, SEXP conditionname,
                                SEXP portname, SEXP val);
 static SEXP
 rvleC_get_observables(SEXP vleObj);
 static SEXP
 rvleC_get_observable_ports(SEXP vleObj, SEXP obsName);
-static void
+static SEXP
 rvleC_add_observable_port(SEXP vleObj, SEXP obsName, SEXP portName);
-static void
+static SEXP
 rvleC_del_observable_port(SEXP vleObj, SEXP obsName, SEXP portName);
-static void
+static SEXP
 rvleC_attach_view(SEXP vleObj, SEXP view, SEXP obsName, SEXP portName);
-static void
+static SEXP
 rvleC_detach_view(SEXP vleObj, SEXP view, SEXP obsName, SEXP portName);
 static SEXP
 rvleC_get_attached_views(SEXP vleObj, SEXP obsName, SEXP portName);
 static SEXP
 rvleC_get_views(SEXP vleObj);
-static void
+static SEXP
 rvleC_add_view(SEXP vleObj, SEXP view);
-static void
+static SEXP
 rvleC_del_view(SEXP vleObj, SEXP view);
 static SEXP
 rvleC_get_view_config(SEXP vleObj, SEXP viewname);
-static void
+static SEXP
 rvleC_set_view_config(SEXP vleObj, SEXP viewname, SEXP config);
 static SEXP
 rvleC_get_view_plugin(SEXP vleObj, SEXP viewname);
-static void
+static SEXP
 rvleC_set_view_plugin(SEXP vleObj, SEXP viewname, SEXP pluginname,
                       SEXP package);
 static SEXP
@@ -126,30 +126,30 @@ rvleC_run(SEXP vleObj);
 
 //manager functions
 
-static void
+static SEXP
 rvleC_manager_clear(SEXP vleObj);
 static SEXP
 rvleC_manager_get_config(SEXP vleObj);
-static void
+static SEXP
 rvleC_manager_set_config(SEXP vleObj, SEXP parallel_option, SEXP nb_slots,
         SEXP simulation_spawn,  SEXP rm_MPI_files,
         SEXP generate_MPI_host, SEXP working_dir);
 
 //plan functions
 
-static void
+static SEXP
 rvleC_plan_clear(SEXP vleObj);
 static SEXP
 rvleC_plan_get(SEXP vleObj);
-static void
+static SEXP
 rvleC_plan_define(SEXP vleObj, SEXP cond, SEXP port, SEXP addORremove);
-static void
+static SEXP
 rvleC_plan_input(SEXP vleObj, SEXP cond, SEXP port, SEXP val);
-static void
+static SEXP
 rvleC_plan_propagate(SEXP vleObj, SEXP cond, SEXP port, SEXP val);
-static void
+static SEXP
 rvleC_plan_replicate(SEXP vleObj, SEXP cond, SEXP port, SEXP val);
-static void
+static SEXP
 rvleC_plan_output(SEXP vleObj, SEXP id, SEXP path,
         SEXP integration, SEXP aggregation_replicate,
         SEXP aggregation_input, SEXP obs_times,
@@ -265,10 +265,11 @@ rvleC_onunload()
     return R_NilValue;
 }
 
-void
+SEXP
 rvleC_compile_test_port()
 {
     rvlecpp_compile_test_port();
+    return R_NilValue;
 }
 
 void
@@ -334,10 +335,11 @@ rvleC_package_content(SEXP pkgname)
 
 //basic functions
 
-void
+SEXP
 rvleC_save(SEXP vleObj, SEXP filename)
 {
     rvlecpp_save(R_ExternalPtrAddr(vleObj), CHAR(STRING_ELT(filename, 0)));
+    return R_NilValue;
 }
 
 SEXP
@@ -351,10 +353,11 @@ rvleC_get_log_level(SEXP vleObj)
     return r;
 }
 
-void
+SEXP
 rvleC_set_log_level(SEXP vleObj, SEXP level)
 {
     rvlecpp_set_log_level(R_ExternalPtrAddr(vleObj), INTEGER(level)[0]);
+    return R_NilValue;
 }
 
 SEXP
@@ -379,20 +382,22 @@ rvleC_get_conditions(SEXP vleObj)
     return r;
 }
 
-void
+SEXP
 rvleC_add_condition(SEXP vleObj, SEXP conditioname)
 {
     rvlecpp_add_condition(R_ExternalPtrAddr(vleObj),
                           CHAR(STRING_ELT(conditioname, 0)));
 
+    return R_NilValue;
 }
 
 
-void
+SEXP
 rvleC_del_condition(SEXP vleObj, SEXP conditioname)
 {
     rvlecpp_del_condition(R_ExternalPtrAddr(vleObj),
                               CHAR(STRING_ELT(conditioname, 0)));
+    return R_NilValue;
 }
 
 SEXP
@@ -408,22 +413,24 @@ rvleC_get_attached_conditions(SEXP vleObj, SEXP atomicpath)
     return r;
 }
 
-void
+SEXP
 rvleC_attach_condition(SEXP vleObj, SEXP atomicpath,
                        SEXP conditioname)
 {
     rvlecpp_attach_condition(R_ExternalPtrAddr(vleObj),
                              CHAR(STRING_ELT(atomicpath, 0)),
                              CHAR(STRING_ELT(conditioname, 0)));
+    return R_NilValue;
 }
 
-void
+SEXP
 rvleC_detach_condition(SEXP vleObj, SEXP atomicpath,
                        SEXP conditioname)
 {
     rvlecpp_detach_condition(R_ExternalPtrAddr(vleObj),
                              CHAR(STRING_ELT(atomicpath, 0)),
                              CHAR(STRING_ELT(conditioname, 0)));
+    return R_NilValue;
 }
 
 SEXP
@@ -439,22 +446,24 @@ rvleC_get_condition_ports(SEXP vleObj, SEXP conditionname)
     return r;
 }
 
-void
+SEXP
 rvleC_add_condition_port(SEXP vleObj, SEXP conditionname,
                          SEXP portname)
 {
     rvlecpp_add_condition_port(R_ExternalPtrAddr(vleObj),
                                CHAR(STRING_ELT(conditionname, 0)),
                                CHAR(STRING_ELT(portname, 0)));
+    return R_NilValue;
 }
 
-void
+SEXP
 rvleC_del_condition_port(SEXP vleObj, SEXP conditionname,
                          SEXP portname)
 {
     rvlecpp_del_condition_port(R_ExternalPtrAddr(vleObj),
                                CHAR(STRING_ELT(conditionname, 0)),
                                CHAR(STRING_ELT(portname, 0)));
+    return R_NilValue;
 }
 
 SEXP
@@ -472,7 +481,7 @@ rvleC_get_condition_port_value(SEXP vleObj, SEXP conditionname,
     return r;
 }
 
-void
+SEXP
 rvleC_set_condition_port_value(SEXP vleObj, SEXP conditionname,
                                SEXP portname, SEXP val)
 {
@@ -480,6 +489,7 @@ rvleC_set_condition_port_value(SEXP vleObj, SEXP conditionname,
                                    CHAR(STRING_ELT(conditionname, 0)),
                                    CHAR(STRING_ELT(portname, 0)),
                                    rvleconv_toVleValue(val));
+    return R_NilValue;
 }
 
 SEXP
@@ -506,38 +516,42 @@ rvleC_get_observable_ports(SEXP vleObj, SEXP obsName)
     return r;
 }
 
-void
+SEXP
 rvleC_add_observable_port(SEXP vleObj, SEXP obsName, SEXP portName)
 {
     rvlecpp_add_observable_port(R_ExternalPtrAddr(vleObj),
             CHAR(STRING_ELT(obsName, 0)),
             CHAR(STRING_ELT(portName, 0)));
+    return R_NilValue;
 }
 
-void
+SEXP
 rvleC_del_observable_port(SEXP vleObj, SEXP obsName, SEXP portName)
 {
     rvlecpp_del_observable_port(R_ExternalPtrAddr(vleObj),
             CHAR(STRING_ELT(obsName, 0)),
             CHAR(STRING_ELT(portName, 0)));
+    return R_NilValue;
 }
 
-void
+SEXP
 rvleC_attach_view(SEXP vleObj, SEXP view, SEXP obsName, SEXP portName)
 {
     rvlecpp_attach_view(R_ExternalPtrAddr(vleObj),
                 CHAR(STRING_ELT(view, 0)),
                 CHAR(STRING_ELT(obsName, 0)),
                 CHAR(STRING_ELT(portName, 0)));
+    return R_NilValue;
 }
 
-void
+SEXP
 rvleC_detach_view(SEXP vleObj, SEXP view, SEXP obsName, SEXP portName)
 {
     rvlecpp_detach_view(R_ExternalPtrAddr(vleObj),
                 CHAR(STRING_ELT(view, 0)),
                 CHAR(STRING_ELT(obsName, 0)),
                 CHAR(STRING_ELT(portName, 0)));
+    return R_NilValue;
 }
 
 SEXP
@@ -566,18 +580,20 @@ rvleC_get_views(SEXP vleObj)
     return r;
 }
 
-void
+SEXP
 rvleC_add_view(SEXP vleObj, SEXP view)
 {
     rvlecpp_add_view(R_ExternalPtrAddr(vleObj),
             CHAR(STRING_ELT(view, 0)));
+    return R_NilValue;
 }
 
-void
+SEXP
 rvleC_del_view(SEXP vleObj, SEXP view)
 {
     rvlecpp_del_view(R_ExternalPtrAddr(vleObj),
                     CHAR(STRING_ELT(view, 0)));
+    return R_NilValue;
 }
 
 SEXP
@@ -593,12 +609,13 @@ rvleC_get_view_config(SEXP vleObj, SEXP viewname)
     return r;
 }
 
-void
+SEXP
 rvleC_set_view_config(SEXP vleObj, SEXP viewname, SEXP config)
 {
     rvlecpp_set_view_config(R_ExternalPtrAddr(vleObj),
                     CHAR(STRING_ELT(viewname, 0)),
                     CHAR(STRING_ELT(config, 0)));
+    return R_NilValue;
 }
 
 SEXP
@@ -614,7 +631,7 @@ rvleC_get_view_plugin(SEXP vleObj, SEXP viewname)
     return r;
 }
 
-void
+SEXP
 rvleC_set_view_plugin(SEXP vleObj, SEXP viewname, SEXP pluginname,
                       SEXP package)
 {
@@ -622,6 +639,7 @@ rvleC_set_view_plugin(SEXP vleObj, SEXP viewname, SEXP pluginname,
                         CHAR(STRING_ELT(viewname, 0)),
                         CHAR(STRING_ELT(pluginname, 0)),
                         CHAR(STRING_ELT(package, 0)));
+    return R_NilValue;
 }
 
 SEXP
@@ -648,10 +666,11 @@ rvleC_run(SEXP vleObj)
 
 //manager functions
 
-void
+SEXP
 rvleC_manager_clear(SEXP vleObj)
 {
     rvlecpp_manager_clear(R_ExternalPtrAddr(vleObj));
+    return R_NilValue;
 }
 
 SEXP
@@ -665,7 +684,7 @@ rvleC_manager_get_config(SEXP vleObj)
     return r;
 }
 
-void
+SEXP
 rvleC_manager_set_config(SEXP vleObj, SEXP parallel_option, SEXP nb_slots,
         SEXP simulation_spawn,  SEXP rm_MPI_files,
         SEXP generate_MPI_host, SEXP working_dir)
@@ -677,15 +696,17 @@ rvleC_manager_set_config(SEXP vleObj, SEXP parallel_option, SEXP nb_slots,
                 LOGICAL(rm_MPI_files)[0],
                 LOGICAL(generate_MPI_host)[0],
                 CHAR(STRING_ELT(working_dir, 0)));
+    return R_NilValue;
 }
 
 
 //plan functions
 
-void
+SEXP
 rvleC_plan_clear(SEXP vleObj)
 {
     rvlecpp_plan_clear(R_ExternalPtrAddr(vleObj));
+    return R_NilValue;
 }
 
 SEXP
@@ -699,34 +720,37 @@ rvleC_plan_get(SEXP vleObj)
     return r;
 }
 
-void
+SEXP
 rvleC_plan_define(SEXP vleObj, SEXP cond, SEXP port, SEXP addORremove)
 {
     rvlecpp_plan_define(R_ExternalPtrAddr(vleObj),
                             CHAR(STRING_ELT(cond, 0)),
                             CHAR(STRING_ELT(port, 0)),
                             LOGICAL(addORremove)[0]);
+    return R_NilValue;
 }
 
-void
+SEXP
 rvleC_plan_input(SEXP vleObj, SEXP cond, SEXP port, SEXP val)
 {
     rvlecpp_plan_input(R_ExternalPtrAddr(vleObj),
                             CHAR(STRING_ELT(cond, 0)),
                             CHAR(STRING_ELT(port, 0)),
                             rvleconv_toVleValue(val));
+    return R_NilValue;
 }
 
-void
+SEXP
 rvleC_plan_propagate(SEXP vleObj, SEXP cond, SEXP port, SEXP val)
 {
     rvlecpp_plan_propagate(R_ExternalPtrAddr(vleObj),
                             CHAR(STRING_ELT(cond, 0)),
                             CHAR(STRING_ELT(port, 0)),
                             rvleconv_toVleValue(val));
+    return R_NilValue;
 }
 
-void
+SEXP
 rvleC_plan_replicate(SEXP vleObj, SEXP cond, SEXP port, SEXP val)
 {
     rvlecpp_plan_replicate(R_ExternalPtrAddr(vleObj),
@@ -734,9 +758,10 @@ rvleC_plan_replicate(SEXP vleObj, SEXP cond, SEXP port, SEXP val)
                             CHAR(STRING_ELT(port, 0)),
                             rvleconv_toVleValue(val));
 
+    return R_NilValue;
 }
 
-void
+SEXP
 rvleC_plan_output(SEXP vleObj, SEXP id, SEXP path,
         SEXP integration, SEXP aggregation_replicate,
         SEXP aggregation_input, SEXP obs_times,
@@ -751,6 +776,7 @@ rvleC_plan_output(SEXP vleObj, SEXP id, SEXP path,
                     rvleconv_toVleValue(obs_times),
                     rvleconv_toVleValue(obs_values),
                     REAL(replicate_quantile)[0]);
+    return R_NilValue;
 }
 
 SEXP
