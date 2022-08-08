@@ -2,8 +2,8 @@
 
 library(rvle)
 
-#tmpdir = "/tmp"
-tmpdir = tempdir()
+tmpdir = "/tmp"
+#tmpdir = tempdir()
 print(tmpdir)
 dir.create(paste(tmpdir,"/vlehome",sep=""))
 vlehome = normalizePath(paste(tmpdir,"/vlehome",sep=""))
@@ -197,13 +197,13 @@ checkEquals(cter$id6,TRUE)
 c = matrix(c(1,2,3,4,5,6),nrow=3)
 rvle.set_condition_port_value(f, "test", "bool",c)
 c = rvle.get_condition_port_value(f, "test", "bool")
-checkEqualsNumeric(class(c),"matrix")
+checkEqualsNumeric(class(c)[1],"matrix")
 checkEqualsNumeric(dim(c)[[1]],3)
 checkEqualsNumeric(dim(c)[[2]],2)
 checkEqualsNumeric(c[1,2],4)
 rvle.set_condition_port_value(f, "test", "bool",c)
 c = rvle.get_condition_port_value(f, "test", "bool")
-checkEquals(class(c),"matrix")
+checkEquals(class(c)[1],"matrix")
 checkEqualsNumeric(dim(c)[[1]],3)
 checkEqualsNumeric(dim(c)[[2]],2)
 checkEquals(c[1,2],4)
