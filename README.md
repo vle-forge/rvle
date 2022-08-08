@@ -1,5 +1,12 @@
-Virtual Laboratory Environment 2.0
+Virtual Laboratory Environment 2.1
 ==================================
+
+| Linux | Windows |
+| :---- | :---- |
+[![Linux](https://github.com/vle-forge/rvle/actions/workflows/Linux.yml/badge.svg?branch=master2.1)](https://github.com/vle-forge/rvle/actions/workflows/Linux.yml) | [![Windows build status][3]][4] |
+
+[3]: https://ci.appveyor.com/api/projects/status/github/vle-forge/rvle?branch=master2.1&svg=true
+[4]: https://ci.appveyor.com/project/quesnel/rvle?branch=master2.1
 
 A R binding for the VFL (*Virtual Laboratory Environment Foundation Library*) and VLE (*Virtual Laboratory Environment*).
 
