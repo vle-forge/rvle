@@ -51,7 +51,7 @@ before_build:
 
 build_script:
   - cmd: dir C:\rtools40\usr\bin
-  - cmd: set PATH=C:\R\bin\;C:\rtools40\usr\bin
+  - cmd: set PATH=C:\R\bin\;C:\rtools40\usr\bin;C:\rtools40\mingw64\bin;C:\R\bin\x64
   - cmd: set MINGW_PATH=c:/rtools40
   - cmd: set VLE_PATH=c:/rvle-bin
   - cmd: cd c:\projects
