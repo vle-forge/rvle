@@ -1,0 +1,54 @@
+name: Linux
+
+on:
+  push:
+    branches: [ "master", "master2.1", "test" ]
+  pull_request:
+    branches: [ "master", "master2.1", "test" ]
+
+env:
+  TEST_OUTPUT_ON_FAILURE: 1
+  CC: gcc-10
+  CXX: g++-10
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        BUILD_TYPE: [Debug, RelWithDebInfo, Release]
+      
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Checkout repository and submodule
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install cmake asciidoctor libboost-dev libopenmpi-dev libexpat1-dev qttools5-dev qttools5-dev-tools qtbase5-dev qtbase5-dev-tools libqt5svg5-dev qtchooser qt5-default r-base r-base-core r-base-dev r-recommended
+      
+    - name: Download VLE
+      run: |
+        cd $HOME
+        VLE_ABI=$(curl --insecure https://www.vle-project.org/pub/vle/latest)
+        VLE_VERSION=$(curl --insecure https://www.vle-project.org/pub/vle/$VLE_ABI/latest)
+        curl --insecure -O https://www.vle-project.org/pub/vle/$VLE_ABI/$VLE_VERSION/vle-$VLE_VERSION.tar.gz
+        tar zxf vle-$VLE_VERSION.tar.gz
+        cd vle-$VLE_VERSION
+        mkdir build
+        cd build
+        cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_COMPILER=$CXX_COMPILER -DCMAKE_C_COMPILER=$C_COMPILER -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_GVLE=ON -DWITH_CVLE=OFF -DWITH_MVLE=OFF ..
+        make
+        sudo make install
+      
+    - name: Build RVLE
+      run: |
+        cd ${{github.workspace}}
+        cd ..
+        mkdir ~/R-packages
+        export R_LIBS=~/R-packages
+        Rscript -e 'install.packages("RUnit", repos="https://cloud.r-project.org")'
+        R CMD build rvle
+        R CMD INSTALL --build rvle
