@@ -20,7 +20,7 @@ This package allows:
 
 * [R](http://www.r-project.org) (≥ 2.10)
 * [Rtools](https://cran.r-project.org/bin/windows/Rtools/) (≥ 2.10)
-* [VLE](http://www.vle-project.org) (≥ 2.0)
+* [VLE](http://www.vle-project.org) (≥ 2.1)
 
 ## Getting the code
 
